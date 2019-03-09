@@ -36,242 +36,199 @@ Java 8 的函数式编程通过 lambda 表达式来介绍给大家。
 
 每一次一个函数式编程函数被称为使用同样的参数，并且得到同样的结果。函数在函数式编程中被认为展示了透明相关性。这意味这你不用改变计算的意义下用结果值替换函数调用。
 
-Functional programming favors immutability, which means the state cannot change. This is typically not the case in imperative programming, where an imperative function might be associated with state (such as a Java instance variable). Calling this function at different times with the same arguments might result in different return values because in this case state is mutable, meaning it changes.
+
+函数式编程偏好不变性,这意味着状态不能改变.命令式编程通常不是这样的.一个命令式的函数会与状态连接到一起.(例如一个Java实例变量).
+因为在这个实例中状态是可变的,所以称这个函数在不同时间中有相同的参数却可以有不同的返回值.
+
+## 命令式和函数式编程的副作用
+
+状态改变是命令式编程的一大副作用,阻碍了相关透明度.有许多其它的副作用也应该知道,尤其是当你决定是在你的程序中使用命令式还是函数式的风格.
+
+在命令式编程中一个常见的副作用是当一个赋值语句通过改变存贮的值来改变变量.在函数式编程中的函数不支持这种变量赋值.因为一个变量初始值从不改变.函数式编程限制了这一个副作用.
+
+另一个常见的副作用发生在修改基于抛出异常的函数的行为,这是一个对调用者可观察的交互.可以在Stack Overflow看到更多对《日益增长的异常副作用是什么？》
 
 
+第三个常见的副作用是当I/O操作,输入不能读的文本，或输出不能写的文本.了解详情,可以在Stack Exchange中查看《在函数式编程中IO是如何造成副作用的？》.
 
-Side effects in imperative and functional programming
-State changes are a side effect of imperative programming, preventing referential transparency. There are many other side effects worth knowing about, especially as you evaluate whether to use the imperative or functional style in your programs.
+去除掉副作用使程序更容易理解和预测计算的行为.这也是帮助代码更加适用于平行处理,通常能够提升应用的性能.然而这些副作用在函数式编程中,它们
+通常少于命令式编程.使用函数式编程可以帮助你写容易理解方便测试和可读性的代码.
 
-One common side effect in imperative programming is when an assignment statement mutates a variable by changing its stored value. Functions in functional programming don't support variable assignments. Because a variable's initial value never changes, functional programming eliminates this side effect.
+## 函数式编程的起源
 
-Another common side effect happens when modifying an imperative function's behavior based on a thrown exception, which is an observable interaction with the caller. For more information, see the Stack Overflow discussion, "Why is the raising of an exception a side effect?"
+函数式编程起源于lambda微积分,它是被Alonzo Church所提出的.另一个起源是组合逻辑,它被Moses Schönfinkel所提出,随后被Haskell Curry发展.
 
-A third common side effect occurs when an I/O operation inputs text that cannot be unread, or outputs text that cannot be unwritten. See the Stack Exchange discussion "How can IO cause side effects in functional programming?" to learn more about this side effect.
 
-Eliminating side effects makes it much easier to understand and predict computational behavior. It also helps make code more suitable for parallel processing, which often improves application performance. While there are side effects in functional programming, they are generally fewer than in imperative programming. Using functional programming can help you write code that's easier to understand, maintain, and test, and is also more reusable.
+## 面向对象VS函数式编程
 
-Origins (and originators) of functional programming
-Functional programming originated in lambda calculus, which was introduced by Alonzo Church. Another origin is combinatory logic, which was introduced by Moses Schönfinkel and subsequently developed by Haskell Curry.
-
-Object-oriented versus functional programming
-I've created a Java application that contrasts the imperative, object-oriented and declarative, functional programming approaches to writing code. Study the code below and then I'll point out differences between the two examples.
+我创建了一个Java与命令式,面向对象和声明式相关的应用.函数式编程来写代码.学习下面代码,然后我将之处两个例子的不同之处.
 
 Listing 1. Employees.java
 
-
+```java
 import java.util.ArrayList;
-
 import java.util.List;
-
 public class Employees
-
 {
-
    static class Employee
-
    {
-
       private String name;
-
       private int age;
-
       Employee(String name, int age)
-
       {
-
          this.name = name;
-
          this.age = age;
-
       }
 
       int getAge()
-
       {
-
          return age;
-
       }
 
       @Override
-
       public String toString()
-
       {
-
          return name + ": " + age;
-
       }
-
    }
 
    public static void main(String[] args)
-
    {
-
       List<Employee> employees = new ArrayList<>();
-
       employees.add(new Employee("John Doe", 63));
-
       employees.add(new Employee("Sally Smith", 29));
-
       employees.add(new Employee("Bob Jone", 36));
-
       employees.add(new Employee("Margaret Foster", 53));
-
       printEmployee1(employees, 50);
-
       System.out.println();
-
       printEmployee2(employees, 50);
-
    }
 
    public static void printEmployee1(List<Employee> employees, int age)
-
    {
-
       for (Employee emp: employees)
-
          if (emp.getAge() < age)
-
             System.out.println(emp);
-
    }
-
    public static void printEmployee2(List<Employee> employees, int age)
-
    {
-
       employees.stream()
-
                .filter(emp -> emp.age < age)
-
                .forEach(emp -> System.out.println(emp));
-
    }
-
 }
-Listing 1 reveals an Employees application that creates a few Employee objects, then prints a list of all employees who are younger than 50. This code demonstrates both object-oriented and functional programming styles.
-
-The printEmployee1() method reveals the imperative, statement-oriented approach. As specified, this method iterates over a list of employees, compares each employee's age against an argument value, and (if the age is less than the argument), prints the employee's details.
-
-The printEmployee2() method reveals the declarative, expression-oriented approach, in this case implemented with the Streams API. Instead of imperatively specifying how to print the employees (step-by-step), the expression specifies the desired outcome and leaves the details of how to do it to Java. Think of filter() as the functional equivalent of an if statement, and forEach() as functionally equivalent to the for statement.
-
-You can compile Listing 1 as follows:
+```
 
 
+Listing 1 发布了一个 Employees 的应用,创建了一些Employee对象,然后输出了一组年龄小于50的Employee对象.这个代码从面向对象和函数式编程
+两方面实现.
 
+printEmployee1() 方法展示了命令式,面向声明的方式.同样的,这个方法迭代了所有list中的employee,比较了employee的年龄,(如果年龄小于参数)
+打印出employee的细节.
+
+printEmployee2() 方法展示了声明式,面向表达的方式.在这个例子中使用了Streams API.替代了命令式的实现如何打印出employee,这个表达式指定了结果,并留下了如何用Java去实现的细节.
+
+想想filter()作为函数式的相同的if声明,和forEach()做为相同for的声明.
+
+你可以想下面一样编译 Listing 1
 javac Employees.java
-Use the following command to run the resulting application:
 
-
-
+使用下面的命令来运行
 java Employees
-The output should look something like this:
 
-
-
+输出结果应该像这样
 Sally Smith: 29
-
+Bob Jone: 36
+Sally Smith: 29
 Bob Jone: 36
 
-Sally Smith: 29
 
-Bob Jone: 36
 Functional programming examples
 In the next sections, we'll explore five core techniques used in functional programming: pure functions, higher-order functions, lazy evaluation, closures, and currying. Examples in this section are coded in JavaScript because its simplicity, relative to Java, will allow us to focus on the techniques. In Part 2 we'll revisit these same techniques using Java code.
 
-download
-Download the code
-Get code samples for the five functional programming techniques demonstrated in the next sections. Created by Jeff Friesen for JavaWorld.
-Listing 2 presents the source code to RunScript, a Java application that uses Java's Scripting API to facilitate running JavaScript code. RunScript will be the base program for all of the forthcoming examples.
+## 函数式编程实例
+
+在下一节中,我们将探索5个在函数式编程汇总使用核心技术.
+
+- 纯粹的函数
+- 高阶函数
+- 延迟实现
+- 闭包
+- 加脂法
+
+这一节中的实例是用JavaScript写的,因为它简洁并且Java相关.将允许我们关注于技术.在Part2我们将重新回顾同样的技术用Java实现.
+
+
+Listing 2 展示了RunScript的源代码,一个使用Java脚本API的Java应用来帮助运行JavaScript代码.Runscript将是下面实例运行的基础.
+
+
 
 Listing 2. RunScript.java
  
+```java
 import java.io.FileReader;
-
 import java.io.IOException;
-
 import javax.script.ScriptEngine;
-
 import javax.script.ScriptEngineManager;
-
 import javax.script.ScriptException;
-
 import static java.lang.System.*;
 
 public class RunScript
 
 {
+	public static void main(String[] args) {
+		if (args.length != 1){
+			err.println("usage: java RunScript script");
+			return;
+		}
+		ScriptEngineManager manager = new ScriptEngineManager();
 
-   public static void main(String[] args)
+		ScriptEngine engine = manager.getEngineByName("nashorn");
+		try {
 
-   {
+			engine.eval(new FileReader(args[0]));
 
-      if (args.length != 1)
+		}
 
-      {
+		catch (ScriptException se) {
+			err.println(se.getMessage());
+		}
 
-         err.println("usage: java RunScript script");
+		catch (IOException ioe) {
+			err.println(ioe.getMessage());
 
-         return;
-
-      }
-
-      ScriptEngineManager manager = 
-
-         new ScriptEngineManager();
-
-      ScriptEngine engine = 
-
-         manager.getEngineByName("nashorn");
-
-      try
-
-      {
-
-         engine.eval(new FileReader(args[0]));
-
-      }
-
-      catch (ScriptException se)
-
-      {
-
-         err.println(se.getMessage());
-
-      }
-
-      catch (IOException ioe)
-
-      {
-
-         err.println(ioe.getMessage());
-
-      }      
-
-   }
-
+		}
+	}
 }
-The main() method in this example first verifies that a single command-line argument (the name of a script file) has been specified. Otherwise, it displays usage information and terminates the application.
-
-Assuming the presence of this argument, main() instantiates the javax.script.ScriptEngineManager class. ScriptEngineManager is the entry-point into Java's Scripting API.
-
-Next, the ScriptEngineManager object's ScriptEngine getEngineByName(String shortName) method is called to obtain a script engine corresponding to the desired shortName value. Java 10 supports the Nashorn script engine, which is obtained by passing "nashorn" to getEngineByName(). The returned object's class implements the javax.script.ScriptEngine interface.
-
-ScriptEngine declares several eval() methods for evaluating a script. main() invokes the Object eval(Reader reader) method to read the script from its java.io.FileReader object argument and (assuming that java.io.IOException isn't thrown) then evaluate the script. This method returns any script return value, which I ignore. Also, this method throws javax.script.ScriptException when an error occurs in the script.
-
-Compile Listing 2 as follows:
+```
 
 
+这个 main() 方法在实例中首先验证单个的命令行参数被指定.然而,它展示惯例信息和终止应用.
+
+
+设想这个参数的展示,main()实例化javax.script.ScriptEngineManager类,ScriptEngineManager是这个实体点进入Java脚本的API.
+
+下一次,这个ScriptEngineManager对象的ScriptEngine的getEngineByName(String shortName)方法被调用遵循脚本引擎纠正希望的shortName的
+值.Java 10支持这个 Nashorn引擎,它是遵循通过nashorn来getEngineByName().这个返回的对象的类实现了javax.script.ScriptEngine接口.
+
+ScriptEngine 声明了几个eval()方法来实现一个脚本.main()调用Object eval(Reader reader) 方面来读取从java.io.FileReader对象参数和
+(假设java.io.IOException没有抛出).之后实现这个脚本.
+这个方法返回了任意脚本任意值.同样,当发生异常时,这个方法抛出javax.script.ScriptException.
+
+编译 Listing 2 :
 
 javac RunScript.java
-I'll show you how to run this application after I have presented the first script.
 
-Functional programming with pure functions
-A pure function is a functional programming function that depends only on its input arguments and no external state. An impure function is a functional programming function that violates either of these requirements. Because pure functions have no interaction with the outside world (apart from calling other pure functions), a pure function always returns the same result for the same arguments. Pure functions also have no observable side effects.
+我将向你展示如何在我展示的第一个脚本后运行这个应用.
+
+
+## 纯粹的函数下的函数式编程
+
+一个纯粹的函数是一个只依赖它的输入参数和没有额外声明的函数式编程函数.一个不纯粹的函数是一个函数式编程函数违反了这些需要.
+因为纯粹的函数没有和外边的世界有交互.(除了调用其它纯粹的函数).一个纯粹的函数总是在相同的参数下,返回相同的结果.纯粹的函数也没有明显的副作用.
+
+
+
 
 Can a pure function perform I/O?
 If I/O is a side effect, can a pure function perform I/O? The answer is yes. Haskell uses monads to address this problem. See "Pure Functions and I/O" for more about pure functions and I/O.

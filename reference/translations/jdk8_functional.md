@@ -142,10 +142,6 @@ Bob Jone: 36
 Sally Smith: 29
 Bob Jone: 36
 
-
-Functional programming examples
-In the next sections, we'll explore five core techniques used in functional programming: pure functions, higher-order functions, lazy evaluation, closures, and currying. Examples in this section are coded in JavaScript because its simplicity, relative to Java, will allow us to focus on the techniques. In Part 2 we'll revisit these same techniques using Java code.
-
 ## 函数式编程实例
 
 在下一节中,我们将探索5个在函数式编程汇总使用核心技术.
@@ -228,308 +224,233 @@ javac RunScript.java
 因为纯粹的函数没有和外边的世界有交互.(除了调用其它纯粹的函数).一个纯粹的函数总是在相同的参数下,返回相同的结果.纯粹的函数也没有明显的副作用.
 
 
+一个纯粹的函数能执行I/O吗?
+如果I/O是一个副作用,一个纯粹的函数能执行I/O吗?答案是可以的.Haskell使用monads来解决这个问题.
 
-
-Can a pure function perform I/O?
-If I/O is a side effect, can a pure function perform I/O? The answer is yes. Haskell uses monads to address this problem. See "Pure Functions and I/O" for more about pure functions and I/O.
-
-Pure functions versus impure functions
-The JavaScript in Listing 3 contrasts an impure calculatebonus() function with a pure calculatebonus2() function.
+纯粹的函数VS不纯粹的函数
+这个在Listing 3中JavaScript中不纯粹的calculatebonus()函数与纯粹的calculatebonus2() 对比.
 
 Listing 3. Comparing pure vs impure functions (script1.js)
 
-
+```js
 // impure bonus calculation
-
 var limit = 100;
-
 function calculatebonus(numSales) 
-
 {
-
    return(numSales > limit) ? 0.10 * numSales : 0
-
 }
 
 print(calculatebonus(174))
-
 // pure bonus calculation
-
 function calculatebonus2(numSales)
-
 {
-
    return (numSales > 100) ? 0.10 * numSales : 0
-
 }
-
 print(calculatebonus2(174))
-calculatebonus() is impure because it accesses the external limit variable. In contrast, calculatebonus2() is pure because it obeys both requirements for purity. Run script1.js as follows:
+```
 
-
+calculatebonus()是非纯粹的,因为他读取了额外的limit变量.相反,calculatebonus2()是纯粹的,因为它遵守了纯粹的两个需求.
+像下面一样运行 script1.js
 
 java RunScript script1.js
+
 Here's the output you should observe:
 
+你应该看到下面的输出
 
-
+```
 17.400000000000002
-
 17.400000000000002
+```
 
-Suppose calculatebonus2() was refactored to return calculatebonus(numSales). Would calculatebonus2() still be pure? The answer is no: when a pure function invokes an impure function, the "pure function" becomes impure.
-
-When no data dependency exists between pure functions, they can be evaluated in any order without affecting the outcome, making them suitable for parallel execution. This is one of functional programming's benefits.
-
-More about impure functions
-Not all functional programming functions need to be pure. As Functional Programming: Pure Functions explains, it is possible (and sometimes desirable) to "separate the pure, functional, value based core of your application from an outer, imperative shell."
-
-Functional programming with higher-order functions
-A higher-order function is a mathematical function that receives functions as arguments, returns a function to its caller, or both. One example is calculus's differential operator, d/dx, which returns the derivative of function f.
-
-First-class functions are first-class citizens
-Closely related to the mathematical higher-order function concept is the first-class function, which is a functional programming function that takes other functional programming functions as arguments and/or returns a functional programming function. First-class functions are first-class citizens because they can appear wherever other first-class program entities (e.g., numbers) can, including being assigned to a variable or being passed as an argument to or returned from a function.
-
-The JavaScript in Listing 4 demonstrates passing anonymous comparison functions to a first-class sorting function.
-
-Listing 4. Passing anonymous comparison functions (script2.js)
+支持calculatebonus2()是对calculatebonus(numSales)返回的重构.那calculatebonus2(numSales)还仍是纯粹的吗?
+答案是不是.当一个纯粹的函数调用另一个不纯粹的函数,那么这个函数就变的不纯粹了
 
 
+当两个纯粹的函数没有数据依赖时,它们可以被评估为在任意要求下不影响结果.使它们更加适合平行计算.这是它们函数式编程的好处之一.
+
+
+更多关于非纯粹函数
+不是所以的函数式编程函数需要纯粹.作为函数式编程:纯粹的函数式解释为它是可能的(有时是被期待的)来分离纯粹的,函数式的,外部应用值相关核心,命令式shell.
+
+
+## 高阶函数式编程
+
+一个高阶函数是像参数一样接受函数的数学的函数,返回一个函数给它的调用者或者都返回.一个例子是对不同的操作员的积分.d/dx,它返回f函数的派生.
+
+优秀的函数是优秀的公民
+
+近相关对数学的高阶函数感念来讲是一流的函数,它是函数式编程函数的采用其它函数式编程函数作为参数或者返回一个函数式编程的函数.
+一流的函数是一流的公民,因为无论其它一流的程序实体,他们都可以出现.包括被视为标志的一个变量或者被通过的一个参数,又或者函数的返回.
+
+The JavaScript in Listing 4 展示了通过匿名的比较函数来进行一流的排序函数
+
+Listing 4  通过匿名的比较函数(script2.js)
+
+```js
 function sort(a, cmp)
-
 {
-
    for (var pass = 0; pass < a.length - 1; pass++)
-
       for (var i = a.length - 1; i > pass; i--)
-
          if (cmp(a[i], a[pass]) < 0)
-
          {
-
             var temp = a[i]
-
             a[i] = a[pass]
-
             a[pass] = temp
-
          }
-
 }
-
 var a = [22, 91, 3, 45, 64, 67, -1]
 
 sort(a, function(i, j)
-
-        {
-
-           return i - j;
-
-        })
-
+		{
+		   return i - j;
+		})
+		
 a.forEach(function(entry) { print(entry) })
-
 print('\n')
 
 sort(a, function(i, j)
-
         {
-
            return j - i;
-
         })
 
 a.forEach(function(entry) { print(entry) })
-
 print('\n')
 
 a = ["X", "E", "Q", "A", "P"]
-
 sort(a, function(i, j)
-
         {
-
            return i < j ? -1 : i > j;
-
         })
 
 a.forEach(function(entry) { print(entry) })
-
 print('\n')
 
 sort(a, function(i, j)
-
         {
-
            return i > j ? -1 : i < j;
-
         })
-
 a.forEach(function(entry) { print(entry) })
-In this example, the initial sort() call receives an array as its first argument, followed by an anonymous comparison function. When called, the anonymous comparison function executes return i - j; to achieve an ascending sort. By reversing i and j, the second comparison function achieves a descending sort. The third and fourth sort() calls receive anonymous comparison functions that are slightly different in order to properly compare string values.
-
-Run the script2.js example as follows:
+```
 
 
+在这个例子中,这个初始化的sort()调用了接受一个接收数组作为它第一个参数和一个匿名比较器的函数.
+当调用时,这个匿名的比较器函数执行 return i - j; 来达到升序排序.通过反转i和j,第二个比较器函数达到了一个倒序排序.
+第三个和第四个排序调用接收了匿名的排序函数是有点不同的,目的是进行正确的字符串值的比较.
 
+运行 script2.js
 java RunScript script2.js
-Here's the expected output:
+
+输出应该是
+
+```
+-1 3 22 45 64 67 91 
+91 67 64 45 22 3 -1
+A E P Q X
+X Q P E A
+```
+ 
+Filter和map
+函数式编程语言通常提供了几个很有用的高阶函数.两个常见的例子是filter 和 map
 
 
+一个filter处理一个list,在一些要求下产出一个包含在原始list中确切的元素中被认定为返回值为真的新list.
 
--1
+一个map应用在给出的函数中list里的每一个元素,以相同的顺序返回list的结果
+JavaScript通过filter() and map()支持filtering 和 mapping高阶函数.
 
-3
-
-22
-
-45
-
-64
-
-67
-
-91
-
-91
-
-67
-
-64
-
-45
-
-22
-
-3
-
--1
-
-A
-
-E
-
-P
-
-Q
-
-X
-
-X
-
-Q
-
-P
-
-E
-
-A
-Filter and map
-Functional programming languages typically provide several useful higher-order functions. Two common examples are filter and map.
-
-A filter processes a list in some order to produce a new list containing exactly those elements of the original list for which a given predicate (think Boolean expression) returns true.
-A map applies a given function to each element of a list, returning a list of results in the same order.
-JavaScript supports filtering and mapping functionality via the filter() and map() higher-order functions. Listing 5 demonstrates these functions for filtering out odd numbers and mapping numbers to their cubes.
+Listing 5 展示了这些函数筛选出奇数和映射数字到它们的立方.
 
 Listing 5. Filtering and mapping (script3.js)
 
-
+```js
 print([1, 2, 3, 4, 5, 6].filter(function(num) { return num % 2 == 0 }))
-
 print('\n')
-
 print([3, 13, 22].map(function(num) { return num * 3 }))
-Run the script3.js example as follows:
+```
 
-
+用下列方式运行  script3.js :
 
 java RunScript script3.js
-You should observe the following output:
 
+你应该得到的结果
 
-
+```
 2,4,6
-
 9,39,66
-Reduce
-Another common higher-order function is reduce, which is more commonly known as a fold. This function reduces a list to a single value.
+```
 
-Listing 6 uses JavaScript's reduce() higher-order function to reduce an array of numbers to a single number, which is then divided by the array's length to obtain an average.
+另一个常见的高阶函数是减少,它更多地以折叠被广泛了解.这个还是减少一系列单独的值
 
-Listing 6. Reducing an array of numbers to a single number (script4.js)
+Listing 6 使用的JavaScript的reduce() 高阶还是来减少一个数组里的单独值,它随后通过数组的长度来得到一个平均值.
 
+Listing 6. 减少数组的数字来得到单独的数字 (script4.js)
 
+```js
 var numbers = [22, 30, 43]
+print(numbers.reduce(function(acc, curval) { return acc + curval })/ numbers.length)
+```
 
-print(numbers.reduce(function(acc, curval) { return acc + curval })
-
-      / numbers.length)
-Run Listing 6's script (in script4.js) as follows:
-
-
-
+以下列方式运行Listing 6
 java RunScript script4.js
-You should observe the following output:
 
+应该观察到的内容
 
-
+```
 31.666666666666668
-You might think that the filter, map, and reduce higher-order functions obviate the need for if-else and various looping statements, and you would be right. Their internal implementations take care of decisions and iteration.
+```
+你可能认为这个filter, map, 和 reduce 高阶函数避免了需要if-else和各种循环声明,你是正确的.他们内置的实现处理了决策和声明.
+一个高阶的函数使用了递归来实现迭代.一个递归函数调用了它自己,允许一个操作来重复,知道它达到预期.你也可以在你的代码里利用递归来进行迭代.
 
-A higher-order function uses recursion to achieve iteration. A recursive function invokes itself, allowing an operation to repeat until it reaches a base case. You can also leverage recursion to achieve iteration in your functional code.
+## 函数式编程的延迟计算
 
-Functional programming with lazy evaluation
-Another important functional programming feature is lazy evaluation (also known as nonstrict evaluation), which is the deferral of expression evaluation for as long as possible. Lazy evaluation offers several benefits, including these two:
+另一个重要的函数式编程的特性是延迟计算.(也被称为非严格求值),它是尽可能慢进行表达式计算.延迟计算提供了几个好处,包括下面两个
 
-Expensive (timewise) calculations can be deferred until they're absolutely necessary.
-Unbounded collections are possible. They'll keep delivering elements for as long as they're requested to do so.
-Lazy evaluation is integral to Haskell. It won't calculate anything (including a function's arguments before the function is called) unless it's strictly necessary to do so.
+- 昂贵的(费时的)计算可以延迟到它们真正被需要的时候
+- 非绑定的集合是可能的.只要需要，他们就会一直交付元素
 
-Java's Streams API capitalizes on lazy evaluation. A stream's intermediate operations (e.g., filter()) are always lazy; they don't do anything until a terminal operation (e.g., forEach()) is executed.
+延迟计算是集成到Haskell的.他不会计算任何事情(包括在还是调用之前的一个函数的参数),除非它真正地需要这么做.
 
-Although lazy evaluation is an important part of functional languages, even many imperative languages provide builtin support for some forms of laziness. For example, most programming languages support short-circuit evaluation in the context of the Boolean AND and OR operators. These operators are lazy, refusing to evaluate their right-hand operands when the left-hand operand is false (AND) or true (OR).
-
-Listing 7 is an example of lazy evaluation in a JavaScript script.
-
-Listing 7. Lazy evaluation in JavaScript (script5.js)
+Java的Streams API 利用了延迟计算.一个stream的中级操作(例如 filer())通常是懒加载的.它们不会做任何事情,直到终点的操作被执行.(例如 forEach())
 
 
+尽管延迟计算是函数语言的重要部分,但是在许多命令式语言中提供了许多装入式的形式的支持.
+例如,许多编程语言在上下文中支持 short-circuit计算.Boolean AND 和 OR 计算符合,它们是懒惰的,当左边的运算结果是false(AND)或true(OR),就会拒绝计算它们右边的运算对象.
+
+Listing 7 是一个延迟计算的例子 JavaScript 
+
+```js
 var a = false && expensiveFunction("1")
-
 var b = true && expensiveFunction("2")
-
 var c = false || expensiveFunction("3")
-
 var d = true || expensiveFunction("4")
-
 function expensiveFunction(id)
-
 {
-
    print("expensiveFunction() called with " + id)
-
 }
-Run the code in script5.js as follows:
+```
 
-
+运行下列的代码
 
 java RunScript script5.js
-You should observe the following output:
 
-
-
+你应该观察到的结果
+```
 expensiveFunction() called with 2
-
 expensiveFunction() called with 3
-Lazy evaluation is often combined with memoization, an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs reoccur.
+```
 
-Because lazy evaluation doesn't work with side effects (such as code that produces exceptions and I/O), imperative languages mainly use eager evaluation (also known as strict evaluation), where an expression is evaluated as soon as it's bound to a variable.
+延迟计算通常和记忆化结合在一起.当出现相同的输入时,一个最优化的技术元素来提升程序的速度,是首先通过使用存储昂贵的函数调用和返回缓存的结果.
 
-More about lazy evaluation and memoization
-A Google search will reveal many useful discussions of lazy evaluation with or without memoization. One example is "Optimizing your JavaScript with functional programming."
+因为延迟计算没有副作用,(诸如产出异常和I/0的代码),命令式语言主要使用渴望的计算(也被称为严格计算),一个表达式尽可能快地执行.
 
-Functional programming with closures
-First-class functions are associated with the concept of a closure, which is a persistent scope that holds onto local variables even after the code execution has left the block in which the local variables were defined.
+更多关于延迟计算的记忆化
+
+一个谷歌搜素将提供许多有关有没有记忆化延迟计算的讨论.一个例子是使用函数式编程最优化你的JavaScript代码.
+
+## 函数式编程和闭环
+
+一流的函数是和闭包的概念相关的,它是一个持久的范围,来处理本地变量即使在代码执行后也留下了块.
 
 Crafting closures
 Operationally, a closure is a record that stores a function and its environment. The environment maps each of the function's free variables (variables used locally, but defined in an enclosing scope) with the value or reference to which the variable's name was bound when the closure was created. It lets the function access those captured variables through the closure's copies of their values or references, even when the function is invoked outside their scope.

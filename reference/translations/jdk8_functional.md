@@ -1218,53 +1218,35 @@ public class StreamFP {
 
 这个main()方法下一次创建一个整型stream,它产生了一个有序的从0开始到10结束的整型范围.这个mapToObj() 一流的函数接受了一个lambda来映射在城市数组中的与整型索引相同的字符串.城市名是之后通过forEach()函数和它的System.out::println 方法引用发送到标准输出的.
 
-Lastly, main() demonstrates the reduce() first-class function. An integer stream that produces the same range of integers as in the previous example is reduced to a sum of their values, which is subsequently output.
+最后,main()展示了这个reduce() 一流的函数.一个整型stream产出了相同范围的整型在之前的例子中减少它们中的总和,顺序地输出.
 
-Identifying the intermediate and terminal operations
-Each of limit(), filter(), range(), and mapToObj() are intermediate operations, whereas forEach() and reduce() are terminal operations.
+确定中间的和终止的操作
 
+每一个limit(), filter(), range()和 mapToObj() 是中间的操作,然而forEach() 和 reduce()是最终的操作
 
-最后,main()展示了这个reduce() 一流的函数.一个整型stream产出了相同范围的整型在
-Compile Listing 7 as follows:
+如下编译Listing 7 
 
-
-javac StreamFP.java
-Run the resulting application as follows:
-
+javac StreamFP.java 
 
 java StreamFP
-I observed the following output from one run:
 
 
-0
-2
-10
-6
-0
-8
-10
-New York
-London
-Paris
-Berlin
-BrasÌlia
-Tokyo
-Beijing
-Jerusalem
-Cairo
-Riyadh
-Moscow
-45
-45
-You might have expected 10 instead of 7 pseudorandom even integers (ranging from 0 through 10, thanks to range(0, 11)) to appear at the beginning of the output. After all, limit(10) seems to indicate that 10 integers will be output. However, this isn't the case. Although the limit(10) call results in a stream of exactly 10 integers, the filter(x -> x % 2 == 0) call results in odd integers being removed from the stream.
+你将观察到如下的输出
 
-More about Streams
-If you're unfamiliar with Streams, check out my tutorial introducing Java SE 8's new Streams API for more about this functional API.
+```
+0 2 10 6 0 8 10
+New York London Paris Berlin BrasÌlia Tokyo
+Beijing Jerusalem Cairo Riyadh Moscow
+45 45
+```
 
-In conclusion
-Many Java developers won't pursue pure functional programming in a language like Haskell because it differs so greatly from the familiar imperative, object-oriented paradigm. Java 8's functional programming capabilities are designed to bridge that gap, enabling Java developers to write code that's easier to understand, maintain, and test. Functional code is also more reusable and more suitable for parallel processing in Java. With all of these incentives, there's really no reason not to incorporate Java's functional programming options into your Java code.
+你可能期待在输出开始时10替代7伪随机数偶数整数(范围从0到10,由于范围是(0,11)).总之,limit(10)看起来是指示10整数将被输出.然而,这不是那种情况.尽管limit(10)在stream中调用有10个整数,filter(x -> x % 2 == 0)调用造成奇数被移除了stream.
 
-Sidebar: Write a functional Bubble Sort application
-Functional thinking is a term coined by Neal Ford, which refers to the cognitive shift from the object-oriented paradigm to the functional programming paradigm. As you've seen in this tutorial, it's possible to learn a lot about functional programming by rewriting object-oriented code using functional techniques.
+更多关于Stream
 
-Cap off what you've learned so far by revisiting the Sort application from Listing 2. In this quick sidebar, I'll show you how to write a purely functional Bubble Sort, first using pre-Java 8 techniques, and then using Java 8's functional features.
+如果你不熟悉 Stream ,可以查看我的Java SE 8's new Streams API 教程.有更多关于函数式的API.
+
+总结
+
+许多Java开发者在类似Haskell的语言不会暂停去使用纯粹的函数式编程,因为它与熟悉的命令式,面向对象的编程方式大有不同.Java 8的函数式编程的能力被设计成缝隙的桥.能够让Java开发者写出更加容易理解,维护和测试的代码.函数式编程的代码在Java中同样是可重复利用和更加适合平行处理的.在这些诱因下,没有理由不去在你的Java代码中使用Java的函数式编程.
+

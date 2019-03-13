@@ -789,262 +789,276 @@ in cube
 64
 ```
 
-The output shows that each ifThenElse() call results in both methods executing, irrespective of the Boolean expression. We cannot leverage the ?: operator's laziness because Java eagerly evaluates the method's arguments.
+这个输出显示了两种方法的执行中每一个ifThenElse()调用的结果,无关这个布尔表达式.
+我们不能利用 ?:操作符的懒加载.因为Java是饥饿式地计算方法的参数.
 
-Although there's no way to avoid eager evaluation of method arguments, we can still take advantage of ?:'s lazy evaluation to ensure that only square() or cube() is called. Listing 4 shows how.
 
-Listing 4. An example of lazy evaluation in Java (LazyEval.java)
+尽管没有方式来避免函数参数的饥饿运算.我们任然能从?:的延迟计算中来确定square()和cube()只被调用一次.
 
-interface Function<T, R>
-{
-   R apply(T t);
-}
-public class LazyEval
-{
-   public static void main(String[] args)
-   {
-      Function<Integer, Integer> square = new Function<Integer, Integer>()
-                                          {
-                                             {
-                                                System.out.println("SQUARE");
-                                             }
-                                             @Override
-                                             public Integer apply(Integer t)
-                                             {
-                                                System.out.println("in square");
-                                                return t * t;
-                                             }
-                                          };
-      Function<Integer, Integer> cube = new Function<Integer, Integer>()
-                                        {
-                                           {
-                                              System.out.println("CUBE");
-                                           }
-                                           @Override
-                                           public Integer apply(Integer t)
-                                           {
-                                              System.out.println("in cube");
-                                              return t * t * t;
-                                           }
-                                        };
-      System.out.printf("%d%n", ifThenElse(true, square, cube, 4));
-      System.out.printf("%d%n", ifThenElse(false, square, cube, 4));
-   }
-   static <T, R> R ifThenElse(boolean predicate, Function<T, R> onTrue,
-                              Function<T, R> onFalse, T t)
-   {
-      return (predicate ? onTrue.apply(t) : onFalse.apply(t));
-   }
+Listing 4 展示了具体的实现
+
+Listing 4. Java中的延迟计算 (LazyEval.java)
+
+```java
+interface Function<T, R> {
+	R apply(T t);
 }
 
-Listing 4 turns ifThenElse() into a higher-order function by declaring this method to receive a pair of Function arguments. Although these arguments are eagerly evaluated when passed to ifThenElse(), the ?: operator causes only one of these functions to execute (via apply()). You can see both eager and lazy evaluation at work when you compile and run the application.
+public class LazyEval {
+	public static void main(String[] args) {
+		Function<Integer, Integer> square = new Function<Integer, Integer>() {
+			{
+				System.out.println("SQUARE");
+			}
 
-Compile Listing 4 as follows:
+			@Override
+			public Integer apply(Integer t) {
+				System.out.println("in square");
+				return t * t;
+			}
+		};
+		Function<Integer, Integer> cube = new Function<Integer, Integer>() {
+			{
+				System.out.println("CUBE");
+			}
 
+			@Override
+			public Integer apply(Integer t) {
+				System.out.println("in cube");
+				return t * t * t;
+			}
+		};
+		System.out.printf("%d%n", ifThenElse(true, square, cube, 4));
+		System.out.printf("%d%n", ifThenElse(false, square, cube, 4));
+	}
+
+	static <T, R> R ifThenElse(boolean predicate, Function<T, R> onTrue, Function<T, R> onFalse, T t) {
+		return (predicate ? onTrue.apply(t) : onFalse.apply(t));
+	}
+}
+```
+
+
+Listing 4 把 ifThenElse()转变成一个通过声明一个接收函数参数的高阶函数.当通过ifThenElse()时,尽管这些参数是饥饿式执行地.这个?:操作符
+造成了这些函数唯一执行.(通过apply()).在你编译和运行这个应用是,你可以看到无论是饥饿式的还是延迟的计算.
+
+如下编译 Listing 4
 
 javac LazyEval.java
-Run the resulting application as follows:
-
-
 java LazyEval
-You should observe the following output:
 
+你应该观察到的输出
 
+```
 SQUARE
 CUBE
 in square
 16
 in cube
 64
-A lazy iterator and more
-Neal Ford's "Laziness, Part 1: Exploring lazy evaluation in Java" provides more insight into lazy evaluation. The author presents a Java-based lazy iterator along with a couple of lazy-oriented Java frameworks.
+```
 
-Closures in Java
-An anonymous inner class instance is associated with a closure. Outer scope variables must be declared final or (starting in Java 8) effectively final (meaning unmodified after initialization) in order to be accessible. Consider Listing 5.
 
-Listing 5. An example of closures in Java (PartialAdd.java)
+一个延迟的迭代和其它
 
-interface Function<T, R>
-{
-   R apply(T t);
+Neal Ford的怠惰 Part 1中探索了Java中的延迟计算.它提供了更多延迟计算的细节.这个作者展示了一个基于Java的延迟的迭代器.
+
+## Java中的闭包
+
+一个匿名的内部类实例是与闭包相关联的.外部范围变量必须声明为final，或者(从Java 8开始)有效地声明为final(即初始化后未修改)，以便能够访问.
+
+看一下 Listing 5
+
+Listing 5 在Java中的一个闭包实例 (PartialAdd.java)
+
+```java
+interface Function<T, R> {
+	R apply(T t);
 }
-public class PartialAdd
-{
-   Function<Integer, Integer> add(final int x)
-   {
-      Function<Integer, Integer> partialAdd = new Function<Integer, Integer>()
-                                              {
-                                                 @Override
-                                                 public Integer apply(Integer y)
-                                                 {
-                                                    return y + x;
-                                                 }
-                                              };
-      return partialAdd;
-   }
-   public static void main(String[] args)
-   {
-      PartialAdd pa = new PartialAdd();
-      Function<Integer, Integer> add10 = pa.add(10);
-      Function<Integer, Integer> add20 = pa.add(20);
-      System.out.println(add10.apply(5));
-      System.out.println(add20.apply(5));
-   }
+
+public class PartialAdd {
+	Function<Integer, Integer> add(final int x) {
+		Function<Integer, Integer> partialAdd = new Function<Integer, Integer>() {
+			@Override
+			public Integer apply(Integer y) {
+				return y + x;
+			}
+		};
+		return partialAdd;
+	}
+
+	public static void main(String[] args) {
+		PartialAdd pa = new PartialAdd();
+		Function<Integer, Integer> add10 = pa.add(10);
+		Function<Integer, Integer> add20 = pa.add(20);
+		System.out.println(add10.apply(5));
+		System.out.println(add20.apply(5));
+	}
 }
-Listing 5 is the Java equivalent of the closure I previously presented in JavaScript (see Part 1, Listing 8). This code declares an add() higher-order function that returns a function for performing partial application of the add() function. The apply() method accesses variable x in the outer scope of add(), which must be declared final prior to Java 8. The code behaves pretty much the same as the JavaScript equivalent.
+```
 
-Compile Listing 5 as follows:
+Listing 5 是和我之前用JavaScript中演示的闭包是相同效果的.这个代码展示了一个高阶函数 add().它为实现内部应用返回了一个add()函数.这个apply()方法读取了在外部的变量x.它在Java8之前必须被声明fianl.这块代码和在JavaScript中的几乎一样.
 
 
+像下面这样编译 Listing 5
 javac PartialAdd.java
-Run the resulting application as follows:
-
-
 java PartialAdd
-You should observe the following output:
 
+你应该观察到下面的结果
 
+```
 15
 25
-Currying in Java
-You might have noticed that the PartialAdd in Listing 5 demonstrates more than just closures. It also demonstrates currying, which is a way to translate a multi-argument function's evaluation into the evaluation of an equivalent sequence of single-argument functions. Both pa.add(10) and pa.add(20) in Listing 5 return a closure that records an operand (10 or 20, respectively) and a function that performs the addition--the second operand (5) is passed via add10.apply(5) or add20.apply(5).
-
-Currying lets us evaluate function arguments one at a time, producing a new function with one less argument on each step. For example, in the PartialAdd application, we are currying the following function:
+```
 
 
+## Java中的分化
+
+你可能有注意到在 Listing 5 中声明的PartialAdd不仅仅是闭包.它也还展示了分化.它是把多参数函数的计算翻译成有相同顺序的单参数函数的一中方式.在Listing 5中 pa.add(10) 和 pa.add(20)返回了一个有参数(10或20)和函数的闭包.函数展示了第二个参数(5)是通过add10.apply(5)或add20.apply(5)的.
+
+
+分化让我们计算函数参数1,每一步产生了一个有较少参数的新的函数.在PartialAdd应用中,我们可以分化下面的函数.
 f(x, y) = x + y
-We could apply both arguments at the same time, yielding the following:
 
-
+我们可以同时应用两个参数
 f(10, 5) = 10 + 5
-However, with currying, we apply only the first argument, yielding this:
 
+而然,通过分化,我们可以只用第一个参数.如下
 
 f(10, y) = g(y) = 10 + y
-We now have a single function, g, that takes only a single argument. This is the function that will be evaluated when we call the apply() method.
 
-Partial application, not partial addition
-The name PartialAdd stands for partial application of the add() function. It doesn't stand for partial addition. Currying is about performing partial application of a function. It's not about performing partial calculations.
+我们现在有一个单独的函数,g,它只有一个参数.当我们调用apply()时,这是将要执行的函数.
 
-You might be confused by my use of the phrase "partial application," especially because I stated in Part 1 that currying isn't the same as partial application, which is the process of fixing a number of arguments to a function, producing another function of smaller arity. With partial application, you can produce functions with more than one argument, but with currying, each function must have exactly one argument.
+局部的应用,不是局部的添加
+名为PartialAdd函数代表了add()函数局部的应用.他不是代表局部的添加.分化是关于执行一个函数局部应用.它不是关于局部的计算.
 
-Listing 5 presents a small example of Java-based currying prior to Java 8. Now consider the CurriedCalc application in Listing 6.
+你可能会拒绝使用我使用的短语局部的应用.特别是,因为我开始在第一部分说分化不同于局部应用.它是将多个参数固定到一个函数的过程.产生出了另一个有更少参数的函数.通过局部应用,你能产出多于一个参数的函数,但是由于分化,每个函数必须有确切的一个参数.
 
-Listing 6. Currying in Java code (CurriedCalc.java)
+Listing 5 展示了一个基于Java 8 之前的一个分化的例子.现在考虑一下这个在Listing 6的CurriedCalc应用
 
-interface Function<T, R>
-{
-   R apply(T t);
+Listing 6. Java代码中的分化 (CurriedCalc.java)
+
+```java
+public class CurriedCalc {
+	public static void main(String[] args) {
+		System.out.println(calc(1).apply(2).apply(3).apply(4));
+	}
+
+	static Function<Integer, Function<Integer, Function<Integer, Integer>>> calc(final Integer a) {
+		return new Function<Integer, Function<Integer, Function<Integer, Integer>>>() {
+			@Override
+			public Function<Integer, Function<Integer, Integer>> apply(final Integer b) {
+				return new Function<Integer, Function<Integer, Integer>>() {
+					@Override
+					public Function<Integer, Integer> apply(final Integer c) {
+						return new Function<Integer, Integer>() {
+							@Override
+							public Integer apply(Integer d) {
+								return (a + b) * (c + d);
+							}
+						};
+					}
+				};
+			}
+		};
+	}
 }
-public class CurriedCalc
-{
-   public static void main(String[] args)
-   {
-      System.out.println(calc(1).apply(2).apply(3).apply(4));
-   }
-   static Function<Integer, Function<Integer, Function<Integer, Integer>>> 
-      calc(final Integer a)
-   {
-      return new Function<Integer, 
-                          Function<Integer, Function<Integer, Integer>>>()
-             {
-                @Override
-                public Function<Integer, Function<Integer, Integer>> 
-                   apply(final Integer b)
-                {
-                   return new Function<Integer, Function<Integer, Integer>>()
-                          {
-                             @Override
-                             public Function<Integer, Integer> 
-                                apply(final Integer c)
-                             {
-                                return new Function<Integer, Integer>()
-                                {
-                                   @Override
-                                   public Integer apply(Integer d)
-                                   {
-                                      return (a + b) * (c + d);
-                                   }
-                                };
-                             }
-                          };
-                }
-             };
-   }
-}
-Listing 6 uses currying to evaluate the function f(a, b, c, d) = (a + b) * (c + d). Given expression calc(1).apply(2).apply(3).apply(4), this function is curried as follows:
+```
 
+Listing 6 使用了分化来计算函数f(a, b, c, d) = (a + b) * (c + d).给了的表达式 calc(1).apply(2).apply(3).apply(4),这个函数分化如下
+
+```
 f(1, b, c, d) = g(b, c, d) = (1 + b) * (c + d)
 g(2, c, d) = h(c, d) = (1 + 2) * (c + d)
 h(3, d) = i(d) = (1 + 2) * (3 + d)
 i(4) = (1 + 2) * (3 + 4)
-Compile Listing 6:
+```
 
+编译Listing 6:
 
 javac CurriedCalc.java
-Run the resulting application:
-
-
 java CurriedCalc
-You should observe the following output:
 
+你应该观察到如下的输出
 
+```
 21
-Because currying is about performing partial application of a function, it doesn't matter in what order the arguments are applied. For example, instead of passing a to calc() and d to the most-nested apply() method (which performs the calculation), we could reverse these parameter names. This would result in d c b a instead of a b c d, but it would still achieve the same result of 21. (The source code for this tutorial includes the alternative version of CurriedCalc.)
+```
 
-Functional programming in Java 8
-Functional programming before Java 8 isn't pretty. Too much code is required to create, pass a function to, and/or return a function from a first-class function. Prior versions of Java also lack predefined functional interfaces and first-class functions such as filter and map.
+因为分化是关于执行局部函数的一个应用.参数应用的顺序并不重要。例如,通过calc()和d来替代最多内嵌的apply()方法.(它执行了计算),我们能反转这些参数名.这将把 d c b a 替换为 a b c d,但是它将达到同样的结果 21.
 
-Java 8 reduces verbosity largely by introducing lambdas and method references to the Java language. It also offers predefined functional interfaces, and it makes filter, map, reduce, and other reusable first-class functions available via the Streams API.
+## Java 8 里的函数式编程
 
-We'll look at these improvements together in the next sections.
+函数式编程在Java 8 之前不是很好.需要写太多的代码,通过一个函数.从一个第一流的函数返回一个函数.之前的Java版本也缺乏预定义的函数接口和第一流的函数,诸如filter和map.
 
-Writing lambdas in Java code
-A lambda is an expression that describes a function by denoting an implementation of a functional interface. Here's an example:
+Java 8 通过发布lambdas和方法引用大量减少了冗余.它也提供了预定义的函数接口,并且通过Stream来使filter,map,reduce,和其它的课重复使用的一流的函数.
 
+下一节,让我们一起看看这些实现.
 
+使用Java代码写lambda
+
+一个lambda是一个通过描述的表示一个函数接口实现的函数的表达式.这里有一个例子.
+```
 () -> System.out.println("my first lambda")
-From left to right, () identifies the lambda's formal parameter list (there are no parameters), -> signifies a lambda expression, and System.out.println("my first lambda") is the lambda's body (the code to be executed).
+```
 
-A lambda has a type, which is any functional interface for which the lambda is an implementation. One such type is java.lang.Runnable, because Runnable's void run() method also has an empty formal parameter list:
+从左到右,() 确定了这个lambda的正式参数列表.(这里是无参数的), -> 代表了一个lambad表达式.System.out.println("my first lambda") 是一个lambda的表达体.(将要执行的代码)
 
+lambda有一个类型，它是lambda为其实现的任何函数接口。举例,java.lang.Runnable的接口,因为Runnable的 void run()方法也有一个空的参数列表.
 
+```java
 Runnable r = () -> System.out.println("my first lambda");
-You can pass the lambda anywhere that a Runnable argument is required; for example, the Thread(Runnable r) constructor. Assuming that the previous assignment has occurred, you could pass r to this constructor, as follows:
+```
 
+你可以在任何地方通过这个lambda,它需要必须要一个参数.例如,Thread(Runnable r)构造器.考虑到之前发生了赋值,你可以通过r到这个构造器.如下
 
+```java
 new Thread(r);
-Alternatively, you could pass the lambda directly to the constructor:
+```
 
+二者选一,你可以通过一个lambda直接到构造器
 
+```java
 new Thread(() -> System.out.println("my first lambda"));
-This is definitely more compact than the pre-Java 8 version:
+```
 
+这是被Java 8之前版本所兼容的
 
+```java
 new Thread(new Runnable()
-           {
-              @Override
-              public void run()
-              {
-                 System.out.println("my first lambda");
-              }
-           });
-A lambda-based file filter
-My previous demonstration of higher-order functions presented a file filter based on an anonymous inner class. Here's the lambda-based equivalent:
+{
+  @Override
+  public void run()
+  {
+	 System.out.println("my first lambda");
+  }
+});
+```
 
+一个基于lambda的文件过滤器
 
+我之前的展示的高阶函数展示了一个基于匿名内部类的文件过滤器.这里使用lambda.
+
+```java
 File[] txtFiles = new File(".").listFiles(p -> p.getAbsolutePath().endsWith("txt"));
-Return statements in lambda expressions
-In Part 1, I mentioned that functional programming languages work with expressions as opposed to statements. Prior to Java 8, you could largely eliminate statements in functional programming, but you couldn't eliminate the return statement.
+```
 
-The above code fragment shows that a lambda doesn't require a return statement to return a value (a Boolean true/false value, in this case): you just specify the expression without return [and add] a semicolon. However, for multi-statement lambdas, you'll still need the return statement. In these cases you must place the lambda's body between braces as follows (don't forget the semicolon to terminate the statement):
+在lambda中返回一个声明
 
+在第一部分中,我提到了函数式编程语言和表达式相反的是声明.Java 8 之前,你可能总是消除在函数式编程里的声明.但是你不能消除返回的声明.
 
+之前的代码碎片展示了lambda不需要一个返回声明给返回值.(一个布尔值 true或false).你会看到没有返回分号的表达式.然而,为了多声明的lambda,你将仍然需要返回声明.在下面的例子中,你一定替换下面的lambda的结构体,在下面的分支里面.(不要忘记给声明加上分号)
+
+```java
 File[] txtFiles = new File(".").listFiles(p -> { return p.getAbsolutePath().endsWith("txt"); });
-Lambdas with functional interfaces
-I have two more examples to illustrate the conciseness of lambdas. First, let's revisit the main() method from the Sort application shown in Listing 2:
+```
+
+### lambda和函数接口
+
+我还有两个例子来说明lambda的简洁性.第一,我们从Listing 2 中的Sort重温一下main()方法.
 
 
+```java
 public static void main(String[] args)
 {
    String[] innerplanets = { "Mercury", "Venus", "Earth", "Mars" };
@@ -1054,27 +1068,32 @@ public static void main(String[] args)
    sort(innerplanets, (e1, e2) -> e2.compareTo(e1));
    dump(innerplanets);
 }
-We can also update the calc() method from the CurriedCalc application shown in Listing 6:
+```
 
-
+我们也可以更新 Listing 6 的 CurriedCalc中 calc()方法
+```
 static Function<Integer, Function<Integer, Function<Integer, Integer>>> 
    calc(Integer a)
 {
    return b -> c -> d -> (a + b) * (c + d);
 }
-Runnable, FileFilter, and Comparator are examples of functional interfaces, which describe functions. Java 8 formalized this concept by requiring a functional interface to be annotated with the java.lang.FunctionalInterface annotation type, as in @FunctionalInterface. An interface that is annotated with this type must declare exactly one abstract method.
+```
 
-You can use Java's pre-defined functional interfaces (discussed later), or you can easily specify your own, as follows:
+Runnable, FileFilter, and Comparator 都是函数接口的实例.它们展示了函数.Java 8 通过需要一个函数式接口正式化了这些概念.也可以通过java.lang.FunctionalInterface 注解类型 ( @FunctionalInterface).一个接口被注解后必须声明只用一个抽象方法.
 
+你可以使用,Java预定的函数接口.(稍后讨论)或者你可以自定义一个.如下
 
+```java
 @FunctionalInterface
 interface Function<T, R>
 {
    R apply(T t);
 }
-You might then use this functional interface as shown here:
+```
 
+你可以使用下面的函数式接口
 
+```java
 public static void main(String[] args)
 {
    System.out.println(getValue(t -> (int) (Math.random() * t), 10));
@@ -1084,34 +1103,46 @@ static Integer getValue(Function<Integer, Integer> f, int x)
 {
    return f.apply(x);
 }
-New to lambdas?
-If you're new to lambdas, you might need more background in order to understand these examples. In that case, check out my further introduction to lambdas and functional interfaces in "Java 101: The essential Java language features tour, Part 6." You'll also find numerous helpful blog posts on this topic. One example is "Functional programming with Java 8 functions," in which author Edwin Dalorzo shows how to use lambda expressions and anonymous functions in Java 8.
+```
 
-Architecture of a lambda
-Every lambda is ultimately an instance of some class that's generated behind the scenes. Explore the following resources to learn more about lambda architecture:
+现在轮到了lambda了
+
+如果你是刚刚开始了解lambda,你可能需要了解一下更多关于这些例子的背景.在这种情况下,列出我很早之前对lambda和函数接口的介绍.在Java 101: java语言的基本特性中你可以得到更多有帮助的博客.其中有个是使用Java8 来进行函数编程.作者是 Edwin Dalorzo 展示了如何Java 8中使用lambad表达式和匿名的函数.
+
+lambda的结构
+
+每个lambda最终都是幕后生成的某个类的实例.探索下面的资源来学习lambda结构.
 
 "How lambdas and anonymous inner classes work" (Martin Farrell, DZone)
 "Lambdas in Java: A peek under the hood" (Brian Goetz, GOTO)
 "Why are Java 8 lambdas invoked using invokedynamic?" (Stack Overflow)
-I think you'll find Java Language Architect Brian Goetz's video presentation of what's going on under the hood with lambdas especially fascinating.
 
-Method references in Java
+我想你将找找Java语言结构Brian Goetz的视频.它格外生动地展示了与下面的lambda.
+
 Some lambdas only invoke an existing method. For example, the following lambda invokes System.out's void println(s) method on the lambda's single argument:
-
 
 (String s) -> System.out.println(s)
 The lambda presents (String s) as its formal parameter list and a code body whose System.out.println(s) expression prints s's value to the standard output stream.
 
-To save keystrokes, you could replace the lambda with a method reference, which is a compact reference to an existing method. For example, you could replace the previous code fragment with the following:
+
+Java中的方法引用
+
+一些lambda只调用了一个存在的方法.例如,下面的lambda在lambda的单个参数中调用System.out的 void println(s)方法.
 
 
+为了保存使用键盘击键,你可以使用lambda来替换应用参数.它是一个对存在方法的紧凑的应用.例如,你可以如下替换之前的代码碎片.
+
+```java
 System.out::println
-Here, :: signifies that System.out's void println(String s) method is being referenced. The method reference results in much shorter code than we achieved with the previous lambda.
+```
 
-A method reference for Sort
-I previously showed a lambda version of the Sort application from Listing 2. Here is that same code written with a method reference instead:
+这里 :: 表示 System.out的 void println(String s)方法被引用了.这个方法引用用较比我们之前用lambda实现执行了更少的代码.
 
+Sort一个方法引用
 
+我之前展示在Listing 2 中lambda版本的.这里是用方法引用替代了.
+
+```
 public static void main(String[] args)
 {
    String[] innerplanets = { "Mercury", "Venus", "Earth", "Mars" };
@@ -1121,74 +1152,79 @@ public static void main(String[] args)
    sort(innerplanets, Comparator.comparing(String::toString).reversed());
    dump(innerplanets);
 }
+```
 
-The String::compareTo method reference version is shorter than the lambda version of (e1, e2) -> e1.compareTo(e2). Note, however, that a longer expression is required to create an equivalent reverse-order sort, which also includes a method reference: String::toString. Instead of specifying String::toString, I could have specified the equivalent s -> s.toString() lambda.
 
-More about method references
-There's much more to method references than I could cover in a limited space. To learn more, check out my introduction to writing method references for static methods, non-static methods, and constructors in "Java 101: The essential Java language features tour, Part 7."
+这个 String::compareTo 方法引用版本要比lambda版本的 (e1, e2) -> e1.compareTo(e2) 更短.而然注意,较长的表达式需要创建一个同等的反序sort,他将包括一个方法引用 String::toString.替换指定的 String::toString,我可能有指定同样效果的s -> s.toString() lambda表达式.
 
-Predefined functional interfaces
-Java 8 introduced predefined functional interfaces (java.util.function) so that developers don't have create our own functional interfaces for common tasks. Here are a few examples:
 
-The Consumer<T> functional interface represents an operation that accepts a single input argument and returns no result. Its void accept(T t) method performs this operation on argument t.
-The Function<T, R> functional interface represents a function that accepts one argument and returns a result. Its R apply(T t) method applies this function to argument t and returns the result.
-The Predicate<T> functional interface represents a predicate (Boolean-valued function) of one argument. Its boolean test(T t) method evaluates this predicate on argument t and returns true or false.
-The Supplier<T> functional interface represents a supplier of results. Its T get() method receives no argument(s) but returns a result.
-The DaysInMonth application in Listing 1 revealed a complete Function interface. Starting with Java 8, you can remove this interface and import the identical predefined Function interface.
+更多关于方法引用
+
+有许多比我在有限篇幅中覆盖的关于函数引用的内容.如果想了解更多可以看一下我写的关于静态方法,非静态方法和构造器的文章.
+
+
+预定义的函数引用
+
+Java8引用了预定义的函数接口 (java.util.function),因此开发者不用为了常见的任务,而自己创建我们的函数接口.这里有几个例子.
+
+Consumer<T> 是一个代表了接受一个单独输入参数和无返回结果的函数接口.它的 void accept(T t) 方法在参数t中执行了.
+
+Function<T, R> 是一个代表了接受一个参数和返回一个结果的方法.它的R apply(T t) 方法使用了参数t和返回result的函数.
+
+Predicate<T>是一个展示一个预定义一个参数的(布尔值的函数)的函数式接口.它的boolean test(T t) method 计算了它预定义参数t和返回true或false.
+
+The Supplier<T> 是一个展示了一个supplier的结果.它的T get()方法接受没有参数,但却返回一个result.
+
+Listing 1的DaysInMonth应用中展示了一个完整的函数接口.从Java 8 开始,你可以移除这个接口并导入确定的预定义函数接口.
 
 More about predefined functional interfaces
 "Java 101: The essential Java language features tour, Part 6" provides examples of the Consumer and Predicate functional interfaces. Check out the blog post "Java 8 -- Lazy argument evaluation" to discover an interesting use for Supplier.
 
 Additionally, while the predefined functional interfaces are useful, they also present some issues. Blogger Pierre-Yves Saumont explains why.
 
-Functional APIs: Streams
-Java 8 introduced the Streams API to facilitate sequential and parallel processing of data items. This API is based on streams, where a stream is a sequence of elements originating from a source and supporting sequential and parallel aggregate operations. A source stores elements (such as a collection) or generates elements (such as a random number generator). An aggregate is a result calculated from multiple input values.
+更多关于预定义接口
 
-A stream supports intermediate and terminal operations. An intermediate operation returns a new stream, whereas a terminal operation consumes the stream. Operations are connected into a pipeline (via method chaining). The pipeline starts with a source, which is followed by zero or more intermediate operations, and ends with a terminal operation.
+可以参考在博文《Java 8 懒惰参数执行》中更多Supplier的有趣使用。
 
-Streams is an example of a functional API. It offers filter, map, reduce, and other reusable first-class functions. I briefly demonstrated this API in the Employees application shown in Part 1, Listing 1. Listing 7 offers another example.
+函数式 API:Stream
 
-Listing 7. Functional programming with Streams (StreamFP.java)
+Java 8 引入了Streams API 来帮助顺序的和平行的进行数据处理.它的API基于流，其中流是源元素的序列，支持顺序和并行聚合操作。一个元存储了元素(诸如一个集合)或者普通的元素(诸如一个随机数生成器).一个聚集是一个从多输入值的结果.
 
+一个流支持中间的和终止的操作.一个中间的操作返回一个新的stream.然而,一个终止操作产出了stream.操作是被连接到管道的(通过方法链).这个管道从源开始,它是后面跟着零或则更多中间的操作,并以一个终止的操作为结束.
+
+Stream 是一个函数式API的一个例子.它提供了 filter, map, reduce和其它可重复使用的第一流函数.我简短地Employees在展示一下这个API.(在Part 1, Listing 1. Listing 7 有其它例子)
+
+Listing 7. Stream函数式编程 (StreamFP.java)
+
+```java
 import java.util.Random;
 import java.util.stream.IntStream;
-public class StreamFP
-{
-   public static void main(String[] args)
-   {
-      new Random().ints(0, 11).limit(10).filter(x -> x % 2 == 0)
-                  .forEach(System.out::println);
-      System.out.println();
-      String[] cities = 
-      {
-         "New York",
-         "London",
-         "Paris",
-         "Berlin",
-         "BrasÌlia",
-         "Tokyo",
-         "Beijing",
-         "Jerusalem",
-         "Cairo",
-         "Riyadh",
-         "Moscow"
-      };
-      IntStream.range(0, 11).mapToObj(i -> cities[i])
-               .forEach(System.out::println);
-      System.out.println();
-      System.out.println(IntStream.range(0, 10).reduce(0, (x, y) -> x + y));
-      System.out.println(IntStream.range(0, 10).reduce(0, Integer::sum));
-   }
-}
-The main() method first creates a stream of pseudorandom integers starting at 0 and ending at 10. The stream is limited to exactly 10 integers. The filter() first-class function receives a lambda as its predicate argument. The predicate removes odd integers from the stream. Finally, the forEach() first-class function prints each even integer to the standard output via the System.out::println method reference.
 
-The main() method next creates an integer stream that produces a sequential range of integers starting at 0 and ending at 10. The mapToObj() first-class function receives a lambda that maps an integer to the equivalent string at the integer index in the cities array. The city name is then sent to the standard output via the forEach() first-class function and its System.out::println method reference.
+public class StreamFP {
+	public static void main(String[] args) {
+		new Random().ints(0, 11).limit(10).filter(x -> x % 2 == 0).forEach(System.out::println);
+		System.out.println();
+		String[] cities = { "New York", "London", "Paris", "Berlin", "BrasÌlia", "Tokyo", "Beijing", "Jerusalem",
+				"Cairo", "Riyadh", "Moscow" };
+		IntStream.range(0, 11).mapToObj(i -> cities[i]).forEach(System.out::println);
+		System.out.println();
+		System.out.println(IntStream.range(0, 10).reduce(0, (x, y) -> x + y));
+		System.out.println(IntStream.range(0, 10).reduce(0, Integer::sum));
+	}
+}
+```
+
+这个main()方法第一次创建了一个伪随机数的一个stream,从0开始以10结束.这个stram是被限定在10的整数.这个filter()一流的函数接受一个lambda作为它的预定义参数.这个预定义函数移除了stream中的奇数.最终,这个forEach() 一流的函数通过标准的System.out::println方法引用输出打印出每一个整型.
+
+这个main()方法下一次创建一个整型stream,它产生了一个有序的从0开始到10结束的整型范围.这个mapToObj() 一流的函数接受了一个lambda来映射在城市数组中的与整型索引相同的字符串.城市名是之后通过forEach()函数和它的System.out::println 方法引用发送到标准输出的.
 
 Lastly, main() demonstrates the reduce() first-class function. An integer stream that produces the same range of integers as in the previous example is reduced to a sum of their values, which is subsequently output.
 
 Identifying the intermediate and terminal operations
 Each of limit(), filter(), range(), and mapToObj() are intermediate operations, whereas forEach() and reduce() are terminal operations.
 
+
+最后,main()展示了这个reduce() 一流的函数.一个整型stream产出了相同范围的整型在
 Compile Listing 7 as follows:
 
 

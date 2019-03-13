@@ -452,150 +452,156 @@ expensiveFunction() called with 3
 
 一流的函数是和闭包的概念相关的,它是一个持久的范围,来处理本地变量即使在代码执行后也留下了块.
 
-Crafting closures
-Operationally, a closure is a record that stores a function and its environment. The environment maps each of the function's free variables (variables used locally, but defined in an enclosing scope) with the value or reference to which the variable's name was bound when the closure was created. It lets the function access those captured variables through the closure's copies of their values or references, even when the function is invoked outside their scope.
-
-To help clarify this concept, Listing 8 presents a JavaScript script that introduces a simple closure. The script is based on the example presented here.
-
-Listing 8. A simple closure (script6.js)
+制作闭包
+运作地,一个闭包是一个存储函数和它的环境的一条记录.环境将函数的每个自由变量(在本地使用的变量，但在封闭的范围中定义)与创建闭包时绑定变量名的值或引用进行映射。
+这让这个函数通过这个闭包的值或应用的副本来读取这些获取到的变量,即使当这个函数是在它们的范围之外被调用的.
 
 
+
+
+为了理清这个概念,Listing 8 展示了一个JavaScript脚本来介绍一个简单的闭环.这个脚本是基于下面的实例的.
+
+Listing 8. 一个简单的闭包 (script6.js)
+
+```js
 function add(x)
-
 {
-
    function partialAdd(y)
-
    {
-
       return y + x
-
    }
-
    return partialAdd
-
 }
-
 var add10 = add(10)
-
 var add20 = add(20)
-
 print(add10(5))
-
 print(add20(5))
-Listing 8 defines a first-class function named add() with a parameter x and a nested function partialAdd(). The nested function partialAdd() has access to x because x is in add()'s lexical scope. Function add() returns a closure that contains a reference to partialAdd() and a copy of the environment around add(), in which x has the value assigned to it in a specific invocation of add().
-
-Because add() returns a value of function type, variables add10 and add20 also have function type. The add10(5) invocation returns 15 because the invocation assigns 5 to parameter y in the call to partialAdd(), using the saved environment for partialAdd() where x is 10. The add20(5) invocation returns 25 because, although it also assigns 5 to y in the call to partialAdd(), it's now using another saved environment for partialAdd() where x is 20. Thus, while add10() and add20() use the same function partialAdd(), the associated environments differ and invoking the closures will bind x to two different values in the two invocations, evaluating the function to two different results.
-
-Run Listing 8's script (in script6.js) as follows:
+```
 
 
+Listing 8 定义了一个名为 add() 一流的函数并且有一个参数x和一个内置的函数partialAdd().这个内置的partialAdd()能够读取x,因为x是在add()的词法范围.函数add()返回了一个包含一个partialAdd()的引用闭包和一个add()环境的副本.在其中x在一个特殊的调用add()中有被安排的值.
+
+因为add()返回了要给函数的类型值,变量 add10 和 add20 也有这个函数类型.这个add10(5)调用后,返回15,因为这个调用partialAdd()在使用5来对参数y赋值
+
+使用一个对partialAdd()使用一个保存x是10的环境.这个add20(5)调用返回25,因为现在使用了另一个保存x是20的环境,尽管它也把y赋值为5并且调用
+partialAdd().
+
+因此,进过add10()和add20()使用相同的函数partialAdd(),这个相关的环境是不同的,在两个不同的调用中,调用这个闭包将x绑定到不同的两个值上.
+计算出两个不同的结果
+
+像下面这样运行 Listing 8 的脚本
 
 java RunScript script6.js
-You should observe the following output:
 
-
-
+你将观察到下面的输出
+```
 15
-
 25
-Functional programming with currying
-Currying is a way to translate the evaluation of a multi-argument function into the evaluation of an equivalent sequence of single-argument functions. For example, a function takes two arguments: x and y. Currying transforms the function into taking only x and returning a function that takes only y. Currying is related to but is not the same as partial application, which is the process of fixing a number of arguments to a function, producing another function of smaller arity.
-
-Listing 9 presents a JavaScript script that demonstrates currying.
-
-Listing 9. Currying in JavaScript (script7.js)
+```
 
 
+## 函数式编程的currying
+
+currying是一个翻译一个多参数的函数到一个单一参数函数的相同的序列.
+例如,一个函数调用两个参数 x 和 y.currying转变这个函数到只使用x并且返回一个只调用y的函数.currying是一个相关的但不是相同的partial应用
+它是调整一个函数参数数量一个过程,产出另一个更少参数数量的函数.
+
+
+Listing 9 展示一个说明currying的JavaScript脚本
+
+Listing 9. Currying  (script7.js)
+```js
 function multiply(x, y)
-
 {
-
    return x * y
-
 }
 
 function curried_multiply(x)
-
 {
-
    return function(y)
-
    {
-
       return x * y
-
    }
-
 }
-
 print(multiply(6, 7))
-
 print(curried_multiply(6)(7))
 
 var mul_by_4 = curried_multiply(4)
-
 print(mul_by_4(2))
-The script presents a noncurried two-argument multiply() function, followed by a first-class curried_multiply() function that receives multiplicand argument x and returns a closure containing a reference to an anonymous function (that receives multiplier argument y) and a copy of the environment around curried_multiply(), in which x has the value assigned to it in an invocation of curried_multiply().
+```
 
-The rest of the script first invokes multiply() with two arguments and prints the result. It then invokes curried_multiply() in two ways:
+这个脚本展示一个非分化的两个参数的 multiply() 函数,后面跟着一个一流的函数 curried_multiply(),并且返回一个包含匿名函数的引用的闭包和一个有关 curried_multiply()的一个副本.在调用 curried_multiply()在其中 x 有被赋予的值.
 
-curried_multiply(6)(7) results in curried_multiply(6) executing first. The returned closure executes the anonymous function with the closure's saved x value 6 being multiplied by 7.
-var mul_by_4 = curried_multiply(4) executes curried_multiply(4) and assigns the closure to mul_by_4. mul_by_4(2) executes the anonymous function with the closure's 4 value and the passed argument 2.
-Run Listing 9's script (in script7.js) as follows:
+剩下的脚本使用两个参数第一个调用multiply()并且打印出结果.它用下列两种方式接着调用curried_multiply()
 
+curried_multiply(6)(7)会先执行curried_multiply(6).这个返回的闭包执行一个保存了x值为6的匿名函数,然后与7相乘.
 
+var mul_by_4 = curried_multiply(4) 执行了 curried_multiply(4)并且安置了闭包到 mul_by_4.mul_by_4(2)执行了闭包值为4的匿名函数并且
+通过了参数 2
 
+像下列一样运行 Listing 9 的脚本
 java RunScript script7.js
-You should observe the following output:
 
+你将观察到下面的输出
 
-
+```
 42
-
 42
-
 8
-Why use currying?
-In his blog post "Why curry helps," Hugh Jackson observes that "little pieces can be configured and reused with ease, without clutter." Quora's "What are the advantages of currying in functional programming?" describes currying as "a cheap form of dependency injection," that eases the process of mapping/filtering/folding (and higher order functions generally). This Q&A also notes that currying "helps us create abstract functions."
+```
 
-In conclusion
-In this tutorial you've learned some basics of functional programming. We've used examples in JavaScript to study five core functional programming techniques, which we'll further explore using Java code in Part 2. In addition to touring Java 8's functional programming capabilities, the second half of this tutorial will help you begin to think functionally, by converting an example of object-oriented Java code to its functional equivalent.
+为什么使用分化?
+在Hugh Jackson 的《为什么分化有帮助》中说道"一小部分可以简介地被配置和轻松的复用". Quora的《分化在函数式编程中的优点是什么》中描述了
+分化是一个廉价依赖注入的形式.这减轻了mapping/filtering/folding的过程.(和一些更高级的函数).这个问答也之处了分化帮助我们创建抽象函数.
 
-Learn more about functional programming
-I found the book Introduction to Functional Programming (Richard Bird and Philip Wadler, Prentice Hall International Series in Computing Science, 1992) helpful in learning the basics of functional programming.
+## 第一部分总结
+在这个教程中,你已经学习了一些函数式编程的基本.我们使用几个JavaScript的案例来学习了5个核心的函数式编程的技术.我们将探索更多的Java相关的代码内容.
+此外,了解Java 8 的函数式编程强大,这个教程的下半场将帮助你开始用函数式地思考,通过一个面向对象的Java代码到一个相应的函数式代码.
+
+学习更多的函数式编程
+我推荐一本书 《Introduction to Functional Programming》 (Richard Bird and Philip Wadler, Prentice Hall International Series in Computing Science, 1992)。
 
 
+# Java中的函数式代码
 
->Rewrite object-oriented code using functional techniques. Get started with lambdas, method references, functional interfaces, and the Streams API in Java
+用函数式技术重写Java代码。从lambda，方法引用，方法接口和Stream API开始吧。
+
+欢迎回到第二部分关于函数式编程的Java部分的教程。在第一部分，我使用了JavaScript的例子来使你从5个函数式编程技术开始。
+存储的函数，高阶的函数，延迟技术，闭包和分化。展示了这些在JavaScript中的例子允许我们用简单的语法并集中在技术上。不用管Java复杂的语法。
+
+在第二部分，我们将使用Java 8 代码来回顾这些技术。你将看到，这些代码是函数式的，但不是很容易理解和编写。我也将介绍给你一些新的函数式编程的特性。
+
+它们在Java 8 中是集成到Java语言环境中的。也就是说，lambda，方法引用，函数接口和Streams API是被集成好的。
+
+通过这个教程，我们将从第一部分回顾JavaScript和Java实例的不同。你将看到我用函数式语言的特性来更新一些Java 8 之前的例子。(例如使用
+lambdas或者方法引用).最后,这教程包括了一个工具栏的设计帮助你练习函数式的思考.那里你将通过沾边一小部分的面向对象的Java代码来进入相同的函数式代码.
 
 
-Welcome back to this two-part tutorial introducing functional programming in a Java context. In Part 1 I used JavaScript examples to get you started with five functional programming techniques: pure functions, higher-order functions, lazy evaluation, closures, and currying. Presenting those examples in JavaScript allowed us to focus on the techniques in a simpler syntax, without getting into Java's more complex functional programming capabilities.
+## 使用Java来进行函数式编程
 
-In Part 2 we'll revisit those techniques using Java code that pre-dates Java 8. As you'll see, this code is functional, but it's not easy to write or read. You'll also be introduced to the new functional programming features that were fully integrated into the Java language in Java 8; namely, lambdas, method references, functional interfaces, and the Streams API.
+许多开发者没有意识到,但在Java 8 之前写函数式代码是可能的.为了用Java得到一个丰满的效果.让我们快速重温一下Java 8 之前的函数式编程的特性.
 
-Throughout this tutorial we'll revisit examples from Part 1 to see how the JavaScript and Java examples compare. You'll also see what happens when I update some of the pre-Java 8 examples with functional language features like lambdas and method references. Finally, this tutorial includes a sidebar designed to help you practice functional thinking, which you'll do by transforming a piece of object-oriented Java code into its functional equivalent.
+自从你理解了它们,你将有会更加欣赏在Java 8 中介绍的新特性.(诸如lambda和函数引用)
 
-Functional programming with Java
-Many developers don't realize it, but it was possible to write functional programs in Java before Java 8. In order to have a well-rounded view of functional programming in Java, let's quickly review functional programming features that predate Java 8. Once you've got those down, you'll likely have more appreciation for how new features introduced in Java 8 (like lambdas and functional interfaces) have simplified Java's approach to functional programming.
+Java对函数式编程有限的支持
+即使在Java 8 中函数式编程有了提升,Java仍是命令式,面向对象的编程语言.这是一个缺少范围的类型和其它特性将使它更加函数化.Java也蹒跚地通过
+主格打字来前进.这是一个每种类型必须命名的条约.不管这些限制,拥抱Java函数式特性的开发者仍然能从写更多简介的,可复用的,可读的代码中获益.
 
-Limits of Java's support for functional programming
-Even with functional programming improvements in Java 8, Java remains an imperative, object-oriented programming language. It's missing range types and other features that would make it more functional. Java is also hobbled by nominative typing, which is the stipulation that every type must have a name. Despite these limitations, developers who embrace Java's functional features still benefit from being able to write more concise, reusable, and readable code.
+## Java 8 之前的函数式编程
+接口,闭包,匿名的内部类是三个老的支持老版本Java的特性.
+一名内部类让你通过函数性(通过接口来描述)到达一个方法.
+函数接口是描述函数的接口
+闭包让你在范围之外读取变量
 
-Functional programming before Java 8
-Anonymous inner classes along with interfaces and closures are three older features that support functional programming in older versions of Java:
+在下面这节中,我们将回顾5个在第一部分介绍过的技术,但是使用Java语法.您将看到这些功能技术在Java 8之前是如何实现的。
 
-Anonymous inner classes let you pass functionality (described by interfaces) to methods.
-Functional interfaces are interfaces that describe a function.
-Closures let you access variables in their outer scopes.
-In the sections that follow we'll revisit the five techniques introduced in Part 1, but using Java syntax. You'll see how each of these functional techniques was possible prior to Java 8.
+在Java中写纯粹的函数
 
-Writing pure functions in Java
-Listing 1 presents the source code to an example application, DaysInMonth, that is written using an an anonymous inner class and a functional interface. This application demonstrates how to write a pure function, which was achievable in Java long before Java 8.
+Listing 1 展示了案例的源码,DaysInMonth,这是使用匿名内部类和一个函数式接口书写的.这个应用展示了如何写一个纯粹的函数,它是在Java 8之前能够实现的.
 
-[ Learn Java from beginning concepts to advanced design patterns in this comprehensive 12-part course! ]
-Listing 1. A pure function in Java (DaysInMonth.java)
+Listing 1. 一个在Java中的纯粹的函数 (DaysInMonth.java)
 
+```java
 interface Function<T, R>
 {
    R apply(T t);
@@ -617,174 +623,172 @@ public class DaysInMonth
       System.out.printf("August: %d%n", dim.apply(7));
    }
 }
-The generic Function interface in Listing 1 describes a function with a single parameter of type T and a return type of type R. The Function interface declares an R apply(T t) method that applies this function to the given argument.
+```
 
-The main() method instantiates an anonymous inner class that implements the Function interface. The apply() method unboxes month and uses it to index an array of days-in-month integers. The integer at this index is returned. (I'm ignoring leap years for simplicity.)
+在Listing 1 中所描述的有一个单独参数的T和返回类型R的一般的函数接口.函数接口声明一个R apply(T T)方法，该方法将该函数应用于给定的参数
 
-main() next executes this function twice by invoking apply() to return the day counts for the months of April and August. These counts are subsequently printed.
+这个main()方法实例化一个匿名内部类,该内部类实现了这个Function接口.这个 apply()方法拆箱了 month 并且使用它来当作数组days-in-month的
+索引.在这个索引中整型是被返回的.(我忽略了闰年)
 
-We've managed to create a function, and a pure function at that! Recall that a pure function depends only on its arguments and no external state. There are no side effects.
+main() 下一次通过调用apply()执行两次这个函数来返回4月和8月的天数.这是记录被依次地打印.
+我们已经创建一个函数,一个纯粹的函数.重新调用一个只依赖于参数且没有额外的状态.这是没有副作用的.
 
-Compile Listing 1 as follows:
-
+如下编译 Listing 1
 
 javac DaysInMonth.java
-Run the resulting application as follows:
-
-
 java DaysInMonth
-You should observe the following output:
 
+你应该观察到下面的输出
 
+```
 April: 30
 August: 31
-Writing higher-order functions in Java
-Next, we'll look at higher-order functions, also known as first-class functions. Remember that a higher-order function receives function arguments and/or returns a function result. Java associates a function with a method, which is defined in an anonymous inner class. An instance of this class is passed to or returned from another Java method that serves as the higher-order function. The following file-oriented code fragment demonstrates passing a function to a higher-order function:
+```
 
 
+## 在Java中高级的函数
+
+下面,我们将看到高阶的函数,也被称为第一流的函数.记住高阶的函数接收函数参数或返回一个函数结果.Java使用一个方法来连接一个函数,它是在一个匿名内部类中被定义的.一个类的实例是通过的或着从另一个像高阶函数一样返回的Java方法.下面基于文件的代码碎片展示了一个通过函数来达到一个高阶的函数.
+
+```java
 File[] txtFiles = 
    new File(".").listFiles(new FileFilter() 
-                           {
-                              @Override
-                              public boolean accept(File pathname) 
-                              {
-                                 return pathname.getAbsolutePath().endsWith("txt");
-                              }
-                           });
+   {
+	  @Override
+	  public boolean accept(File pathname) 
+	  {
+		 return pathname.getAbsolutePath().endsWith("txt");
+	  }
+   });
+```
  
-This code fragment passes a function based on the java.io.FileFilter functional interface to the java.io.File class's File[] listFiles(FileFilter filter) method, telling it to return only those files with txt extensions.
+这个代码碎片通过了一个基于java.io.FileFilter函数接口的函数来达到java.io.File 类的File[] listFiles(FileFilter filter)方法.告诉他
+只返回txt拓展名的文件
 
-Listing 2 shows another way to work with higher-order functions in Java. In this case, the code passes a comparator function to a sort() higher-order function for an ascending-order sort, and a second comparator function to sort() for a descending-order sort.
+Listing 2 展示了另一个方式在Java中使用高阶的函数.在这个例子中,这个代码通过一个比较器函数 ,高阶的函数sort()来取得升序的排列,第二个比较器函数取得一个降序的结果.
 
-Listing 2. A higher-order function in Java (Sort.java)
+Listing 2. Java中的高阶函数 (Sort.java)
 
-import java.util.Comparator;
-public class Sort
-{
-   public static void main(String[] args)
-   {
-      String[] innerplanets = { "Mercury", "Venus", "Earth", "Mars" };
-      dump(innerplanets);
-      sort(innerplanets, new Comparator<String>()
-                         {
-                            @Override
-                            public int compare(String e1, String e2)
-                            {
-                               return e1.compareTo(e2);
-                            }
-                         });
-      dump(innerplanets);
-      sort(innerplanets, new Comparator<String>()
-                         {
-                            @Override
-                            public int compare(String e1, String e2)
-                            {
-                               return e2.compareTo(e1);
-                            }
-                         });
-      dump(innerplanets);
-   }
-   static <T> void dump(T[] array)
-   {
-      for (T element: array)
-         System.out.println(element);
-      System.out.println();
-   }
-   static <T> void sort(T[] array, Comparator<T> cmp)
-   {
-      for (int pass = 0; pass < array.length - 1; pass++)
-         for (int i = array.length - 1; i > pass; i--)
-            if (cmp.compare(array[i], array[pass]) < 0)
-               swap(array, i, pass);
-   }
-   static <T> void swap(T[] array, int i, int j)
-   {
-      T temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-   }
+```java
+public class Sort {
+	public static void main(String[] args) {
+		String[] innerplanets = { "Mercury", "Venus", "Earth", "Mars" };
+		dump(innerplanets);
+		sort(innerplanets, new Comparator<String>() {
+			@Override
+			public int compare(String e1, String e2) {
+				return e1.compareTo(e2);
+			}
+		});
+		dump(innerplanets);
+		sort(innerplanets, new Comparator<String>() {
+			@Override
+			public int compare(String e1, String e2) {
+				return e2.compareTo(e1);
+			}
+		});
+		dump(innerplanets);
+	}
+
+	static <T> void dump(T[] array) {
+		for (T element : array)
+			System.out.println(element);
+		System.out.println();
+	}
+
+	static <T> void sort(T[] array, Comparator<T> cmp) {
+		for (int pass = 0; pass < array.length - 1; pass++)
+			for (int i = array.length - 1; i > pass; i--)
+				if (cmp.compare(array[i], array[pass]) < 0)
+					swap(array, i, pass);
+	}
+
+	static <T> void swap(T[] array, int i, int j) {
+		T temp = array[i];
+		array[i] = array[j];
+		array[j] = temp;
+	}
 }
-Listing 2 imports the java.util.Comparator functional interface, which describes a function that can perform a comparison on two objects of arbitrary but identical type.
 
-Two significant parts of this code are the sort() method (which implements the Bubble Sort algorithm) and the sort() invocations in the main() method. Although sort() is far from being functional, it demonstrates a higher-order function that receives a function--the comparator--as an argument. It executes this function by invoking its compare() method. Two instances of this function are passed in two sort() calls in main().
+```
 
-Compile Listing 2 as follows:
+Listing 2 引入了java.util.Comparator函数式接口,它描述了一个可以实现在任意的两个相同对象的比较.
+
+代码中有意义的两个部分 sort()方法(它实现了冒泡排序算法)和sort()调用了main()方法.尽管 sort()远不是函数化的.它展示了一个高阶的函数,它接收一个比较器函数作为参数.
+它通过调用compare()执行这个函数.这个函数中的两个实例在main()的sort()中通过.
 
 
+像下面一样编译 Listing 2 
 javac Sort.java
-Run the resulting application as follows:
-
-
 java Sort
-You should observe the following output:
+
+你应该看到下面的输出
+```
+Mercury Venus Earth Mars 
+Earth Mars Mercury Venus 
+Venus Mercury Mars Earth
+```
 
 
-Mercury
-Venus
-Earth
-Mars
-Earth
-Mars
-Mercury
-Venus
-Venus
-Mercury
-Mars
-Earth
-Lazy evaluation in Java
-Lazy evaluation is another functional programming technique that is not new to Java 8. This technique delays the evaluation of an expression until its value is needed. In most cases, Java eagerly evaluates an expression that is bound to a variable. Java supports lazy evaluation for the following specific syntax:
+## Java中的延迟计算
 
-The Boolean && and || operators, which will not evaluate their right operand when the left operand is false (&&) or true (||).
-The ?: operator, which evaluates a Boolean expression and subsequently evaluates only one of two alternative expressions (of compatible type) based on the Boolean expression's true/false value.
-Functional programming encourages expression-oriented programming, so you'll want to avoid using statements as much as possible. For example, suppose you want to replace Java's if-else statement with an ifThenElse() method. Listing 3 shows a first attempt.
+延迟计算另一个对Java8 来讲不算新的函数式编程.这个技术将表达式的计算延迟到真正需要值的时候.
+Java是饥饿式地计算一个绑定到变量的值.Java通过下面的特殊的语法支持延迟计算.
 
-Listing 3. An example of eager evaluation in Java (EagerEval.java)
+这个Boolean && 和 || 运算符,它将不计算它右边的值,如果当左边的参数是false(&&)或true(||).
 
-public class EagerEval
-{
-   public static void main(String[] args)
-   {
-      System.out.printf("%d%n", ifThenElse(true, square(4), cube(4)));
-      System.out.printf("%d%n", ifThenElse(false, square(4), cube(4)));
-   }
-   static int cube(int x)
-   {
-      System.out.println("in cube");
-      return x * x * x;
-   }
-   static int ifThenElse(boolean predicate, int onTrue, int onFalse)
-   {
-      return (predicate) ? onTrue : onFalse;
-   }
-   static int square(int x)
-   {
-      System.out.println("in square");
-      return x * x;
-   }
+这个 ?: 操作符,它计算一个布尔表达式并通过的表达式结果的真假来顺序地计算两者之一.
+
+函数式编程鼓励以表达式为基准的编程,因此你将想避免使用很多的声明.例如,支持你通过ifThenElse()方法来替代 if-else.Listing 3 展示了第一个尝试.
+
+Listing 3. Java中一个饥饿计算的例子
+
+```java
+public class EagerEval {
+	public static void main(String[] args) {
+		System.out.printf("%d%n", ifThenElse(true, square(4), cube(4)));
+		System.out.printf("%d%n", ifThenElse(false, square(4), cube(4)));
+	}
+
+	static int cube(int x) {
+		System.out.println("in cube");
+		return x * x * x;
+	}
+
+	static int ifThenElse(boolean predicate, int onTrue, int onFalse) {
+		return (predicate) ? onTrue : onFalse;
+	}
+
+	static int square(int x) {
+		System.out.println("in square");
+		return x * x;
+	}
 }
-Listing 3 defines an ifThenElse() method that takes a Boolean predicate and a pair of integers, returning the onTrue integer when the predicate is true and the onFalse integer otherwise.
+```
 
-Listing 3 also defines cube() and square() methods. Respectively, these methods cube and square an integer and return the result.
 
-The main() method invokes ifThenElse(true, square(4), cube(4)), which should invoke only square(4), followed by ifThenElse(false, square(4), cube(4)), which should invoke only cube(4).
+Listing 3 定义了一个ifThenElse()方法,它有一个布尔类型的predicate和一组整型.当predicate是true时返回onTrue.否者返回onFasle.
 
-Compile Listing 3 as follows:
+Listing 3 也定义了一个 cube()和square()方法.相应地,这些方式 cube或者 square 一个返回一个整型的结果.
 
+这个main() 方法调用了 ifThenElse(true, square(4), cube(4)) ,它应该只调用square(4),后面跟着ifThenElse(false, square(4), cube(4)),它应该只调用cube(4).
+
+编译 Listing 3 
 
 javac EagerEval.java
-Run the resulting application as follows:
-
-
 java EagerEval
-You should observe the following output:
 
+应该观察到下面的输出
 
+```
 in square
 in cube
 16
 in square
 in cube
 64
+```
+
 The output shows that each ifThenElse() call results in both methods executing, irrespective of the Boolean expression. We cannot leverage the ?: operator's laziness because Java eagerly evaluates the method's arguments.
 
 Although there's no way to avoid eager evaluation of method arguments, we can still take advantage of ?:'s lazy evaluation to ensure that only square() or cube() is called. Listing 4 shows how.

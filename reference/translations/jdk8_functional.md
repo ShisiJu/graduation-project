@@ -1,18 +1,18 @@
 # Java开发者的函数式编程
 
-使用这五个函数式编程机巧使你的Java代码更加优秀。
+使用五个函数式编程机巧使你的Java代码更加优秀。
 
 Java 8 的函数式编程通过 lambda 表达式来介绍给大家。
 
 这次Java发布的内容使Java开发者改变了认为Java编程是仅仅为了命令式，面向对象的观点。一个Java开发者也必须能够使用声明的函数式编程方式进行思考和编程。
 
-这个教程展示了函数式编程的基本内容。我将从术语开始。然后我们将深入了解函数式编程的概念。
-我将通过五个函数式编程的技术做一个总结。在这一部分的编码实例将你以纯正的，高阶的函数，延迟计算，闭包和科力化。
+这个教程展示了函数式编程的基本内容。我将从一些术语开始。然后我们将深入了解函数式编程的概念。
+我将通过五个函数式编程的技术做一个总结。在这一部分的编码实例将你以纯正的，高阶的函数，延迟计算，闭包和分化。
 
 函数式编程正在上升阶段。
 2018年，IEEE在最顶尖的25种编程语言中包含了函数式编程语言。并且谷歌现阶段也把函数式编程视为和面向对象编程同等重要。
 
-很明显，函数式编程不能够被忽略。但是为什么它会如此流行呢？在其它方面，函数式编程可以简单地验证程序的正确性。它也是很简单地提供并发地编程。并发编程是提升应用性能的关键。
+很明显，函数式编程不能够被忽略。但是为什么它会如此流行呢？在某些方面，函数式编程可以简单地验证程序的正确性。它也是很简单地提供并发地编程。而并发编程是提升应用性能的关键。
 
 ## 什么是函数式编程？
 
@@ -36,7 +36,6 @@ Java 8 的函数式编程通过 lambda 表达式来介绍给大家。
 
 每一次一个函数式编程函数被称为使用同样的参数，并且得到同样的结果。函数在函数式编程中被认为展示了透明相关性。这意味这你不用改变计算的意义下用结果值替换函数调用。
 
-
 函数式编程偏好不变性，这意味着状态不能改变。命令式编程通常不是这样的。一个命令式的函数会与状态连接到一起。(例如一个Java实例变量)。
 因为在这个实例中状态是可变的，所以称这个函数在不同时间中有相同的参数却可以有不同的返回值。
 
@@ -48,11 +47,9 @@ Java 8 的函数式编程通过 lambda 表达式来介绍给大家。
 
 另一个常见的副作用发生在修改基于抛出异常的函数的行为，这是一个对调用者可观察的交互。可以在Stack Overflow看到更多对《日益增长的异常副作用是什么？》
 
-
 第三个常见的副作用是当I/O操作，输入不能读的文本，或输出不能写的文本。了解详情，可以在Stack Exchange中查看《在函数式编程中IO是如何造成副作用的？》。
 
-去除掉副作用使程序更容易理解和预测计算的行为。这也是帮助代码更加适用于平行处理，通常能够提升应用的性能。然而这些副作用在函数式编程中，它们
-通常少于命令式编程。使用函数式编程可以帮助你写容易理解方便测试和可读性的代码。
+去除掉副作用使程序更容易理解和预测计算的行为。这也是帮助代码更加适用于平行处理，通常能够提升应用的性能。然而这些副作用在函数式编程中，它们通常少于命令式编程。使用函数式编程可以帮助你写容易理解方便测试和可读性的代码。
 
 ## 函数式编程的起源
 
@@ -131,16 +128,19 @@ printEmployee2() 方法展示了声明式，面向表达的方式。在这个例
 想想filter()作为函数式的相同的if声明，和forEach()做为相同for的声明。
 
 你可以想下面一样编译 Listing 1
-javac Employees。java
+javac Employees.java
 
 使用下面的命令来运行
 java Employees
 
 输出结果应该像这样
+```
 Sally Smith: 29
 Bob Jone: 36
 Sally Smith: 29
 Bob Jone: 36
+
+```
 
 ## 函数式编程实例
 
@@ -150,16 +150,13 @@ Bob Jone: 36
 - 高阶函数
 - 延迟实现
 - 闭包
-- 加脂法
+- 分化
 
 这一节中的实例是用JavaScript写的，因为它简洁并且Java相关。将允许我们关注于技术。在Part2我们将重新回顾同样的技术用Java实现。
 
-
 Listing 2 展示了RunScript的源代码，一个使用Java脚本API的Java应用来帮助运行JavaScript代码。Runscript将是下面实例运行的基础。
 
-
-
-Listing 2 RunScript。java
+Listing 2 RunScript.java
  
 ```java
 import java.io.FileReader;
@@ -204,23 +201,21 @@ public class RunScript
 
 设想这个参数的展示，main()实例化javax。script。ScriptEngineManager类，ScriptEngineManager是这个实体点进入Java脚本的API。
 
-下一次，这个ScriptEngineManager对象的ScriptEngine的getEngineByName(String shortName)方法被调用遵循脚本引擎纠正希望的shortName的
-值。Java 10支持这个 Nashorn引擎，它是遵循通过nashorn来getEngineByName()。这个返回的对象的类实现了javax。script。ScriptEngine接口。
+下一次，这个ScriptEngineManager对象的ScriptEngine的getEngineByName(String shortName)方法被调用遵循脚本引擎纠正希望的shortName的值。Java 10支持这个 Nashorn引擎，它是遵循通过nashorn来getEngineByName()。这个返回的对象的类实现了javax.script.ScriptEngine接口。
 
-ScriptEngine 声明了几个eval()方法来实现一个脚本。main()调用Object eval(Reader reader) 方面来读取从java。io。FileReader对象参数和
-(假设java。io。IOException没有抛出)。之后实现这个脚本。
-这个方法返回了任意脚本任意值。同样，当发生异常时，这个方法抛出javax。script。ScriptException。
+ScriptEngine 声明了几个eval()方法来实现一个脚本。main()调用Object eval(Reader reader) 方面来读取从java.io.FileReader对象参数和(假设java.io.IOException没有抛出)。之后实现这个脚本。
+这个方法返回了任意脚本任意值。同样，当发生异常时，这个方法抛出javax.script.ScriptException。
 
 编译 Listing 2 :
 
-javac RunScript。java
+javac RunScript.java
 
 我将向你展示如何在我展示的第一个脚本后运行这个应用。
 
 
 ## 纯粹的函数下的函数式编程
 
-一个纯粹的函数是一个只依赖它的输入参数和没有额外声明的函数式编程函数。一个不纯粹的函数是一个函数式编程函数违反了这些需要。
+一个纯粹的函数是一个只依赖它的输入参数和没有额外声明的函数式编程函数。一个不纯粹的函数是违反了这些需要的函数式编程函数。
 因为纯粹的函数没有和外边的世界有交互。(除了调用其它纯粹的函数)。一个纯粹的函数总是在相同的参数下，返回相同的结果。纯粹的函数也没有明显的副作用。
 
 
@@ -230,7 +225,7 @@ javac RunScript。java
 纯粹的函数VS不纯粹的函数
 这个在Listing 3中JavaScript中不纯粹的calculatebonus()函数与纯粹的calculatebonus2() 对比。
 
-Listing 3。 Comparing pure vs impure functions (script1。js)
+Listing 3 Comparing pure vs impure functions (script1.js)
 
 ```js
 // impure bonus calculation
@@ -264,28 +259,27 @@ Here's the output you should observe:
 ```
 
 支持calculatebonus2()是对calculatebonus(numSales)返回的重构。那calculatebonus2(numSales)还仍是纯粹的吗?
-答案是不是。当一个纯粹的函数调用另一个不纯粹的函数，那么这个函数就变的不纯粹了
 
+答案是不是。当一个纯粹的函数调用另一个不纯粹的函数，那么这个函数就变的不纯粹了
 
 当两个纯粹的函数没有数据依赖时，它们可以被评估为在任意要求下不影响结果。使它们更加适合平行计算。这是它们函数式编程的好处之一。
 
-
 更多关于非纯粹函数
-不是所以的函数式编程函数需要纯粹。作为函数式编程:纯粹的函数式解释为它是可能的(有时是被期待的)来分离纯粹的，函数式的，外部应用值相关核心，命令式shell。
 
+不是所以的函数式编程函数需要纯粹。作为函数式编程:纯粹的函数式解释为它是可能的(有时是被期待的)来分离纯粹的，函数式的，外部应用值相关核心，命令式shell。
 
 ## 高阶函数式编程
 
 一个高阶函数是像参数一样接受函数的数学的函数，返回一个函数给它的调用者或者都返回。一个例子是对不同的操作员的积分。d/dx，它返回f函数的派生。
 
-优秀的函数是优秀的公民
+优秀的函数是一等公民
 
 近相关对数学的高阶函数感念来讲是一流的函数，它是函数式编程函数的采用其它函数式编程函数作为参数或者返回一个函数式编程的函数。
-一流的函数是一流的公民，因为无论其它一流的程序实体，他们都可以出现。包括被视为标志的一个变量或者被通过的一个参数，又或者函数的返回。
+一流的函数是一流的公民，因为无论其它一流的程序实体，它们都可以出现。包括被视为标志的一个变量或者被通过的一个参数，又或者函数的返回。
 
 The JavaScript in Listing 4 展示了通过匿名的比较函数来进行一流的排序函数
 
-Listing 4  通过匿名的比较函数(script2。js)
+Listing 4  通过匿名的比较函数(script2.js)
 
 ```js
 function sort(a, cmp)
@@ -338,8 +332,9 @@ a.forEach(function(entry) { print(entry) })
 当调用时，这个匿名的比较器函数执行 return i - j; 来达到升序排序。通过反转i和j，第二个比较器函数达到了一个倒序排序。
 第三个和第四个排序调用接收了匿名的排序函数是有点不同的，目的是进行正确的字符串值的比较。
 
-运行 script2。js
-java RunScript script2。js
+运行 script2.js
+
+java RunScript script2.js
 
 输出应该是
 
@@ -351,8 +346,8 @@ X Q P E A
 ```
  
 Filter和map
-函数式编程语言通常提供了几个很有用的高阶函数。两个常见的例子是filter 和 map
 
+函数式编程语言通常提供了几个很有用的高阶函数。两个常见的例子是filter 和 map
 
 一个filter处理一个list，在一些要求下产出一个包含在原始list中确切的元素中被认定为返回值为真的新list。
 
@@ -369,9 +364,9 @@ print('\n')
 print([3, 13, 22].map(function(num) { return num * 3 }))
 ```
 
-用下列方式运行  script3。js :
+用下列方式运行  script3.js :
 
-java RunScript script3。js
+java RunScript script3.js
 
 你应该得到的结果
 
@@ -380,11 +375,11 @@ java RunScript script3。js
 9,39,66
 ```
 
-另一个常见的高阶函数是减少，它更多地以折叠被广泛了解。这个还是减少一系列单独的值
+另一个常见的高阶函数是reduce，它更多地以折叠被广泛了解。这个函数把一系列的数据减少到单独的值。
 
 Listing 6 使用的JavaScript的reduce() 高阶还是来减少一个数组里的单独值，它随后通过数组的长度来得到一个平均值。
 
-Listing 6。 减少数组的数字来得到单独的数字 (script4。js)
+Listing 6 减少数组的数字来得到单独的数字 (script4.js)
 
 ```js
 var numbers = [22, 30, 43]
@@ -392,13 +387,15 @@ print(numbers.reduce(function(acc, curval) { return acc + curval })/ numbers.len
 ```
 
 以下列方式运行Listing 6
-java RunScript script4。js
+
+java RunScript script4.js
 
 应该观察到的内容
 
 ```
 31.666666666666668
 ```
+
 你可能认为这个filter， map， 和 reduce 高阶函数避免了需要if-else和各种循环声明，你是正确的。他们内置的实现处理了决策和声明。
 一个高阶的函数使用了递归来实现迭代。一个递归函数调用了它自己，允许一个操作来重复，知道它达到预期。你也可以在你的代码里利用递归来进行迭代。
 
@@ -412,7 +409,6 @@ java RunScript script4。js
 延迟计算是集成到Haskell的。他不会计算任何事情(包括在还是调用之前的一个函数的参数)，除非它真正地需要这么做。
 
 Java的Streams API 利用了延迟计算。一个stream的中级操作(例如 filer())通常是懒加载的。它们不会做任何事情，直到终点的操作被执行。(例如 forEach())
-
 
 尽管延迟计算是函数语言的重要部分，但是在许多命令式语言中提供了许多装入式的形式的支持。
 例如，许多编程语言在上下文中支持 short-circuit计算。Boolean AND 和 OR 计算符合，它们是懒惰的，当左边的运算结果是false(AND)或true(OR)，就会拒绝计算它们右边的运算对象。
@@ -453,12 +449,13 @@ expensiveFunction() called with 3
 一流的函数是和闭包的概念相关的，它是一个持久的范围，来处理本地变量即使在代码执行后也留下了块。
 
 制作闭包
+
 运作地，一个闭包是一个存储函数和它的环境的一条记录。环境将函数的每个自由变量(在本地使用的变量，但在封闭的范围中定义)与创建闭包时绑定变量名的值或引用进行映射。
 这让这个函数通过这个闭包的值或应用的副本来读取这些获取到的变量，即使当这个函数是在它们的范围之外被调用的。
 
 为了理清这个概念，Listing 8 展示了一个JavaScript脚本来介绍一个简单的闭环。这个脚本是基于下面的实例的。
 
-Listing 8。 一个简单的闭包 (script6。js)
+Listing 8 一个简单的闭包 (script6.js)
 
 ```js
 function add(x)
@@ -488,7 +485,7 @@ partialAdd()。
 
 像下面这样运行 Listing 8 的脚本
 
-java RunScript script6。js
+java RunScript script6.js
 
 你将观察到下面的输出
 ```
@@ -500,9 +497,8 @@ java RunScript script6。js
 ## 函数式编程的分化
 
 分化是一个翻译一个多参数的函数到一个单一参数函数的相同的序列。
-例如，一个函数调用两个参数 x 和 y。分化转变这个函数到只使用x并且返回一个只调用y的函数。分化是一个相关的但不是相同的partial应用
+例如，一个函数调用两个参数 x 和 y。分化把这个函数转变到只使用x，并且返回一个只调用y的函数。分化是一个相关的，但不是相同的partial应用。
 它是调整一个函数参数数量一个过程，产出另一个更少参数数量的函数。
-
 
 Listing 9 展示一个说明分化的JavaScript脚本
 
@@ -537,7 +533,7 @@ var mul_by_4 = curried_multiply(4) 执行了 curried_multiply(4)并且安置了�
 通过了参数 2
 
 像下列一样运行 Listing 9 的脚本
-java RunScript script7。js
+java RunScript script7.js
 
 你将观察到下面的输出
 
@@ -548,6 +544,7 @@ java RunScript script7。js
 ```
 
 为什么使用分化?
+
 在Hugh Jackson 的《为什么分化有帮助》中说道"一小部分可以简介地被配置和轻松的复用"。 Quora的《分化在函数式编程中的优点是什么》中描述了
 分化是一个廉价依赖注入的形式。这减轻了mapping/filtering/folding的过程。(和一些更高级的函数)。这个问答也之处了分化帮助我们创建抽象函数。
 
@@ -564,7 +561,7 @@ java RunScript script7。js
 用函数式技术重写Java代码。从lambda，方法引用，方法接口和Stream API开始吧。
 
 欢迎回到第二部分关于函数式编程的Java部分的教程。在第一部分，我使用了JavaScript的例子来使你从5个函数式编程技术开始。
-存储的函数，高阶的函数，延迟技术，闭包和分化。展示了这些在JavaScript中的例子允许我们用简单的语法并集中在技术上。不用管Java复杂的语法。
+纯粹的函数，高阶的函数，延迟技术，闭包和分化。展示了这些在JavaScript中的例子允许我们用简单的语法并集中在技术上。不用管Java复杂的语法。
 
 在第二部分，我们将使用Java 8 代码来回顾这些技术。你将看到，这些代码是函数式的，但不是很容易理解和编写。我也将介绍给你一些新的函数式编程的特性。
 
@@ -576,16 +573,19 @@ lambdas或者方法引用)。最后，这教程包括了一个工具栏的设计
 
 ## 使用Java来进行函数式编程
 
-许多开发者没有意识到，但在Java 8 之前写函数式代码是可能的。为了用Java得到一个丰满的效果。让我们快速重温一下Java 8 之前的函数式编程的特性。
+许多开发者没有意识到，但在Java 8 之前写函数式代码是可能的。为了用Java得到一个良好的效果。让我们快速重温一下Java 8 之前的函数式编程的特性。
 
 自从你理解了它们，你将有会更加欣赏在Java 8 中介绍的新特性。(诸如lambda和函数引用)
 
 Java对函数式编程有限的支持
+
 即使在Java 8 中函数式编程有了提升，Java仍是命令式，面向对象的编程语言。这是一个缺少范围的类型和其它特性将使它更加函数化。Java也蹒跚地通过
-主格打字来前进。这是一个每种类型必须命名的条约。不管这些限制，拥抱Java函数式特性的开发者仍然能从写更多简介的，可复用的，可读的代码中获益。
+主格打字来前进。这是一个每种类型必须命名的条约。不管这些限制，拥抱Java函数式特性的开发者仍然能从写更多简洁的，可复用的，可读的代码中获益。
 
 ## Java 8 之前的函数式编程
+
 接口，闭包，匿名的内部类是三个老的支持老版本Java的特性。
+
 一名内部类让你通过函数性(通过接口来描述)到达一个方法。
 函数接口是描述函数的接口
 闭包让你在范围之外读取变量
@@ -596,7 +596,7 @@ Java对函数式编程有限的支持
 
 Listing 1 展示了案例的源码，DaysInMonth，这是使用匿名内部类和一个函数式接口书写的。这个应用展示了如何写一个纯粹的函数，它是在Java 8之前能够实现的。
 
-Listing 1。 一个在Java中的纯粹的函数 (DaysInMonth。java)
+Listing 1 一个在Java中的纯粹的函数 (DaysInMonth.java)
 
 ```java
 interface Function<T, R>
@@ -632,7 +632,8 @@ main() 下一次通过调用apply()执行两次这个函数来返回4月和8月�
 
 如下编译 Listing 1
 
-javac DaysInMonth。java
+javac DaysInMonth。java   
+
 java DaysInMonth
 
 你应该观察到下面的输出
@@ -659,8 +660,7 @@ File[] txtFiles =
    });
 ```
  
-这个代码碎片通过了一个基于java。io。FileFilter函数接口的函数来达到java。io。File 类的File[] listFiles(FileFilter filter)方法。告诉他
-只返回txt拓展名的文件
+这个代码碎片通过了一个基于java.io.FileFilter函数接口的函数来达到java.io.File 类的File[] listFiles(FileFilter filter)方法。告诉他只返回txt拓展名的文件。
 
 Listing 2 展示了另一个方式在Java中使用高阶的函数。在这个例子中，这个代码通过一个比较器函数 ，高阶的函数sort()来取得升序的排列，第二个比较器函数取得一个降序的结果。
 
@@ -706,17 +706,19 @@ public class Sort {
 		array[j] = temp;
 	}
 }
-
 ```
 
-Listing 2 引入了java。util。Comparator函数式接口，它描述了一个可以实现在任意的两个相同对象的比较。
+Listing 2 引入了java.util.Comparator函数式接口，它描述了一个可以实现在任意的两个相同对象的比较。
 
 代码中有意义的两个部分 sort()方法(它实现了冒泡排序算法)和sort()调用了main()方法。尽管 sort()远不是函数化的。它展示了一个高阶的函数，它接收一个比较器函数作为参数。
+
 它通过调用compare()执行这个函数。这个函数中的两个实例在main()的sort()中通过。
 
 
 像下面一样编译 Listing 2 
-javac Sort。java
+
+javac Sort.java
+
 java Sort
 
 你应该看到下面的输出
@@ -773,6 +775,7 @@ Listing 3 也定义了一个 cube()和square()方法。相应地，这些方式 
 编译 Listing 3 
 
 javac EagerEval。java
+
 java EagerEval
 
 应该观察到下面的输出
@@ -788,7 +791,6 @@ in cube
 
 这个输出显示了两种方法的执行中每一个ifThenElse()调用的结果，无关这个布尔表达式。
 我们不能利用 ?:操作符的懒加载。因为Java是饥饿式地计算方法的参数。
-
 
 尽管没有方式来避免函数参数的饥饿运算。我们任然能从?:的延迟计算中来确定square()和cube()只被调用一次。
 
@@ -842,6 +844,7 @@ Listing 4 把 ifThenElse()转变成一个通过声明一个接收函数参数的
 如下编译 Listing 4
 
 javac LazyEval。java
+
 java LazyEval
 
 你应该观察到的输出
@@ -898,7 +901,9 @@ Listing 5 是和我之前用JavaScript中演示的闭包是相同效果的。这
 
 
 像下面这样编译 Listing 5
+
 javac PartialAdd。java
+
 java PartialAdd
 
 你应该观察到下面的结果
@@ -926,14 +931,13 @@ f(10， y) = g(y) = 10 + y
 
 我们现在有一个单独的函数，g，它只有一个参数。当我们调用apply()时，这是将要执行的函数。
 
-局部的应用，不是局部的添加
-名为PartialAdd函数代表了add()函数局部的应用。他不是代表局部的添加。分化是关于执行一个函数局部应用。它不是关于局部的计算。
+局部的应用，不是局部的添加名为PartialAdd函数代表了add()函数局部的应用。他不是代表局部的添加。分化是关于执行一个函数局部应用。它不是关于局部的计算。
 
 你可能会拒绝使用我使用的短语局部的应用。特别是，因为我开始在第一部分说分化不同于局部应用。它是将多个参数固定到一个函数的过程。产生出了另一个有更少参数的函数。通过局部应用，你能产出多于一个参数的函数，但是由于分化，每个函数必须有确切的一个参数。
 
 Listing 5 展示了一个基于Java 8 之前的一个分化的例子。现在考虑一下这个在Listing 6的CurriedCalc应用
 
-Listing 6。 Java代码中的分化 (CurriedCalc。java)
+Listing 6 Java代码中的分化 (CurriedCalc.java)
 
 ```java
 public class CurriedCalc {
@@ -941,7 +945,8 @@ public class CurriedCalc {
 		System.out.println(calc(1).apply(2).apply(3).apply(4));
 	}
 
-	static Function<Integer, Function<Integer, Function<Integer, Integer>>> calc(final Integer a) {
+	static Function<Integer, Function<Integer, Function<Integer, Integer>>> 
+	calc(final Integer a) {
 		return new Function<Integer, Function<Integer, Function<Integer, Integer>>>() {
 			@Override
 			public Function<Integer, Function<Integer, Integer>> apply(final Integer b) {
@@ -974,6 +979,7 @@ i(4) = (1 + 2) * (3 + 4)
 编译Listing 6:
 
 javac CurriedCalc。java
+
 java CurriedCalc
 
 你应该观察到如下的输出
@@ -999,9 +1005,9 @@ Java 8 通过发布lambdas和方法引用大量减少了冗余。它也提供了
 () -> System.out.println("my first lambda")
 ```
 
-从左到右，() 确定了这个lambda的正式参数列表。(这里是无参数的)， -> 代表了一个lambad表达式。System。out。println("my first lambda") 是一个lambda的表达体。(将要执行的代码)
+从左到右，() 确定了这个lambda的正式参数列表。(这里是无参数的)， -> 代表了一个lambad表达式。System.out.println("my first lambda") 是一个lambda的表达体。(将要执行的代码)
 
-lambda有一个类型，它是lambda为其实现的任何函数接口。举例，java。lang。Runnable的接口，因为Runnable的 void run()方法也有一个空的参数列表。
+lambda有一个类型，它是lambda为其实现的任何函数接口。举例，java.lang.Runnable的接口，因为Runnable的 void run()方法也有一个空的参数列表。
 
 ```java
 Runnable r = () -> System.out.println("my first lambda");
@@ -1076,7 +1082,7 @@ static Function<Integer, Function<Integer, Function<Integer, Integer>>>
 }
 ```
 
-Runnable， FileFilter， and Comparator 都是函数接口的实例。它们展示了函数。Java 8 通过需要一个函数式接口正式化了这些概念。也可以通过java。lang。FunctionalInterface 注解类型 ( @FunctionalInterface)。一个接口被注解后必须声明只用一个抽象方法。
+Runnable， FileFilter， and Comparator 都是函数接口的实例。它们展示了函数。Java 8 通过需要一个函数式接口正式化了这些概念。也可以通过java.lang.FunctionalInterface 注解类型 ( @FunctionalInterface)。一个接口被注解后必须声明只用一个抽象方法。
 
 你可以使用，Java预定的函数接口。(稍后讨论)或者你可以自定义一个。如下
 
@@ -1116,16 +1122,17 @@ lambda的结构
 
 我想你将找找Java语言结构Brian Goetz的视频。它格外生动地展示了与下面的lambda。
 
-Some lambdas only invoke an existing method。 For example， the following lambda invokes System。out's void println(s) method on the lambda's single argument:
+一些lambda只调用了一个存在的方法。例如，下面的lambda调用了System.out 的 void println(s) 方法。
 
-(String s) -> System。out。println(s)
-The lambda presents (String s) as its formal parameter list and a code body whose System。out。println(s) expression prints s's value to the standard output stream。
+```
+(String s) -> System.out.println(s)
+```
 
+这个lambda展示了(String s) 作为它的正式的参数列表和一个代码体，它的 System.out.println(s)表达式打印出了标准输出的s的值。
 
 Java中的方法引用
 
-一些lambda只调用了一个存在的方法。例如，下面的lambda在lambda的单个参数中调用System。out的 void println(s)方法。
-
+一些lambda只调用了一个存在的方法。例如，下面的lambda在lambda的单个参数中调用System.out的 void println(s)方法。
 
 为了保存使用键盘击键，你可以使用lambda来替换应用参数。它是一个对存在方法的紧凑的应用。例如，你可以如下替换之前的代码碎片。
 
@@ -1152,7 +1159,7 @@ public static void main(String[] args)
 ```
 
 
-这个 String::compareTo 方法引用版本要比lambda版本的 (e1， e2) -> e1。compareTo(e2) 更短。而然注意，较长的表达式需要创建一个同等的反序sort，他将包括一个方法引用 String::toString。替换指定的 String::toString，我可能有指定同样效果的s -> s。toString() lambda表达式。
+这个 String::compareTo 方法引用版本要比lambda版本的 (e1， e2) -> e1。compareTo(e2) 更短。而然注意，较长的表达式需要创建一个同等的反序sort，他将包括一个方法引用 String::toString。替换指定的 String::toString，我可能有指定同样效果的s -> s.toString() lambda表达式。
 
 
 更多关于方法引用
@@ -1162,7 +1169,7 @@ public static void main(String[] args)
 
 预定义的函数引用
 
-Java8引用了预定义的函数接口 (java。util。function)，因此开发者不用为了常见的任务，而自己创建我们的函数接口。这里有几个例子。
+Java8引用了预定义的函数接口 (java.util.function)，因此开发者不用为了常见的任务，而自己创建我们的函数接口。这里有几个例子。
 
 Consumer<T> 是一个代表了接受一个单独输入参数和无返回结果的函数接口。它的 void accept(T t) 方法在参数t中执行了。
 
@@ -1174,10 +1181,6 @@ The Supplier<T> 是一个展示了一个supplier的结果。它的T get()方法�
 
 Listing 1的DaysInMonth应用中展示了一个完整的函数接口。从Java 8 开始，你可以移除这个接口并导入确定的预定义函数接口。
 
-More about predefined functional interfaces
-"Java 101: The essential Java language features tour， Part 6" provides examples of the Consumer and Predicate functional interfaces。 Check out the blog post "Java 8 -- Lazy argument evaluation" to discover an interesting use for Supplier。
-
-Additionally， while the predefined functional interfaces are useful， they also present some issues。 Blogger Pierre-Yves Saumont explains why。
 
 更多关于预定义接口
 
@@ -1201,7 +1204,8 @@ public class StreamFP {
 	public static void main(String[] args) {
 		new Random().ints(0, 11).limit(10).filter(x -> x % 2 == 0).forEach(System.out::println);
 		System.out.println();
-		String[] cities = { "New York", "London", "Paris", "Berlin", "BrasÌlia", "Tokyo", "Beijing", "Jerusalem",
+		String[] cities = { "New York", "London", "Paris", "Berlin", 
+		"BrasÌlia", "Tokyo", "Beijing", "Jerusalem",
 				"Cairo", "Riyadh", "Moscow" };
 		IntStream.range(0, 11).mapToObj(i -> cities[i]).forEach(System.out::println);
 		System.out.println();
@@ -1243,7 +1247,7 @@ Beijing Jerusalem Cairo Riyadh Moscow
 
 如果你不熟悉 Stream ，可以查看我的Java SE 8's new Streams API 教程。有更多关于函数式的API。
 
-总结
+## 总结
 
 许多Java开发者在类似Haskell的语言不会暂停去使用纯粹的函数式编程，因为它与熟悉的命令式，面向对象的编程方式大有不同。Java 8的函数式编程的能力被设计成缝隙的桥。能够让Java开发者写出更加容易理解，维护和测试的代码。函数式编程的代码在Java中同样是可重复利用和更加适合平行处理的。在这些诱因下，没有理由不去在你的Java代码中使用Java的函数式编程。
 

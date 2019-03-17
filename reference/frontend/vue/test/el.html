@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<script src="../vue.js"></script>
+	<link rel="stylesheet" type="text/css" href="../style.css" />
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<div id="box1">
+			<input type="number" v-model.number="score"  />
+			<score :pscore="score"  v-on:change='change'>我的分数是 : <header> This is header </header>
+			</score>
+			<h4>成绩 : {{strScore}}</h4>
+
+		</div>
+	</body>
+</html>
+
+<script>
+	Vue.component('score', {
+		template: "<div> <h1> {{pscore}} </h1> <button @click=add10() > add10()</button> </div>",
+		props: ['pscore'],
+		methods: {
+			add10: function() {
+				this.pscore += 10;
+				this.$emit('change', {
+					score: this.pscore
+				})
+			}
+		}
+	});
+
+	var vueBox = new Vue({
+		el: '#box1',
+		data: {
+			score: 10
+		},
+		computed: {
+			strScore: function() {
+				if (this.score <= 0 || this.score > 100)
+					return '你想干嘛';
+				if (this.score <= 59)
+					return '辣鸡';
+				else if (this.score <= 89)
+					return '不错';
+				else
+					return '卢本伟NB';
+			}
+		},
+		methods: {
+			change: function(value) {
+				this.score = value.score;
+			}
+		}
+
+	});
+</script>

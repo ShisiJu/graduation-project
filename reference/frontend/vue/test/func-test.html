@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+	</body>
+</html>
+<script>
+	function bubbleSort(list, cmp) {
+		for (let pass = 0; pass < list.length - 1; pass++)
+			for (let tmp = list.length - 1; tmp > pass; tmp--) {
+				if (cmp(list[pass], list[tmp]) > 0) {
+					let tmpValue = list[pass];
+					list[pass] = list[tmp];
+					list[tmp] = tmpValue;
+				}
+			}
+	}
+
+	let list = [32, 1, 523, -13, 89, 100];
+
+	let comp = function(n1, n2) {
+		return n1 - n2;
+	}
+
+	bubbleSort(list, (n1, n2) => {
+		return n2 - n1
+	});
+
+
+	let newList = list.filter(num => num < 110).map(num => num).reduce((total, num) => total + num);
+
+	//closure
+	function add(n1) {
+		let addFunc = function(n2) {
+			return n1 + n2;
+		}
+		return addFunc;
+	}
+	
+	let add10 = add(10);
+	let add10a20 = add10(20);
+	console.log(add10a20);
+	
+</script>

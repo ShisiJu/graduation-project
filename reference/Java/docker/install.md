@@ -26,8 +26,6 @@ docker-machine会在你运行 QuickStartTerminal时帮你创建一个default的d
 docker-machine ps
 ```
 
-
-
 ### docker
 
 刚刚提到的docker-machine可以管理多个docker,但是具体的某一个docker还是运行在一个虚拟机上的.
@@ -108,7 +106,10 @@ window 在 `%programdata%\docker\config\daemon.json` 里加入
 
 ### 配置镜像
 
+>配置的镜像地址可能是有时存在问题,导致pull时出现问题.之前163的镜像不知为何就老有问题.修改成官方的就好了.
+
 - 命令修改
+
 ```
 docker-machine ssh default
 sudo sed -i "s|EXTRA_ARGS='|EXTRA_ARGS='--registry-mirror=https://registry.docker-cn.com |g" /var/lib/boot2docker/profile
@@ -126,7 +127,7 @@ sudo vi /var/lib/boot2docker/profile
 修改为
 ```json
 {
-  "registry-mirrors": ["http://hub-mirror.c.163.com"]
+  "registry-mirrors": ["https://registry.docker-cn.com"]
 }
 ```
 
@@ -167,6 +168,8 @@ docker-machine ssh default
 
 
 ## mongo
+
+以mongo为例,在win10下运行docker
 
 1.下载：
 

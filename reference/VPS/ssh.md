@@ -38,6 +38,8 @@ ssh root@45.16.128.214
 
 ## 在本地生成密钥
 
+>.ssh/known_hosts 如果有之前的host要删除
+
 
 ![](ssh_files/2.jpg)
 
@@ -122,11 +124,14 @@ cat /root/.ssh/authized_keys
 
 vim /etc/ssh/sshd_config
 
+/etc/ssh/ssh_host_rsa_key
+
 将下列的内容修改为yes
 
 ```
 PermitRootLogin yes
 PubkeyAuthentication yes
+ClientAliveCountMax 30
 ```
 
 ![sshd](ssh_files/1.jpg)
@@ -159,7 +164,7 @@ vim /etc/init.d/shadowsocks restart
 
 ```
 {   "server":"0.0.0.0",
-    "server_port":8080,
+    "server_port":8088,
     "local_address":"127.0.0.1",
     "local_port":1080,
     "password":"=k1MSma7jU?e=)$5",
@@ -185,7 +190,23 @@ vim /etc/init.d/shadowsocks restart
 }
 ```
 
-
-
 为什么git bash 不能直接密码登录?
 git bash 登录还是不如putty方便..
+
+
+
+## scp
+scp source target
+
+scp root@45.76.168.244:/etc/ssh/sshd_config  /e/vpn/ssh-key
+
+本地Windows获取远程Linux文件，需要本地Windows有bash命令工具，执行
+
+```
+scp -P 8868 username@www.domain.com:/data/1.sh /d/data  
+-P(注意P是大写)是远程ssh端口(一般默认是22)
+
+本地传文件夹到远程Linux：
+scp -rp /d/data username@www.domain.com:/data
+-r 复制文件夹  -p保留原文件修改，访问时间和权限（modes）信息
+```

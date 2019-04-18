@@ -1,14 +1,14 @@
 package com.jss.app.model.entity;
 
-import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.jss.app.model.base.RowBase;
-import com.jss.app.model.dictionary.Sex;
+import com.jss.app.model.dictionary.CommonDictionary;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,20 +18,22 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@Table(name = "T_STUDENT")
+@Table(name = "T_COURSE")
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Student extends RowBase implements Serializable {
 
-	private static final long serialVersionUID = 3744549621119697113L;
-	private String name;
-	@Enumerated
-	private Sex sex;
-	private Long studno;
+public class Course extends CommonDictionary {
+	private static final long serialVersionUID = -840690077388663221L;
 	@ManyToOne
-	private Group group;
+	private Tutor tutor;
+	@ManyToMany
+	@JoinTable(name="T_COURSE_GROUP")
+	private List<Group> group;
+	private Integer academic_year;
+	private Integer term;
+
 }

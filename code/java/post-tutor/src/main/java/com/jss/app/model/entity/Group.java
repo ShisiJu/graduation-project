@@ -31,8 +31,6 @@ public class Group extends CommonDictionary {
 
 	private Integer academic_year;
 	@ManyToOne
-	private Tutor tutor;
-	@ManyToOne
 	private Institute institute;
 
 }

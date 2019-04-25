@@ -17,6 +17,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 @MappedSuperclass
 @Data
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @DynamicInsert(true)
 @DynamicUpdate
+@Accessors(chain = true)
 public class RowBase implements Serializable {
 
 	private static final long serialVersionUID = -8386266958781724931L;

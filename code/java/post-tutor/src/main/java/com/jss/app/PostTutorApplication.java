@@ -1,6 +1,9 @@
 package com.jss.app;
 
-import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -10,18 +13,25 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.app.model.dictionary.CommonDictionary;
 import com.jss.app.model.dictionary.Sex;
+import com.jss.app.model.entity.Course;
 import com.jss.app.model.entity.Group;
 import com.jss.app.model.entity.Institute;
+import com.jss.app.model.entity.Quiz;
 import com.jss.app.model.entity.School;
 import com.jss.app.model.entity.Student;
 import com.jss.app.model.entity.Tutor;
 import com.jss.app.model.entity.User;
+import com.jss.app.model.m2m.StudentCourse;
+import com.jss.app.repository.CourseRepository;
 import com.jss.app.repository.GroupRepository;
 import com.jss.app.repository.InstituteRepository;
+import com.jss.app.repository.QuizRepository;
 import com.jss.app.repository.SchoolRepository;
+import com.jss.app.repository.StudentCourseRepository;
 import com.jss.app.repository.StudentRepository;
 import com.jss.app.repository.TutorRepository;
 import com.jss.app.repository.UserRepository;
@@ -42,7 +52,24 @@ public class PostTutorApplication implements ApplicationRunner {
 	private StudentRepository studentRepository;
 	
 	@Autowired
+	private InstituteRepository instituteRepository;
+	 
+	@Autowired
+	private TutorRepository tutorRepository;
+	
+	@Autowired
+	private GroupRepository groupRepository;
+	
+	@Autowired
+	private CourseRepository courseRepository;
+	@Autowired
+	private StudentCourseRepository studentCourseRepository;
+
+	@Autowired
+	private QuizRepository quizRepository;
+	@Autowired
 	private UserRepository userRepository;
+	
 	public static void main(String[] args) {
 		SpringApplication.run(PostTutorApplication.class, args);
 	}
@@ -53,19 +80,8 @@ public class PostTutorApplication implements ApplicationRunner {
 
 	}
 
+	@Transactional
 	private void initData() {
-		
-		School school = new School();
-		school.setCode("45500");
-		school.setName("沈阳建筑大学");
-		schoolRepository.save(school);
-
-		Student student = Student.builder().name("赵丽颖").studno(1506420129L).sex(Sex.女).build();
-		studentRepository.save(student);
-		
-		User user = User.builder().username("1506420129").pwd("1506420129").type(0).build();
-		userRepository.save(user);
-		
 	}
 
 }

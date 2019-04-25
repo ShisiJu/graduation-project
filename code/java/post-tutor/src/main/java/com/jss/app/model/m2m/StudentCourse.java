@@ -1,13 +1,11 @@
 package com.jss.app.model.m2m;
 
-import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.ColumnDefault;
 
 import com.jss.app.model.base.RowBase;
 import com.jss.app.model.entity.Course;
@@ -27,14 +25,15 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@ToString(callSuper = false)
 public class StudentCourse extends RowBase {
 	private static final long serialVersionUID = -164015745985836181L;
 
+	@ManyToOne
 	private Student student;
-
+	@ManyToOne
 	private Course course;
-
+	@ColumnDefault(value = "0")
 	private Integer status;
 
 }

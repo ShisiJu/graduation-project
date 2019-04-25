@@ -24,7 +24,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@ToString(callSuper = false)
 public class Student extends RowBase implements Serializable {
 
 	private static final long serialVersionUID = 3744549621119697113L;

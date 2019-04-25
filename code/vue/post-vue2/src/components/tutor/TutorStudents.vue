@@ -1,12 +1,9 @@
 <template>
-	<div>
-		<RouterView></RouterView>
-	</div>
+	<div></div>
 </template>
 
 <script>
 export default {
-	name: 'j-student',
 	data() {
 		return {
 			tableData: [{name:"",date:"1994-1-1",address:"bj"}]
@@ -15,6 +12,5 @@ export default {
 };
 </script>
 
-<style scoped>
-	
+<style>
 </style>

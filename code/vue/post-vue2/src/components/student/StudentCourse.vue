@@ -1,26 +1,58 @@
 <template>
 	<div>
 		<el-table :data="tableData">
-			<el-table-column prop="tutor" label="日期" width="140"></el-table-column>
-			<el-table-column prop="name" label="课程名" width="140"></el-table-column>
-			<el-table-column prop="academic_year" label="学年"></el-table-column>
-			<el-table-column prop="term" label="学期"></el-table-column>
+			<el-table-column prop="course.academic_year" label="学年"></el-table-column>
+			<el-table-column prop="course.term" label="学期"></el-table-column>
+			<el-table-column prop="course.name" label="课程名"></el-table-column>
+			<el-table-column prop="course.code" label="课程编码"></el-table-column>
+			<el-table-column prop="course.tutor.institute.name" label="所属学院"></el-table-column>
+			<el-table-column prop="course.tutor.name" label="导师"></el-table-column>
 			<el-table-column label="操作">
-				<el-button type="primary">评价课程</el-button>
+				<template slot-scope="scope">
+					<el-button v-if="scope.row.status == 0"
+						type="primary"
+						@click.native.prevent="evaluateCourse(scope.row)"
+						size="small"
+					>
+						评价课程
+					</el-button>
+					<el-button v-if="scope.row.status == 1"
+						type="success"
+						size="small"
+						disabled
+					>
+						已评价
+					</el-button>
+				</template>
 			</el-table-column>
 		</el-table>
 	</div>
 </template>
 
 <script>
+import { findStudentCourse } from '@/api/axiosAPI';
+
 export default {
-	name: 'j-student-course',
+	name: 'j-student-info',
+	created: function() {
+		let studentId = this.$store.state.userInfo.obj.id;
+		
+		findStudentCourse({id:studentId}).then(res => {
+			this.tableData = res.data;
+			console.log(this.tableData);
+		});
+	},
 	data() {
 		return {
-			tableData: [
-				{ name: '高数', sex: '男', tutor: '韩子扬', academic_year: '2018', term: '春季' }
-			]
+			tableData: []
 		};
+	},
+	methods: {
+		evaluateCourse: function(data) {
+			console.log(data)
+			this.$store.commit('setQuiz', data)
+			this.$router.push('/student/quiz')
+		}
 	}
 };
 </script>

@@ -27,6 +27,8 @@
 	</div>
 </template>
 <script>
+import { userLogin, findStudenInfo } from '@/api/axiosAPI';
+
 export default {
 	data() {
 		return {
@@ -45,27 +47,26 @@ export default {
 	methods: {
 		submitForm(formName) {
 			this.$refs[formName].validate(valid => {
-				if (valid) {
-					
-				} else {
-					console.log('error submit!!');
-					return false;
-				}
+				if (!valid) return false;
+				userLogin(this.form)
+					.then(res => {
+						console.log(res);
+						if (res.status != 200) 
+							throw '账号密码错误';
+							
+						this.$store.commit('setUserInfo', res.data);
+						this.$router.push('/common')
+					})
+					.catch(err => {
+						alert('账号密码错误')
+						console.log(err)
+					});
 			});
-			this.axios
-				.post('login/login', this.$qs.stringify(this.form), {
-					headers: { 'content-type': 'application/x-www-form-urlencoded' }
-				})
-				.then(res => {
-					console.log(res);
-					//设置store里的type和username
-					this.$router.push('/common');
-				});
-			
 		}
 	}
 };
 </script>
+
 <style>
 * {
 	margin: 0;

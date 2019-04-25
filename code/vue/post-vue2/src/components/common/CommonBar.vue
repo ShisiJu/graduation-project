@@ -3,35 +3,37 @@
 		<el-container>
 			<el-aside width="15%">
 				<el-menu>
-					<el-submenu index="1" name="student" v-if="type === 'student'">
+					<el-submenu index="1" name="student" v-if="userInfo.type === 0">
 						<template slot="title">
 							<i class="el-icon-message"></i>
 							学生信息
 						</template>
 						<el-menu-item-group>
-							<el-menu-item index="1-1">我的导师</el-menu-item>
-							<el-menu-item index="1-2">
-								<router-link :to="'course'">我的课程</router-link>
-							</el-menu-item>
-							<el-menu-item index="1-3">
-								<router-link :to="'info'">个人信息</router-link>
-							</el-menu-item>
+							<router-link :to="'/student/course'">
+								<el-menu-item index="1-1">我的课程</el-menu-item>
+							</router-link>
+							<router-link :to="'/student/info'">
+								<el-menu-item index="1-2">个人信息</el-menu-item>
+							</router-link>
 						</el-menu-item-group>
 					</el-submenu>
 
-					<el-submenu index="2" name="tutor">
+					<el-submenu index="2" name="tutor" v-if="userInfo.type === 1">
 						<template slot="title">
 							<i class="el-icon-menu"></i>
 							导师信息
 						</template>
 						<el-menu-item-group>
-							<el-menu-item index="2-1">我的学生</el-menu-item>
-							<el-menu-item index="2-2">我的课程</el-menu-item>
-							<el-menu-item index="2-3">个人信息</el-menu-item>
+							<router-link :to="'/tutor/course'">
+								<el-menu-item index="2-1">我的课程</el-menu-item>
+							</router-link>
+							<router-link :to="'/tutor/info'">
+								<el-menu-item index="2-2">个人信息</el-menu-item>
+							</router-link>
 						</el-menu-item-group>
 					</el-submenu>
 
-					<el-submenu index="3" name="admin">
+					<el-submenu index="3" name="admin" v-if="userInfo.type === 2">
 						<template slot="title">
 							<i class="el-icon-setting"></i>
 							管理员
@@ -68,11 +70,11 @@
 					<el-dropdown>
 						<i class="el-icon-setting" style="margin-right: 15px;font-size: large;"></i>
 						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item>个人信息</el-dropdown-item>
-							<el-dropdown-item>登出</el-dropdown-item>
+							<el-dropdown-item @click.native.prevent='goInfo()'>个人信息</el-dropdown-item>
+							<el-dropdown-item @click.native.prevent="logout()">登出</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
-					<span>{{ name }}</span>
+					<span>{{ objInfo.name }}</span>
 				</el-header>
 
 				<el-main><router-view></router-view></el-main>
@@ -86,8 +88,31 @@ export default {
 	name: 'j-aside',
 	data() {
 		// 可以把 type 传到子组件  session里?
-		return { name: '琚世思', type: this.$route.query.type };
-	}
+		return {
+			userInfo: this.$store.state.userInfo.user,
+			objInfo: this.$store.state.userInfo.obj
+		};
+	},
+	methods: {
+		logout:function() {
+			console.log('------logout')
+			this.$store.commit('setUserInfo', null);
+			this.$router.push('/');
+		},goInfo:function(){
+			console.log('------goInfo')
+			this.$router.push('/'+this.userType+'/info');
+		}
+	},computed: {
+		userType() {
+			let type = this.$store.state.userInfo.user.type;
+			if(type===0)
+				return 'student'
+			else if (type === 1)
+				return 'tutor'
+			else if(type === 2)
+				return 'admin'
+		}
+	},
 };
 </script>
 
@@ -95,10 +120,8 @@ export default {
 a {
 	text-decoration: none;
 	color: #000000;
-	
 }
-.router-link-exact-active
-{
-color: #409EFF;	
+.router-link-exact-active {
+	color: #409eff;
 }
 </style>

@@ -6,7 +6,7 @@
 
 <script>
 export default {
-	name: 'j-student',
+	name: 'j-tutor',
 	data() {
 		return {
 			tableData: [{name:"",date:"1994-1-1",address:"bj"}]

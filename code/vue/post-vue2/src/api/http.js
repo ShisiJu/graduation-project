@@ -1,57 +1,60 @@
+import Vue from 'vue'
+//axios post请求需要JSON参数化
+import qs from 'qs'
+//axios
 import axios from 'axios'
-import {
-	Loading,
-	Message
-} from 'element-ui'
-import router from '../router/index.js'
-let loading
+//设置默认路径
+axios.defaults.baseURL = '/api'
+// 先导入vuex,因为我们要使用到里面的状态对象
+import store from '@/store/index';
 
-function startLoading() {
-	loading = Loading.service({
-		lock: true,
-		text: '加载中....',
-		background: 'rgba(0, 0, 0, 0.7)'
-	})
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+
+axios.defaults.timeout = 10000;
+
+const jsonHeader = {
+	headers: {
+		'Content-Type': 'application/json;charset=UTF-8'
+	}
+};
+
+
+export function get(url, params) {
+	return new Promise((resolve, reject) => {
+		axios.get(url, {
+			params: params
+		}).then(res => {
+			resolve(res);
+		}).catch(err => {
+			reject(err)
+		})
+	});
 }
 
-function endLoading() {
-	loading.close()
+export function post(url, params) {
+	return new Promise((resolve, reject) => {
+		axios.post(url, qs.stringify(params))
+			.then(res => {
+				resolve(res);
+			})
+			.catch(err => {
+				reject(err)
+			})
+	});
 }
-// 请求拦截
-axios.interceptors.request.use(
-	(confing) => {
-		startLoading()
-		//设置请求头
-		if (localStorage.eToken) {
-			confing.headers.Authorization = localStorage.eToken
-		}
-		return confing
-	},
-	(error) => {
-		return Promise.reject(error)
-	}
-)
-//响应拦截
-axios.interceptors.response.use(
-	(response) => {
-		endLoading()
-		return response
-	},
-	(error) => {
-		Message.error(error.response.data)
-		endLoading()
-		// 获取状态码
-		const {
-			status
-		} = error.response
-		if (status === 401) {
-			Message.error('请重新登录')
-			//清楚token
-			localStorage.removeItem('eToken')
-			//跳转到登录页面
-			router.push('/login')
-		}
-		return Promise.reject(error)
-	}
-)
-export default axios
+
+export function postJson(url, params) {
+	return new Promise((resolve, reject) => {
+		axios.post(url, params, jsonHeader)
+			.then(res => {
+				resolve(res);
+			})
+			.catch(err => {
+				reject(err)
+			})
+	});
+}
+
+export default {
+
+}

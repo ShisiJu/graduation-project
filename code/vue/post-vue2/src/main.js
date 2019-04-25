@@ -5,8 +5,8 @@ import App from './App'
 import router from './router'
 import 'element-ui/lib/theme-chalk/index.css'
 import ElementUI from 'element-ui'
-import store from './store/'
-import axiosAPI from './api'
+import store from '@/store/index.js'
+
 
 Vue.config.productionTip = false
 Vue.use(ElementUI);

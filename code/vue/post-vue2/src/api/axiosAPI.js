@@ -20,3 +20,14 @@ export const insertQuizWithAnswers = data => postJson('quiz/quizMap',data)
 export const findCoursesByTutor = data => get('course/tutor',data)
 
 export const findCourseDetail = data => postJson('quiz/detail',data)
+
+// 管理员
+export const findStudenPage = data => get('student/page',data)
+
+export const countStudents = data => get('student/count',data)
+
+export const insertStudent = data => get('student/insert',data)
+
+export const updateStudent = data => get('student/update',data)
+
+export const getAllGroup = data => get('group/all',data)

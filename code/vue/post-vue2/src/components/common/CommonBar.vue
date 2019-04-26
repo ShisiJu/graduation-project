@@ -43,8 +43,12 @@
 							<template slot="title">
 								学生
 							</template>
-							<el-menu-item index="3-1-1">学生个人信息</el-menu-item>
-							<el-menu-item index="3-1-2">学生选课信息</el-menu-item>
+							<router-link :to="'/admin/students'">
+								<el-menu-item index="3-1-1">学生个人信息</el-menu-item>
+							</router-link>
+								<router-link :to="'/admin/groups'">
+								<el-menu-item index="3-1-2">组信息</el-menu-item>
+							</router-link>
 						</el-submenu>
 
 						<el-submenu index="3-2">

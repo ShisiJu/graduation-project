@@ -86,3 +86,24 @@ docker exec -it mongo bash
 ```
 mongo -u root -p root
 ```
+
+
+使用`graduation`数据库
+```
+use graduation;
+```
+
+
+创建用户
+注意 createUser是函数要加上 `()` 最后别忘记 `;` 结束
+```
+db.createUser(
+	{
+	user:"jss",
+	pwd:"jss",
+	roles:[
+	 {role:"readWrite",db:"graduation"}
+	 ]
+	}
+);
+```

@@ -134,6 +134,11 @@ sudo vi /var/lib/boot2docker/profile
 [官方镜像说明](https://www.docker-cn.com/registry-mirror)
 
 
+```
+systemctl daemon-reload
+systemctl restart docker
+```
+
 ## 成功
 
 成功之后会出现小鲸鱼

@@ -31,7 +31,7 @@ public class Student extends RowBase implements Serializable {
 	private String name;
 	@Enumerated
 	private Sex sex;
-	private Long studno;
+	private String studno;
 	@ManyToOne
 	private Group group;
 }

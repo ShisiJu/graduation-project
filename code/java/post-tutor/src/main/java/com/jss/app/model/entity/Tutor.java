@@ -31,7 +31,7 @@ public class Tutor extends RowBase implements Serializable {
 	private String name;
 	@Enumerated
 	private Sex sex;
-	private Long studno;
+	private String studno;
 	private String title;
 	@ManyToOne
 	private Institute institute;

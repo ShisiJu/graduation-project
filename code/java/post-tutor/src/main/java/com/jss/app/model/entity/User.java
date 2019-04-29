@@ -25,7 +25,7 @@ import lombok.ToString;
 public class User extends RowBase{
 	private static final long serialVersionUID = 7589484456455745036L;
 	private String username;
-	private Long studno;
+	private String studno;
 	@ColumnDefault(value="123456")
 	private String pwd;
 	private Integer type;

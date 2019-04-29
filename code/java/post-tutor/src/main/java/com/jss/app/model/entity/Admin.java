@@ -32,7 +32,7 @@ public class Admin extends RowBase {
 
 	private String name;
 	@ColumnDefault(value = "0")
-	private Long studno;
+	private String studno;
 	@Enumerated
 	private Sex sex;
 

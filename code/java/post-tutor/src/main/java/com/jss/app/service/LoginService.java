@@ -32,7 +32,7 @@ public class LoginService {
 	}
 	
 	
-	public Object findObject(Integer type,Long studno) {
+	public Object findObject(Integer type,String studno) {
 		if(type == 0) 
 			return studentRepository.findByStudno(studno);
 		

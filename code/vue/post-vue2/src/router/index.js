@@ -20,6 +20,7 @@ import Admin from '@/components/admin/Admin'
 import AdminInfo from '@/components/admin/AdminInfo'
 import AdminStudentsList from '@/components/admin/AdminStudentsList'
 import AdminGroupsList from '@/components/admin/AdminGroupsList'
+import AdminTutorsList from '@/components/admin/AdminTutorsList'
 
 Vue.use(Router)
 
@@ -74,6 +75,9 @@ export default new Router({
 			}, {
 				path: 'groups',
 				component: AdminGroupsList
+			},{
+				path: 'tutors',
+				component: AdminTutorsList
 			}]
 		}]
 	}]

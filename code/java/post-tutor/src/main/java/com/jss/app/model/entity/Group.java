@@ -1,5 +1,7 @@
 package com.jss.app.model.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -26,7 +28,7 @@ import lombok.ToString;
 @Builder
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Group extends CommonDictionary {
+public class Group extends CommonDictionary implements Serializable{
 	private static final long serialVersionUID = -8088773384139496113L;
 
 	private Integer academic_year;

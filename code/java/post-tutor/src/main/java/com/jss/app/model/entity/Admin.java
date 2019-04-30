@@ -1,5 +1,7 @@
 package com.jss.app.model.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
@@ -27,7 +29,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 
-public class Admin extends RowBase {
+public class Admin extends RowBase  implements Serializable{
 	private static final long serialVersionUID = 8945426178675295698L;
 
 	private String name;

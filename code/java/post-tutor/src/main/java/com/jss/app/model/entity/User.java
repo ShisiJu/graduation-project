@@ -1,5 +1,7 @@
 package com.jss.app.model.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -22,7 +24,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class User extends RowBase{
+public class User extends RowBase implements Serializable{
 	private static final long serialVersionUID = 7589484456455745036L;
 	private String username;
 	private String studno;

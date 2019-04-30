@@ -1,5 +1,7 @@
 package com.jss.app.model.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -14,16 +16,16 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@Table(name="T_INSTITUTE")
+@Table(name = "T_INSTITUTE")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Institute extends CommonDictionary{
+public class Institute extends CommonDictionary implements Serializable {
 	private static final long serialVersionUID = 6873272756110322397L;
 	@ManyToOne
 	private School school;
-	
+
 }

@@ -1,5 +1,6 @@
 package com.jss.app.model.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -30,7 +31,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 
-public class Quiz extends RowBase {
+public class Quiz extends RowBase  implements Serializable{
 	private static final long serialVersionUID = 2233445329770672168L;
 //	@ManyToOne
 //	private Student student;

@@ -1,5 +1,7 @@
 package com.jss.app.model.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -18,7 +20,7 @@ import lombok.ToString;
 @Builder
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class School extends CommonDictionary {
+public class School extends CommonDictionary implements Serializable {
 
 	private static final long serialVersionUID = 7457810010934020148L;
 

@@ -1,5 +1,6 @@
 package com.jss.app.model.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -30,7 +31,7 @@ import lombok.experimental.Accessors;
 @ToString(callSuper = false)
 @Accessors(chain = true)
 
-public class Course extends CommonDictionary {
+public class Course extends CommonDictionary implements Serializable {
 	private static final long serialVersionUID = -840690077388663221L;
 	@ManyToOne
 	private Tutor tutor;

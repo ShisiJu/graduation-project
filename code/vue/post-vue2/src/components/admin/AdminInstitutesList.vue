@@ -1,22 +1,11 @@
 <template>
 	<div>
-		<div>
-			<el-input v-model="exactName" placeholder="请输入组名称" style="width: 10.25rem;margin-right: 3.125rem;"></el-input>
-			<span style="margin: 1.25rem;">学院</span>
-
-			<el-select v-model="instituteIds" multiple placeholder="请选择学院">
-				<el-option v-for="item in instituteOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-			</el-select>
-			<el-button style="margin-left: 1.5rem;" icon="el-icon-search" circle @click="handleSearch"></el-button>
-			<el-button @click="clearSearch" circle><i class="el-icon-delete"></i></el-button>
-			<el-button style="margin-left: 12.5rem;" type="success" size="small" @click="handleAdd()">添加组</el-button>
-		</div>
+		<div><el-button style="margin-left: 12.5rem;" type="success" size="small" @click="handleAdd()">添加学院</el-button></div>
 
 		<el-table :data="tableData">
-			<el-table-column prop="academic_year" label="学年"></el-table-column>
+			<el-table-column prop="code" label="编码"></el-table-column>
 			<el-table-column prop="name" label="名称"></el-table-column>
-			<el-table-column prop="institute.name" label="学院"></el-table-column>
-			<el-table-column label="操作" width="160">
+			<el-table-column label="操作">
 				<template slot-scope="scope">
 					<el-button size="small" @click="handleEdit(scope.row, scope.$index)">编辑</el-button>
 					<el-button size="small" type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
@@ -38,13 +27,7 @@
 		<el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
 			<el-form :model="selectedTableColumn">
 				<el-form-item label="编码" label-width="100px"><el-input v-model="selectedTableColumn.code"></el-input></el-form-item>
-				<el-form-item label="名称" label-width="100px"><el-input v-model="selectedTableColumn.name" auto-complete="off"></el-input></el-form-item>
-				<el-form-item label="学年" label-width="100px"><el-input v-model="selectedTableColumn.academic_year"></el-input></el-form-item>
-				<el-form-item label="学院" label-width="100px">
-					<el-select v-model="selectedInstituteOption" placeholder="请选择">
-						<el-option v-for="item in instituteOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-					</el-select>
-				</el-form-item>
+				<el-form-item label="学院名称" label-width="100px"><el-input v-model="selectedTableColumn.name" auto-complete="off"></el-input></el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="handleCancle">取 消</el-button>
@@ -55,26 +38,23 @@
 </template>
 
 <script>
-import { searchGroups, getAllInstitute, saveGroup, deleteGroup, turnToEleArr, cloneObject } from '@/api/axiosAPI';
+import { pageInstitues, saveInstitue, deleteInstitue, turnToEleArr, cloneObject } from '@/api/axiosAPI';
 
 export default {
-	name: 'j-admin-group-list',
+	name: 'j-admin-institute-list',
 	data() {
 		return {
 			tableData: [],
 			index: 1,
 			pageSize: 10,
 			total: 10,
-			exactName: '',
+			exactStudno: '',
 			dialogFormVisible: false,
 			dialogTitle: '',
 			selectedInstituteOption: '',
 			selectedTableColumn: {},
 			selectedTableColumnTemp: {},
-			tableDataIndex: 0,
-			instituteProps: { label: 'name', value: 'id' },
-			instituteOptions: [],
-			instituteIds: []
+			tableDataIndex: 0
 		};
 	},
 	methods: {
@@ -86,11 +66,10 @@ export default {
 			this.index = index;
 			this.refreshTableData();
 		},
-		handleEdit(group, tableDataIndex) {
+		handleEdit(column, tableDataIndex) {
 			this.tableDataIndex = tableDataIndex;
-			this.selectedTableColumn = group;
-			this.selectedInstituteOption = group.institute.id;
-			this.dialogTitle = '修改组信息';
+			this.selectedTableColumn = column;
+			this.dialogTitle = '修改学院信息';
 			this.dialogFormVisible = true;
 			this.selectedTableColumnTemp = cloneObject(this.selectedTableColumn);
 		},
@@ -99,12 +78,12 @@ export default {
 			this.selectedTableColumnTemp = {};
 			this.dialogFormVisible = false;
 		},
-		handleDelete(groupId) {
+		handleDelete(columnId) {
 			let confirmed = confirm('确认删除');
 			if (confirmed === false) {
 				return;
 			}
-			deleteGroup({ groupId })
+			deleteInstitue({ instituteId: columnId })
 				.then(res => {
 					this.refreshTableData();
 				})
@@ -116,16 +95,15 @@ export default {
 		handleAdd() {
 			this.dialogFormVisible = true;
 			this.selectedTableColumn = {};
-			this.dialogTitle = '添加组信息';
+			this.dialogTitle = '添加学院信息';
 		},
 		saveColumnData() {
 			let confirmed = confirm('确定保存');
 			if (confirmed === false) {
 				return;
 			}
-
-			let savedTutor = { group: this.selectedTableColumn, instituteId: this.selectedInstituteOption };
-			saveGroup(savedTutor)
+			let savedData = this.selectedTableColumn;
+			saveInstitue(savedData)
 				.then(res => {
 					this.refreshTableData();
 					this.dialogFormVisible = false;
@@ -136,31 +114,20 @@ export default {
 				});
 		},
 
-		refreshTableData() {
-			let instituteIds = this.instituteIds;
-			let name = this.exactName;
+		refreshTableData(pageInfo) {
 			let pageSize = this.pageSize;
 			let index = this.index;
-			let data = { instituteIds, name, pageSize, index };
-			searchGroups(data).then(res => {
+			let data = null;
+			data = { pageSize, index };
+
+			pageInstitues(data).then(res => {
 				this.tableData = res.data.content;
 				this.total = res.data.totalElements;
 			});
-		},
-		handleSearch() {
-			this.refreshTableData();
-		},
-		clearSearch() {
-			this.exactName = '';
-			this.instituteIds = [];
 		}
 	},
 	created: function() {
 		this.refreshTableData();
-		getAllInstitute({}).then(res => {
-			let eleArr = turnToEleArr(res.data);
-			this.instituteOptions = eleArr;
-		});
 	}
 };
 </script>

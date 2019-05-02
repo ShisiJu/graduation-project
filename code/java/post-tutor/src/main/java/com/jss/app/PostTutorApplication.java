@@ -41,6 +41,7 @@ import com.jss.app.repository.StudentCourseRepository;
 import com.jss.app.repository.StudentRepository;
 import com.jss.app.repository.TutorRepository;
 import com.jss.app.repository.UserRepository;
+import com.jss.app.service.CourseService;
 import com.jss.app.service.LoginService;
 import com.jss.app.service.StudentService;
 import com.jss.app.spec.StudentSpecs;
@@ -57,6 +58,9 @@ public class PostTutorApplication implements ApplicationRunner {
 	private SchoolRepository schoolRepository;
 	@Autowired
 	private StudentRepository studentRepository;
+
+	@Autowired
+	private CourseService courseService;
 
 	@Autowired
 	private InstituteRepository instituteRepository;
@@ -92,6 +96,13 @@ public class PostTutorApplication implements ApplicationRunner {
 	private void initData() {
 		Sort sort = new Sort(Sort.Direction.ASC, "studno");
 		Pageable pageable = PageRequest.of(0, 10, sort);
+		List<Long> groupsIds = new ArrayList<>();
+		groupsIds.add(1L);
+		groupsIds.add(2L);
+		Optional<Course> course = courseRepository.findById(1L);
+		Course saveCourse = courseService.saveCourse(course.get(), null, groupsIds);
+
+		int l = 1;
 	}
 
 }

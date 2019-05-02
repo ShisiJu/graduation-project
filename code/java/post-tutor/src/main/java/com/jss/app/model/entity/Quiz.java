@@ -3,6 +3,7 @@ package com.jss.app.model.entity;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -33,11 +34,7 @@ import lombok.ToString;
 
 public class Quiz extends RowBase  implements Serializable{
 	private static final long serialVersionUID = 2233445329770672168L;
-//	@ManyToOne
-//	private Student student;
-//	@ManyToOne
-//	private Course course;
-	@OneToOne
+	@OneToOne(cascade=CascadeType.REMOVE)
 	private StudentCourse studentCourse;
 	@ColumnDefault(value = "0")
 	private Integer template;

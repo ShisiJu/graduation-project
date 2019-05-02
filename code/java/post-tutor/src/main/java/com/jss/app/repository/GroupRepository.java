@@ -2,6 +2,7 @@ package com.jss.app.repository;
 
 import java.util.List;
 
+
 import com.jss.app.model.entity.Group;
 
 public interface GroupRepository extends RowBaseRepository<Group, Long> {

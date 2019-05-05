@@ -13,7 +13,8 @@ const state = {
 	info: {},
 	quiz: {},
 	course: {},
-	quizAnswers: []
+	quizAnswers: [],
+	tutor: {}
 }
 
 const mutations = {
@@ -31,6 +32,9 @@ const mutations = {
 	},
 	setCourse(state, course) {
 		state.course = course;
+	},
+	setTutor(state, tutor) {
+		state.tutor = tutor;
 	}
 }
 

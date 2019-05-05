@@ -1,7 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
+
 import Login from '@/components/login/Login'
 import CommonBar from '@/components/common/CommonBar'
+import UpdatePwd from '@/components/common/UpdatePwd'
+
 
 import Student from '@/components/student/Student'
 import StudentInfo from '@/components/student/StudentInfo'
@@ -14,6 +18,7 @@ import TutorInfo from '@/components/tutor/TutorInfo'
 import TutorStudents from '@/components/tutor/TutorStudents'
 import TutorCourses from '@/components/tutor/TutorCourses'
 import TutorCourseDetail from '@/components/tutor/TutorCourseDetail'
+import TutorCourseOutline from '@/components/tutor/TutorCourseOutline'
 
 
 import Admin from '@/components/admin/Admin'
@@ -22,6 +27,10 @@ import AdminStudentsList from '@/components/admin/AdminStudentsList'
 import AdminGroupsList from '@/components/admin/AdminGroupsList'
 import AdminTutorsList from '@/components/admin/AdminTutorsList'
 import AdminInstitutesList from '@/components/admin/AdminInstitutesList'
+import AdminCoursesList from '@/components/admin/AdminCoursesList'
+import AdminUserList from '@/components/admin/AdminUserList'
+import AdminCourseCount from '@/components/admin/AdminCourseCount'
+
 
 Vue.use(Router)
 
@@ -63,7 +72,12 @@ export default new Router({
 			}, {
 				path: 'course-detail',
 				component: TutorCourseDetail
-			}]
+			},
+			{
+				path: 'course-outline',
+				component: TutorCourseOutline
+			}
+			]
 		}, {
 			path: '/admin',
 			component: Admin,
@@ -76,12 +90,24 @@ export default new Router({
 			}, {
 				path: 'groups',
 				component: AdminGroupsList
-			},{
+			}, {
 				path: 'tutors',
 				component: AdminTutorsList
-			},{
+			}, {
 				path: 'institutes',
 				component: AdminInstitutesList
+			}, {
+				path: 'courses',
+				component: AdminCoursesList
+			}, {
+				path: 'users',
+				component: AdminUserList
+			}, {
+				path: 'course-count',
+				component: AdminCourseCount
+			}, {
+				path: 'test',
+				component: TutorCourseOutline
 			}]
 		}]
 	}]

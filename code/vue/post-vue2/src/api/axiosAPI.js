@@ -36,6 +36,8 @@ export const getAllInstitute = data => get('institute/all', data)
 
 export const getGroupByInstituteIdIn = data => postJson('group/institute_ids', data)
 
+export const getAllTutor = data => get('tutor/all', data)
+
 // Student CRUD
 export const searchStudents = data => get('student/searchStudents', data)
 
@@ -51,11 +53,11 @@ export const saveTutor = data => postJson('tutor/saveTutor', data)
 export const deleteTutor = data => get('tutor/deleteTutor', data)
 
 // Institute CRUD
-export const pageInstitues = data => post('/institute/page',data)
+export const pageInstitues = data => post('/institute/page', data)
 
-export const saveInstitue = data => postJson('/institute/save',data)
+export const saveInstitue = data => postJson('/institute/save', data)
 
-export const deleteInstitue = data => get('/institute/delete',data)
+export const deleteInstitue = data => get('/institute/delete', data)
 
 
 // Group CRUD
@@ -65,7 +67,23 @@ export const saveGroup = data => postJson('group/saveGroup', data)
 
 export const deleteGroup = data => get('group/deleteGroup', data)
 
+// Course CRUD
+export const searchCourses = data => postJson('course/search', data)
 
+export const saveCourse = data => postJson('course/save', data)
+
+export const deleteCourse = data => get('course/delete', data)
+
+export const getGroupsByCourseId = data => get('course/findGroupsByCourseId', data)
+
+// User CRUD
+export const searchUser = data => postJson('user/search', data)
+
+export const deleteUser = data => get('user/delete', data)
+
+export const updatePwd = data => post('user/updatePwd', data)
+
+export const resetPwd = data => post('user/resetPwd', data)
 
 
 
@@ -76,12 +94,15 @@ export const cloneObject = obj => {
 	return JSON.parse(objStr);
 }
 
-export const turnToEleArr = arr => {
+export const turnToEleArr = (arr, other) => {
 	let eleObj = [];
 	arr.forEach(e => {
 		let obj = {};
 		obj['label'] = e.name;
 		obj['value'] = e.id;
+		if (other != null) {
+			obj[other] = e[other];
+		}
 		eleObj.push(obj);
 	});
 	return eleObj;

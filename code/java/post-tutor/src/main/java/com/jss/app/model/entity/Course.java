@@ -3,6 +3,7 @@ package com.jss.app.model.entity;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinTable;
@@ -40,7 +41,7 @@ public class Course extends CommonDictionary implements Serializable {
 	@ManyToMany
 	@JoinTable(name = "T_COURSE_GROUP")
 	private List<Group> group;
-	private Integer academic_year;
+	private Integer academicYear;
 	@Enumerated
 	private Term term;
 

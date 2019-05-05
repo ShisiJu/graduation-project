@@ -16,11 +16,13 @@ import org.springframework.util.StringUtils;
 import com.github.wenhao.jpa.Specifications;
 import com.jss.app.model.entity.Institute;
 import com.jss.app.model.entity.Tutor;
+import com.jss.app.model.entity.User;
 import com.jss.app.repository.InstituteRepository;
 import com.jss.app.repository.TutorRepository;
+import com.jss.app.repository.UserRepository;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class TutorService {
 
 	@Autowired
@@ -29,8 +31,18 @@ public class TutorService {
 	@Autowired
 	private InstituteRepository instituteRepository;
 
-	public void deleteTutor(Long tutorId) {
+	@Autowired
+	private UserRepository userRepository;
 
+	public List<Tutor> findAll() {
+
+		return tutorRepository.findAll();
+	}
+
+	@Transactional
+	public void deleteTutor(Long tutorId) {
+		Optional<Tutor> tutor = tutorRepository.findById(tutorId);
+		userRepository.deleteByStudno(tutor.get().getStudno());
 		tutorRepository.deleteById(tutorId);
 	}
 
@@ -49,11 +61,18 @@ public class TutorService {
 		return tutorRepository.findAll(specification, pageable);
 	}
 
+	@Transactional
 	public Tutor saveTutor(Tutor tutor, Long instituteId) {
 
 		Optional<Institute> institute = instituteRepository.findById(instituteId);
 		if (!institute.isPresent()) {
 			throw new RuntimeException("institute_id: " + instituteId + " 不存在");
+		}
+
+		if (institute.get().getId() == null) {
+			String studno = tutor.getStudno();
+			User user = User.builder().studno(studno).username(studno).pwd(studno).type(1).build();
+			userRepository.save(user);
 		}
 
 		tutor.setInstitute(institute.get());

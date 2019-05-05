@@ -31,7 +31,7 @@ import lombok.ToString;
 public class Group extends CommonDictionary implements Serializable{
 	private static final long serialVersionUID = -8088773384139496113L;
 
-	private Integer academic_year;
+	private Integer academicYear;
 	@ManyToOne
 	private Institute institute;
 

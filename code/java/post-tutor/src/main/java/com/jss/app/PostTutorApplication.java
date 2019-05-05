@@ -96,13 +96,7 @@ public class PostTutorApplication implements ApplicationRunner {
 	private void initData() {
 		Sort sort = new Sort(Sort.Direction.ASC, "studno");
 		Pageable pageable = PageRequest.of(0, 10, sort);
-		List<Long> groupsIds = new ArrayList<>();
-		groupsIds.add(1L);
-		groupsIds.add(2L);
-		Optional<Course> course = courseRepository.findById(1L);
-		Course saveCourse = courseService.saveCourse(course.get(), null, groupsIds);
-
-		int l = 1;
+	
 	}
 
 }

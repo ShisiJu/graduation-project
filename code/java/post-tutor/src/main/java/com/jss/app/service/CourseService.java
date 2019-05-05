@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Enumerated;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -22,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.wenhao.jpa.Specifications;
+import com.jss.app.model.dictionary.Term;
 import com.jss.app.model.entity.Course;
 import com.jss.app.model.entity.Group;
 import com.jss.app.model.entity.Course;
@@ -70,16 +73,36 @@ public class CourseService {
 
 	}
 
-	public Page<Course> searchCourses(String name, List<Long> instituteIds, Integer index, Integer pageSize) {
+	public Page<Course> searchCourses(JSONObject joCourse) {
 
-		Sort sort = new Sort(Sort.Direction.ASC, "code");
+		String name = joCourse.getString("name");
+
+		List<Long> instituteIds = null;
+		boolean boolIns = false;
+
+		if (joCourse.getJSONArray("instituteIds") != null) {
+			instituteIds = joCourse.getJSONArray("instituteIds").toJavaList(Long.class);
+			boolIns = !instituteIds.isEmpty();
+		}
+
+		Integer index = joCourse.getInteger("index");
+		Integer pageSize = joCourse.getInteger("pageSize");
+		Integer academicYear = joCourse.getInteger("academicYear");
+		Optional<Long> tutorId = Optional.ofNullable(joCourse.getLong("tutorId"));
+
+		Term term = null;
+		if (joCourse.getString("term") != null) {
+			term = Term.valueOf(joCourse.getString("term"));
+		}
+
+		Sort sort = new Sort(Sort.Direction.DESC, "academicYear", "term");
 		Pageable pageable = PageRequest.of(index - 1, pageSize, sort);
-
-		boolean boolIns = !instituteIds.isEmpty();
 
 		Specification<Course> specification = Specifications.<Course>and()
 				.like(!StringUtils.isEmpty(name), "name", "%" + name + "%")
-				.in(boolIns, "tutor.institute.id", instituteIds.toArray()).build();
+				.eq(academicYear != null, "academicYear", academicYear).eq(term != null, "term", term)
+				.in(boolIns, "tutor.institute.id", boolIns ? instituteIds.toArray() : null)
+				.eq(tutorId.isPresent(), "tutor.id", tutorId.orElse(null)).build();
 
 		return courseRepository.findAll(specification, pageable);
 	}
@@ -99,7 +122,7 @@ public class CourseService {
 			Optional<Tutor> tutor = tutorRepository.findById(tutorId);
 			course.setTutor(tutor.get());
 		}
-
+		Course savedCourse = courseRepository.save(course);
 		if (newGroupIds != null) {
 			Long courseId = course.getId();
 			// 动态地添加学生,需要先将不再属于课程的group的学生删除
@@ -112,7 +135,7 @@ public class CourseService {
 			}
 		}
 
-		return courseRepository.save(course);
+		return savedCourse;
 	}
 
 	@Transactional
@@ -161,10 +184,16 @@ public class CourseService {
 
 	}
 
-	public List<Long> insertedStudentIds(Long courseId, List<Long> newGroupIds) {
+	public List<Long> findGroupsByCourseId(Long courseId) {
 
 		List<BigInteger> groupId = courseRepository.findGroupIdsByCourseId(courseId);
-		List<Long> oldGroupIds = DataBaseConvertor.toListLong(groupId);
+		return DataBaseConvertor.toListLong(groupId);
+	}
+
+	@Transactional
+	public List<Long> insertedStudentIds(Long courseId, List<Long> newGroupIds) {
+
+		List<Long> oldGroupIds = findGroupsByCourseId(courseId);
 
 		List<Long> deleteGroupIds = new ArrayList<>();
 		List<Long> insertGroupIds = new ArrayList<>();

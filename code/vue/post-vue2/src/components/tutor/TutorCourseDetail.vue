@@ -2,7 +2,7 @@
 	<div>
 		<div class="switch">
 			<el-switch v-model="chart" active-text="表格" inactive-text="图表"></el-switch>
-			----
+			<span>--{{ course.name }} -- {{course.tutor.name}}--</span>
 			<span>评价人数: {{ count }}</span>
 		</div>
 		<div v-show="chart">
@@ -59,7 +59,8 @@ export default {
 			chart: true,
 			socreChart: {},
 			descData: [],
-			descShow: 3
+			descShow: 3,
+			course:{}
 		};
 	},
 	methods: {
@@ -105,6 +106,7 @@ export default {
 	},
 	created: function() {
 		let course = this.$store.state.course;
+		this.course = course;
 		findCourseDetail(course).then(res => {
 			this.originalData = res.data;
 			this.tableData = this.getShowData(this.originalData);
@@ -127,7 +129,6 @@ export default {
 .switch {
 	position: relative;
 	left: 0rem;
-	width: 18.75rem;
 }
 
 .jchart {

@@ -13,7 +13,7 @@
 		</div>
 
 		<el-table :data="tableData">
-			<el-table-column prop="academic_year" label="学年"></el-table-column>
+			<el-table-column prop="academicYear" label="学年"></el-table-column>
 			<el-table-column prop="name" label="名称"></el-table-column>
 			<el-table-column prop="institute.name" label="学院"></el-table-column>
 			<el-table-column label="操作" width="160">
@@ -39,7 +39,7 @@
 			<el-form :model="selectedTableColumn">
 				<el-form-item label="编码" label-width="100px"><el-input v-model="selectedTableColumn.code"></el-input></el-form-item>
 				<el-form-item label="名称" label-width="100px"><el-input v-model="selectedTableColumn.name" auto-complete="off"></el-input></el-form-item>
-				<el-form-item label="学年" label-width="100px"><el-input v-model="selectedTableColumn.academic_year"></el-input></el-form-item>
+				<el-form-item label="学年" label-width="100px"><el-input v-model="selectedTableColumn.academicYear"></el-input></el-form-item>
 				<el-form-item label="学院" label-width="100px">
 					<el-select v-model="selectedInstituteOption" placeholder="请选择">
 						<el-option v-for="item in instituteOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -124,8 +124,8 @@ export default {
 				return;
 			}
 
-			let savedTutor = { group: this.selectedTableColumn, instituteId: this.selectedInstituteOption };
-			saveGroup(savedTutor)
+			let savedData = { group: this.selectedTableColumn, instituteId: this.selectedInstituteOption };
+			saveGroup(savedData)
 				.then(res => {
 					this.refreshTableData();
 					this.dialogFormVisible = false;

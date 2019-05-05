@@ -44,10 +44,13 @@
 								基本信息
 							</template>
 							<router-link :to="'/admin/students'">
-								<el-menu-item index="3-1-1">学生个人信息</el-menu-item>
+								<el-menu-item index="3-1-1">学生信息</el-menu-item>
 							</router-link>
 							<router-link :to="'/admin/tutors'">
-								<el-menu-item index="3-1-2">导师个人信息</el-menu-item>
+								<el-menu-item index="3-1-2">导师信息</el-menu-item>
+							</router-link>
+							<router-link :to="'/admin/users'">
+								<el-menu-item index="3-1-3">管理员信息</el-menu-item>
 							</router-link>
 						</el-submenu>
 
@@ -67,7 +70,12 @@
 							<template slot="title">
 								课程信息
 							</template>
-							<el-menu-item index="3-3-1">课程统计</el-menu-item>
+							<router-link :to="'/admin/courses'">
+								<el-menu-item index="3-3-1">课程信息</el-menu-item>
+							</router-link>
+							<router-link :to="'/admin/course-count'">
+								<el-menu-item index="3-3-2">课程统计</el-menu-item>
+							</router-link>
 						</el-submenu>
 					</el-submenu>
 				</el-menu>

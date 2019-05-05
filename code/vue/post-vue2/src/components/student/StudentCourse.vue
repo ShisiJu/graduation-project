@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-table :data="tableData">
-			<el-table-column prop="course.academic_year" label="学年"></el-table-column>
+			<el-table-column prop="course.academicYear" label="学年"></el-table-column>
 			<el-table-column prop="course.term" label="学期"></el-table-column>
 			<el-table-column prop="course.name" label="课程名"></el-table-column>
 			<el-table-column prop="course.code" label="课程编码"></el-table-column>

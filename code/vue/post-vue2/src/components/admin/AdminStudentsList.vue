@@ -3,7 +3,7 @@
 		<div>
 			<el-input v-model="exactStudno" placeholder="请输入学生学号" style="width: 10.25rem;margin-right: 3.125rem;"></el-input>
 			<span style="margin: 1.25rem;">专业</span>
-			<el-cascader :options="groupOptions" :show-all-levels="false" v-model="selectedSearchOptions" @change="handleGroupChange" :props="groupProps"></el-cascader>
+			<el-cascader :options="groupOptions" :show-all-levels="false" v-model="selectedSearchOptions" @change="handleSearchGroupChange" :props="groupProps"></el-cascader>
 			<el-button style="margin-left: 1.5rem;" icon="el-icon-search" circle @click="handleSearch"></el-button>
 			<el-button @click="clearSearchStudents" circle><i class="el-icon-delete"></i></el-button>
 			<el-button style="margin-left: 12.5rem;" type="success" size="small" @click="handleAdd()">添加学生</el-button>
@@ -13,7 +13,7 @@
 			<el-table-column prop="studno" label="学号"></el-table-column>
 			<el-table-column prop="name" label="姓名"></el-table-column>
 			<el-table-column prop="sex" label="性别"></el-table-column>
-			<el-table-column prop="group.academic_year" label="学年"></el-table-column>
+			<el-table-column prop="group.academicYear" label="学年"></el-table-column>
 			<el-table-column prop="group.institute.name" label="学院"></el-table-column>
 			<el-table-column prop="group.name" label="组"></el-table-column>
 			<el-table-column label="操作" width="160">
@@ -77,6 +77,7 @@ export default {
 			selectTableTemp: {},
 			tableDataIndex: 0,
 			groupId: null,
+			selectedGroupId: null,
 			groupProps: { label: 'name', value: 'id', children: 'groups' },
 			groupOptions: []
 		};
@@ -97,6 +98,7 @@ export default {
 			this.selectTable = student;
 			this.selectTableTemp = this.cloneObject(this.selectTable);
 			let groupId = student.group.id;
+			this.selectedGroupId = groupId;
 			let instituteId = student.group.institute.id;
 			this.selectedOptions = [instituteId, groupId];
 		},
@@ -120,6 +122,7 @@ export default {
 				});
 		},
 		handleAdd() {
+			this.selectedGroupId = null;
 			this.dialogFormVisible = true;
 			this.selectTable = {};
 			this.dialogTitle = '添加学生信息';
@@ -129,7 +132,8 @@ export default {
 			if (confirmed === false) {
 				return;
 			}
-			let studentWithGroup = { student: this.selectTable, groupId: this.groupId };
+			let studentWithGroup = { student: this.selectTable, groupId: this.selectedGroupId };
+			console.log(studentWithGroup);
 			updateStudent(studentWithGroup)
 				.then(res => {
 					this.refreshStudents();
@@ -143,7 +147,7 @@ export default {
 		handleGroupChange(val) {
 			console.log('====val');
 			console.log(val);
-			this.groupId = val[1];
+			this.selectedGroupId = val[1];
 		},
 		cloneObject(obj) {
 			let objStr = JSON.stringify(obj);
@@ -170,6 +174,9 @@ export default {
 			this.selectedSearchOptions = [];
 			this.exactStudno = '';
 			this.groupId = null;
+		},
+		handleSearchGroupChange() {
+			this.groupId = val[1];
 		}
 	},
 	created: function() {

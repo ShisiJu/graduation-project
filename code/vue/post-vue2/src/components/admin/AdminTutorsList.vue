@@ -18,8 +18,9 @@
 			<el-table-column prop="sex" label="性别"></el-table-column>
 			<el-table-column prop="title" label="职称"></el-table-column>
 			<el-table-column prop="institute.name" label="学院"></el-table-column>
-			<el-table-column label="操作" width="160">
+			<el-table-column label="操作" width="260">
 				<template slot-scope="scope">
+					<el-button size="small" type="success" plain @click="handleCheck(scope.row)">查看评价</el-button>
 					<el-button size="small" @click="handleEdit(scope.row, scope.$index)">编辑</el-button>
 					<el-button size="small" type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
 				</template>
@@ -143,7 +144,13 @@ export default {
 					console.log(err);
 				});
 		},
-
+		handleCheck(tutor) {
+			this.$store.commit('setTutor',tutor);
+			let t = this.$store.state.tutor;
+			this.$router.push('/tutor/course-outline')
+			console.log('handleCheck-------------------')
+			console.log(t)
+		},
 		refreshTableData() {
 			let instituteIds = this.instituteIds;
 			let studno = this.exactStudno;

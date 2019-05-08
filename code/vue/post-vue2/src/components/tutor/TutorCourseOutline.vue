@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<div>
+			<el-button @click="statistics" plain>统计分布</el-button>
 			<el-input v-model="searchObj.name" placeholder="课程名称" style="width: 9rem;"></el-input>
 			<el-input v-model="searchObj.academicYear" placeholder="学年" style="width: 9rem"></el-input>
 			<el-select v-model="searchObj.term" placeholder="学期" style="width: 9rem" clearable>
@@ -11,7 +12,7 @@
 			<el-button style="margin-left: 12.5rem;" type="success" size="small" @click="handleAdd()">添加课程</el-button>
 		</div>
 
-		<el-table :data="tableData">
+		<el-table v-if="!showPie" :data="tableData">
 			<el-table-column prop="academicYear" label="学年"></el-table-column>
 			<el-table-column prop="term" label="学期"></el-table-column>
 			<el-table-column prop="name" label="名称"></el-table-column>
@@ -25,7 +26,7 @@
 				</template>
 			</el-table-column>
 		</el-table>
-		<div class="Pagination">
+		<div  v-if="!showPie"  class="Pagination">
 			<el-pagination
 				@size-change="handleSizeChange"
 				@current-change="handleCurrentChange"
@@ -48,9 +49,7 @@
 					</el-select>
 				</el-form-item>
 
-				<el-form-item label="导师" label-width="100px">
-					<el-input v-model="selectedTutor.name" disabled auto-complete="off"></el-input>
-				</el-form-item>
+				<el-form-item label="导师" label-width="100px"><el-input v-model="selectedTutor.name" disabled auto-complete="off"></el-input></el-form-item>
 				<el-form-item label="组" label-width="100px">
 					<el-select v-model="selectedGroupIds" multiple filterable placeholder="请选择">
 						<el-option v-for="item in groupOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -62,11 +61,34 @@
 				<el-button type="primary" @click="saveColumnData">确 定</el-button>
 			</div>
 		</el-dialog>
+
+		<v-chart v-if="showPie" :options="pieChart"></v-chart>
 	</div>
 </template>
 
 <script>
-import { searchCourses, getAllInstitute, saveCourse, getAllTutor, deleteCourse, getGroupsByCourseId, getAllGroup, turnToEleArr, cloneObject } from '@/api/axiosAPI';
+import ECharts from 'vue-echarts';
+import 'echarts/lib/chart/pie';
+import 'echarts/lib/component/tooltip';
+import 'echarts/lib/component/legend';
+import 'echarts/lib/component/title';
+
+
+
+import { coursePieChartData } from '@/api/charts';
+
+import {
+	searchQuizByCustom,
+	searchCourses,
+	getAllInstitute,
+	saveCourse,
+	getAllTutor,
+	deleteCourse,
+	getGroupsByCourseId,
+	getAllGroup,
+	turnToEleArr,
+	cloneObject
+} from '@/api/axiosAPI';
 
 export default {
 	name: 'j-admin-group-list',
@@ -87,10 +109,40 @@ export default {
 			selectedGroupIds: [],
 			selectedTableColumnTemp: {},
 			tableDataIndex: 0,
-			groupOptions: []
+			groupOptions: [],
+			pieChart: {},
+			showPie:false
 		};
 	},
 	methods: {
+		statistics() {
+			let data = this.searchObj;
+			data['tutorId'] = this.selectedTutorId;
+			if(this.showPie){
+				this.showPie = false;
+				return;
+			}
+			this.showPie = true;
+			searchQuizByCustom(data).then(res => {
+				this.changePieOption(res.data);
+			});
+		},
+		changePieOption(data) {
+			//{value:335, name:'直接访问'},
+			let formatData = { A: 0, B: 0, C: 0, D: 0 };
+			data.forEach(e => {
+				let answer = e.answer;
+				if(e.type===0)
+					formatData[answer] = formatData[answer] + 1;
+			});
+			let dataArr = [];
+			for(let key in formatData){
+				let ele = {value:formatData[key],name:key}
+				dataArr.push(ele)
+			}
+			console.log(dataArr)
+			this.pieChart = coursePieChartData(dataArr);
+		},
 		handleSizeChange(pageSize) {
 			this.pageSize = pageSize;
 			this.handleCurrentChange(this.index);
@@ -102,7 +154,6 @@ export default {
 		handleEdit(columnData, tableDataIndex) {
 			this.tableDataIndex = tableDataIndex;
 			this.selectedTableColumn = columnData;
-			console.log(columnData);
 			//减少请求量
 			this.searchGroupOptions(columnData.id);
 			this.dialogTitle = '修改课程信息';
@@ -136,7 +187,6 @@ export default {
 		},
 		saveColumnData() {
 			let savedData = { tutorId: this.selectedTutorId, groupIds: this.selectedGroupIds, course: this.selectedTableColumn };
-			console.log(savedData);
 			let confirmed = confirm('确定保存');
 			if (confirmed === false) {
 				return;
@@ -153,8 +203,6 @@ export default {
 				});
 		},
 		handleCheck(rowData) {
-			console.log('----rowData');
-			console.log(rowData);
 			this.$store.commit('setCourse', rowData);
 			this.$router.push('/tutor/course-detail');
 		},
@@ -163,15 +211,13 @@ export default {
 			data['index'] = this.index;
 			data['pageSize'] = this.pageSize;
 			data['tutorId'] = this.selectedTutorId;
-			console.log(data);
 			searchCourses(data).then(res => {
 				this.tableData = res.data.content;
 				this.total = res.data.totalElements;
-
-				console.log(this.tableData);
 			});
 		},
 		handleSearch() {
+			this.showPie = false;
 			this.refreshTableData();
 		},
 		clearSearch() {
@@ -194,7 +240,15 @@ export default {
 		this.selectedTutorId = this.$store.state.tutor.id;
 		this.selectedTutor = this.$store.state.tutor;
 		this.refreshTableData();
+	},
+	components: {
+		'v-chart': ECharts
 	}
 };
 </script>
-<style></style>
+<style>
+.echarts {
+	width: 100%;
+	height: 100%;
+}
+</style>

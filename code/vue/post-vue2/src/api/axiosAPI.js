@@ -85,6 +85,9 @@ export const updatePwd = data => post('user/updatePwd', data)
 
 export const resetPwd = data => post('user/resetPwd', data)
 
+// Quiz 查询
+
+export const searchQuizByCustom = data => postJson('quiz/custom', data)
 
 
 // 常用的工具函数

@@ -104,6 +104,7 @@ export default {
 		};
 	},
 	methods: {
+		
 		handleSizeChange(pageSize) {
 			this.pageSize = pageSize;
 			this.handleCurrentChange(this.index);

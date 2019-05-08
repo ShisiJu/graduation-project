@@ -5,8 +5,7 @@
 				<el-menu>
 					<el-submenu index="1" name="student" v-if="userInfo.type === 0">
 						<template slot="title">
-							<i class="el-icon-message"></i>
-							学生信息
+							<div class="jsstitle"><i class="el-icon-message"></i>学生信息</div>
 						</template>
 						<el-menu-item-group>
 							<router-link :to="'/student/course'">
@@ -20,8 +19,7 @@
 
 					<el-submenu index="2" name="tutor" v-if="userInfo.type === 1">
 						<template slot="title">
-							<i class="el-icon-menu"></i>
-							导师信息
+							<div class="jsstitle"><i class="el-icon-menu"></i>导师信息</div>
 						</template>
 						<el-menu-item-group>
 							<router-link :to="'/tutor/course'">
@@ -41,7 +39,7 @@
 
 						<el-submenu index="3-1">
 							<template slot="title">
-								基本信息
+								<div class="jsstitle">基本信息</div>
 							</template>
 							<router-link :to="'/admin/students'">
 								<el-menu-item index="3-1-1">学生信息</el-menu-item>
@@ -56,7 +54,8 @@
 
 						<el-submenu index="3-2">
 							<template slot="title">
-								结构信息
+								
+								<div class="jsstitle">结构信息</div>
 							</template>
 							<router-link :to="'/admin/institutes'">
 								<el-menu-item index="3-2-1">学院信息</el-menu-item>
@@ -68,13 +67,10 @@
 
 						<el-submenu index="3-3">
 							<template slot="title">
-								课程信息
+								<div class="jsstitle">课程信息</div>
 							</template>
 							<router-link :to="'/admin/courses'">
 								<el-menu-item index="3-3-1">课程信息</el-menu-item>
-							</router-link>
-							<router-link :to="'/admin/course-count'">
-								<el-menu-item index="3-3-2">课程统计</el-menu-item>
 							</router-link>
 						</el-submenu>
 					</el-submenu>
@@ -83,6 +79,7 @@
 
 			<el-container>
 				<el-header style="text-align: right; font-size: 18px">
+					<el-button @click="goBack" plain style="float:left" icon="el-icon-back">后退</el-button>
 					<el-dropdown>
 						<i class="el-icon-setting" style="margin-right: 15px;font-size: large;"></i>
 						<el-dropdown-menu slot="dropdown">
@@ -117,6 +114,8 @@ export default {
 		},goInfo:function(){
 			console.log('------goInfo')
 			this.$router.push('/'+this.userType+'/info');
+		},goBack(){
+			this.$router.go(-1);
 		}
 	},computed: {
 		userType() {
@@ -139,5 +138,9 @@ a {
 }
 .router-link-exact-active {
 	color: #409eff;
+}
+
+.jsstitle{
+	font-size: large;
 }
 </style>

@@ -148,8 +148,6 @@ export default {
 			this.$store.commit('setTutor',tutor);
 			let t = this.$store.state.tutor;
 			this.$router.push('/tutor/course-outline')
-			console.log('handleCheck-------------------')
-			console.log(t)
 		},
 		refreshTableData() {
 			let instituteIds = this.instituteIds;

@@ -18,4 +18,6 @@ public interface QuizRepository extends RowBaseRepository<Quiz, Long> {
 
 	List<Quiz> findByStudentCourse_Course(Course course);
 
+	List<Quiz> findByStudentCourse_Course_idIn(List<Long> listId);
+
 }

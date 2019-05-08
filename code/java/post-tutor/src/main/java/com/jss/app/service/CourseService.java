@@ -107,6 +107,35 @@ public class CourseService {
 		return courseRepository.findAll(specification, pageable);
 	}
 
+	public List<Course> searchCoursesWithoutPage(JSONObject joCourse) {
+
+		String name = joCourse.getString("name");
+
+		List<Long> instituteIds = null;
+		boolean boolIns = false;
+
+		if (joCourse.getJSONArray("instituteIds") != null) {
+			instituteIds = joCourse.getJSONArray("instituteIds").toJavaList(Long.class);
+			boolIns = !instituteIds.isEmpty();
+		}
+
+		Integer academicYear = joCourse.getInteger("academicYear");
+		Optional<Long> tutorId = Optional.ofNullable(joCourse.getLong("tutorId"));
+
+		Term term = null;
+		if (joCourse.getString("term") != null) {
+			term = Term.valueOf(joCourse.getString("term"));
+		}
+
+		Specification<Course> specification = Specifications.<Course>and()
+				.like(!StringUtils.isEmpty(name), "name", "%" + name + "%")
+				.eq(academicYear != null, "academicYear", academicYear).eq(term != null, "term", term)
+				.in(boolIns, "tutor.institute.id", boolIns ? instituteIds.toArray() : null)
+				.eq(tutorId.isPresent(), "tutor.id", tutorId.orElse(null)).build();
+
+		return courseRepository.findAll(specification);
+	}
+
 	// 级联删除Quiz和QuizAnswer
 	@Transactional
 	public void deleteCourseById(Long id) {

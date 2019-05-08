@@ -56,14 +56,20 @@ public class QuizService {
 	}
 
 	public List<QuizAnswer> findQuizAnswerByCourse(Course course) {
-		
+
 		List<Quiz> listQuiz = quizRepository.findByStudentCourse_Course(course);
+		return quizAnswerRepository.findByQuizIn(listQuiz);
+	}
+
+	public List<QuizAnswer> findQuizAnswerByCourseIn(List<Long> listId) {
+
+		List<Quiz> listQuiz = quizRepository.findByStudentCourse_Course_idIn(listId);
 		return quizAnswerRepository.findByQuizIn(listQuiz);
 	}
 
 	// 批量插入效率高
 	public void batchUpateOrSaveQuizAnswers(List<QuizAnswer> quizAnswers) {
-		
+
 		for (int i = 0; i < quizAnswers.size(); i++) {
 			// 更新或插入
 			em.merge(quizAnswers.get(i));

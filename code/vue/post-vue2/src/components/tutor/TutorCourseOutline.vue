@@ -26,7 +26,7 @@
 				</template>
 			</el-table-column>
 		</el-table>
-		<div  v-if="!showPie"  class="Pagination">
+		<div v-if="!showPie" class="Pagination">
 			<el-pagination
 				@size-change="handleSizeChange"
 				@current-change="handleCurrentChange"
@@ -73,8 +73,6 @@ import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/legend';
 import 'echarts/lib/component/title';
 
-
-
 import { coursePieChartData } from '@/api/charts';
 
 import {
@@ -99,7 +97,7 @@ export default {
 			pageSize: 10,
 			total: 10,
 			searchObj: {},
-			termOptions: [{ value: '春季' }, { value: '秋季' }],
+			termOptions: [{ value: '秋季' }, { value: '春季' }],
 			dialogFormVisible: false,
 			dialogTitle: '',
 			edited: false,
@@ -111,14 +109,14 @@ export default {
 			tableDataIndex: 0,
 			groupOptions: [],
 			pieChart: {},
-			showPie:false
+			showPie: false
 		};
 	},
 	methods: {
 		statistics() {
 			let data = this.searchObj;
 			data['tutorId'] = this.selectedTutorId;
-			if(this.showPie){
+			if (this.showPie) {
 				this.showPie = false;
 				return;
 			}
@@ -128,19 +126,16 @@ export default {
 			});
 		},
 		changePieOption(data) {
-			//{value:335, name:'直接访问'},
 			let formatData = { A: 0, B: 0, C: 0, D: 0 };
 			data.forEach(e => {
 				let answer = e.answer;
-				if(e.type===0)
-					formatData[answer] = formatData[answer] + 1;
+				if (e.type === 0) formatData[answer] = formatData[answer] + 1;
 			});
 			let dataArr = [];
-			for(let key in formatData){
-				let ele = {value:formatData[key],name:key}
-				dataArr.push(ele)
+			for (let key in formatData) {
+				let ele = { value: formatData[key], name: key };
+				dataArr.push(ele);
 			}
-			console.log(dataArr)
 			this.pieChart = coursePieChartData(dataArr);
 		},
 		handleSizeChange(pageSize) {

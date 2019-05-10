@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 
+import IndexPage from '@/components/index/IndexPage'
+
 import Login from '@/components/login/Login'
 import CommonBar from '@/components/common/CommonBar'
 import UpdatePwd from '@/components/common/UpdatePwd'
@@ -35,8 +37,12 @@ import AdminCourseCount from '@/components/admin/AdminCourseCount'
 Vue.use(Router)
 
 export default new Router({
+	mode:'hash',
 	routes: [{
 		path: '/',
+		component: IndexPage
+	}, {
+		path: '/post',
 		component: Login
 	}, {
 		path: '/common',
@@ -64,19 +70,19 @@ export default new Router({
 			path: '/tutor',
 			component: Tutor,
 			children: [{
-				path: 'info',
-				component: TutorInfo
-			}, {
-				path: 'course',
-				component: TutorCourses
-			}, {
-				path: 'course-detail',
-				component: TutorCourseDetail
-			},
-			{
-				path: 'course-outline',
-				component: TutorCourseOutline
-			}
+					path: 'info',
+					component: TutorInfo
+				}, {
+					path: 'course',
+					component: TutorCourses
+				}, {
+					path: 'course-detail',
+					component: TutorCourseDetail
+				},
+				{
+					path: 'course-outline',
+					component: TutorCourseOutline
+				}
 			]
 		}, {
 			path: '/admin',

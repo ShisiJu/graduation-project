@@ -48,7 +48,7 @@
 								<el-menu-item index="3-1-2">导师信息</el-menu-item>
 							</router-link>
 							<router-link :to="'/admin/users'">
-								<el-menu-item index="3-1-3">管理员信息</el-menu-item>
+								<el-menu-item index="3-1-3">用户信息</el-menu-item>
 							</router-link>
 						</el-submenu>
 
@@ -110,7 +110,7 @@ export default {
 		logout:function() {
 			console.log('------logout')
 			this.$store.commit('setUserInfo', null);
-			this.$router.push('/');
+			this.$router.push('/post');
 		},goInfo:function(){
 			console.log('------goInfo')
 			this.$router.push('/'+this.userType+'/info');
@@ -127,7 +127,13 @@ export default {
 			else if(type === 2)
 				return 'admin'
 		}
-	},
+	},created() {
+		let user = this.$store.state.userInfo.user;
+		if(type===null){
+			this.$router.push('/post');
+			alert('请先登录')
+		}
+	}
 };
 </script>
 

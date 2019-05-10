@@ -133,7 +133,6 @@ export default {
 				return;
 			}
 			let studentWithGroup = { student: this.selectTable, groupId: this.selectedGroupId };
-			console.log(studentWithGroup);
 			updateStudent(studentWithGroup)
 				.then(res => {
 					this.refreshStudents();
@@ -145,8 +144,6 @@ export default {
 				});
 		},
 		handleGroupChange(val) {
-			console.log('====val');
-			console.log(val);
 			this.selectedGroupId = val[1];
 		},
 		cloneObject(obj) {
@@ -159,10 +156,8 @@ export default {
 			let pageSize = this.pageSize;
 			let index = this.index;
 			let data = { groupId, studno, pageSize, index };
-			console.log('------');
-			console.log(data);
+			
 			searchStudents(data).then(res => {
-				console.log(res.data);
 				this.tableData = res.data.content;
 				this.total = res.data.totalElements;
 			});
@@ -175,7 +170,7 @@ export default {
 			this.exactStudno = '';
 			this.groupId = null;
 		},
-		handleSearchGroupChange() {
+		handleSearchGroupChange(val) {
 			this.groupId = val[1];
 		}
 	},

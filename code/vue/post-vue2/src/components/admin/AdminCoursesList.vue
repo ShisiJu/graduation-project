@@ -7,8 +7,11 @@
 				<el-option v-for="item in termOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
 			</el-select>
 
-			<el-select v-model="searchObj.instituteIds" multiple placeholder="请选择学院">
-				<el-option v-for="item in instituteOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+			<el-select v-model="searchObj.tutorId" placeholder="请选择" filterable>
+				<el-option v-for="item in tutorOptions" :key="item.value" :label="item.label" :value="item.value">
+					<span style="float: left">{{ item.label }}</span>
+					<span style="float: right; color: #8492a6; font-size: 13px">{{ item.studno }}</span>
+				</el-option>
 			</el-select>
 			<el-button style="margin-left: 1.5rem;" icon="el-icon-search" circle @click="handleSearch"></el-button>
 			<el-button @click="clearSearch" circle><i class="el-icon-delete"></i></el-button>
@@ -88,7 +91,7 @@ export default {
 			pageSize: 10,
 			total: 10,
 			searchObj: {},
-			termOptions: [{ value: '春季' }, { value: '秋季' }],
+			termOptions: [{ value: '秋季' }, { value: '春季' }],
 			dialogFormVisible: false,
 			dialogTitle: '',
 			edited: false,
@@ -117,8 +120,6 @@ export default {
 			this.tableDataIndex = tableDataIndex;
 			this.selectedTableColumn = columnData;
 			// 需要先查出原来的组信息 放入
-			console.log(columnData);
-			//减少请求量
 			this.searchTutorOptions(columnData.tutor.id);
 			this.searchGroupOptions(columnData.id);
 			this.dialogTitle = '修改课程信息';
@@ -179,6 +180,8 @@ export default {
 			let data = this.searchObj;
 			data['index'] = this.index;
 			data['pageSize'] = this.pageSize;
+
+			console.log(data)
 
 			searchCourses(data).then(res => {
 				this.tableData = res.data.content;

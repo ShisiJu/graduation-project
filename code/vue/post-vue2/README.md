@@ -19,3 +19,14 @@ npm run build --report
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+
+axiosAPI
+
+```
+export const findStudenPage = data => get('student/page', data)
+
+export const countStudents = data => get('student/count', data)
+
+export const insertStudent = data => get('student/insert', data)
+```

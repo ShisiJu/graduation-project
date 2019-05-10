@@ -78,7 +78,7 @@ export default {
 			let studno = this.exactStudno;
 			let pageSize = this.pageSize;
 			let index = this.index;
-			let data = { userType, studno, pageSize, index };
+			let data = { type:userType, studno, pageSize, index };
 			searchUser(data).then(res => {
 				console.log(res.data);
 				this.tableData = res.data.content;

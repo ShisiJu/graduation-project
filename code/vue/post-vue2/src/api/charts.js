@@ -30,3 +30,36 @@ export const coursePieChartData = data => {
 		}]
 	};
 }
+
+
+// 五年变化直线趋势图
+
+export const coursePieChartData = option => {
+    xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun','321','321']
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [{
+        data: [120, 200, 150, 80, 70, 110, 130,120,321],
+        type: 'line',
+        symbol: 'triangle',
+        symbolSize: 20,
+        lineStyle: {
+            normal: {
+                color: 'green',
+                width: 4,
+                type: 'dashed'
+            }
+        },
+        itemStyle: {
+            normal: {
+                borderWidth: 3,
+                borderColor: 'black',
+                color: 'blue'
+            }
+        }
+    }]
+};

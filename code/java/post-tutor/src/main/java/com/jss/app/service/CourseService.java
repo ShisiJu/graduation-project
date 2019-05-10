@@ -127,11 +127,16 @@ public class CourseService {
 			term = Term.valueOf(joCourse.getString("term"));
 		}
 
+		Integer lowYear = joCourse.getInteger("beforeYear");
+		Integer highYear = joCourse.getInteger("afterYear");
+		boolean betweenYear = lowYear != null && highYear != null;
+
 		Specification<Course> specification = Specifications.<Course>and()
 				.like(!StringUtils.isEmpty(name), "name", "%" + name + "%")
 				.eq(academicYear != null, "academicYear", academicYear).eq(term != null, "term", term)
 				.in(boolIns, "tutor.institute.id", boolIns ? instituteIds.toArray() : null)
-				.eq(tutorId.isPresent(), "tutor.id", tutorId.orElse(null)).build();
+				.eq(tutorId.isPresent(), "tutor.id", tutorId.orElse(null))
+				.between(betweenYear, "academicYear", lowYear, highYear).build();
 
 		return courseRepository.findAll(specification);
 	}

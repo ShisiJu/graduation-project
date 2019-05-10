@@ -5,12 +5,10 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.app.model.entity.Course;
 import com.jss.app.model.entity.Quiz;
@@ -20,7 +18,7 @@ import com.jss.app.repository.QuizAnswerRepository;
 import com.jss.app.repository.QuizRepository;
 import com.jss.app.repository.StudentCourseRepository;
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class QuizService {
 
@@ -34,6 +32,7 @@ public class QuizService {
 	@PersistenceContext
 	private EntityManager em;
 
+	@Transactional
 	public void insertQuizWithQuizAnswers(Long studentCourseId, Quiz quiz, List<QuizAnswer> quizAnswers) {
 
 		Optional<StudentCourse> optStudentCourse = studentCourseRepository.findById(studentCourseId);
@@ -68,6 +67,7 @@ public class QuizService {
 	}
 
 	// 批量插入效率高
+	@Transactional
 	public void batchUpateOrSaveQuizAnswers(List<QuizAnswer> quizAnswers) {
 
 		for (int i = 0; i < quizAnswers.size(); i++) {

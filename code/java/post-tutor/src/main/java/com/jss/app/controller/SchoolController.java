@@ -1,9 +1,7 @@
 package com.jss.app.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,15 +17,6 @@ public class SchoolController {
 	
 	@Autowired
 	private SchoolService schoolService;
-
-	/*
-	 * @RequestMapping("/all")
-	 * 
-	 * @ResponseStatus(HttpStatus.CREATED) public List<School> school(@PathVariable
-	 * Long id) { // new ResponseEntity<List<School>> return
-	 * schoolService.findAll(); }
-	 */
-	//@RequestParam String name)
 	
 	@RequestMapping("/all")
 	public ResponseEntity<List<School>> school() {

@@ -13,18 +13,14 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.app.model.dictionary.Sex;
 import com.jss.app.model.entity.Group;
-import com.jss.app.model.entity.Institute;
 import com.jss.app.model.entity.Student;
 import com.jss.app.model.entity.User;
 import com.jss.app.repository.GroupRepository;
-import com.jss.app.repository.InstituteRepository;
 import com.jss.app.repository.StudentRepository;
 import com.jss.app.repository.UserRepository;
 import com.jss.app.spec.StudentSpecs;
 
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(readOnly = true)

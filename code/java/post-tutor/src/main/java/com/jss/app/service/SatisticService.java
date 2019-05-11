@@ -2,7 +2,6 @@ package com.jss.app.service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,15 +28,19 @@ public class SatisticService {
 		Calendar nowTime = Calendar.getInstance();
 		Integer year = nowTime.get(Calendar.YEAR);
 
-		for (int y = 0; y < 5; y++) { // 年份
+		for (int y = 0; y < 5; y++) { // 年份从远到近
 			for (int t = 0; t < 2; t++) { // 学期
-				int curYear = year - y;
+				int curYear = year - 5 + y;
 				List<Long> answerIds = quizAnswerRepository.evaluateSpecific(tutorId, curYear, t);
 				// 使用In语句,数据必须有
 				if (answerIds.isEmpty()) {
 					Map<String, Object> evaluation = new HashMap<>();
 					evaluation.put("name", curYear + "年" + Term.values()[t].toString());
 					evaluation.put("value", 0);
+					evaluation.put("A", 0);
+					evaluation.put("B", 0);
+					evaluation.put("C", 0);
+					evaluation.put("D", 0);
 					listEvaluation.add(evaluation);
 					continue;
 				}
@@ -56,8 +59,6 @@ public class SatisticService {
 
 		return listEvaluation;
 	}
-	
-	
 
 	private Map<String, Object> copyMap(Map<String, Object> evaluation) {
 		Map<String, Object> map = new HashMap<>();

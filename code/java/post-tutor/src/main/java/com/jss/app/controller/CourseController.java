@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jss.app.model.entity.Course;
-import com.jss.app.model.entity.Student;
-import com.jss.app.model.entity.Tutor;
 import com.jss.app.model.m2m.StudentCourse;
 import com.jss.app.service.CourseService;
 
@@ -28,6 +25,12 @@ public class CourseController {
 	public List<StudentCourse> findByStudent(@RequestParam Long id) {
 
 		return courseService.findStudentCourseByStudent_Id(id);
+	}
+
+	@RequestMapping("/studentWithPage")
+	public Page<StudentCourse> findByStudentWithPage(@RequestBody JSONObject jsonObject) {
+
+		return courseService.searchStudentCourseByStudent(jsonObject);
 	}
 
 	@RequestMapping("/tutor")
@@ -65,7 +68,7 @@ public class CourseController {
 
 	@RequestMapping("/findGroupsByCourseId")
 	public List<Long> findGroupsByCourseId(Long courseId) {
-		
+
 		return courseService.findGroupsByCourseId(courseId);
 	}
 

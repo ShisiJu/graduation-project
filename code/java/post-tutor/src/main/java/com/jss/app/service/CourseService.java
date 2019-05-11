@@ -2,13 +2,10 @@ package com.jss.app.service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Enumerated;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -27,10 +24,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.wenhao.jpa.Specifications;
 import com.jss.app.model.dictionary.Term;
 import com.jss.app.model.entity.Course;
-import com.jss.app.model.entity.Group;
-import com.jss.app.model.entity.Course;
-import com.jss.app.model.entity.Institute;
-import com.jss.app.model.entity.Student;
 import com.jss.app.model.entity.Tutor;
 import com.jss.app.model.m2m.StudentCourse;
 import com.jss.app.repository.CourseRepository;
@@ -57,6 +50,28 @@ public class CourseService {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	public Page<StudentCourse> searchStudentCourseByStudent(JSONObject jsonObject) {
+
+		Long studentId = jsonObject.getLong("studentId");
+
+		Integer academicYear = jsonObject.getInteger("year");
+
+		Term term = null;
+		if (jsonObject.getString("term") != null) {
+			term = Term.valueOf(jsonObject.getString("term"));
+		}
+
+		Specification<StudentCourse> specification = Specifications.<StudentCourse>and().eq("student.id", studentId)
+				.eq(academicYear != null, "course.academicYear", academicYear).eq(term != null, "course.term", term).build();
+
+		Integer index = jsonObject.getInteger("index");
+		Integer pageSize = jsonObject.getInteger("pageSize");
+		Sort sort = new Sort(Sort.Direction.DESC, "course.academicYear", "course.term");
+		Pageable page = PageRequest.of(index - 1, pageSize, sort);
+
+		return studentCourseRepository.findAll(specification, page);
+	}
 
 	public List<Course> findAllCourses() {
 		return courseRepository.findAll();

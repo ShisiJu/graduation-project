@@ -16,6 +16,8 @@ export const findAdminInfo = data => get('admin/info', data)
 // 学生
 export const findStudentCourse = data => post('course/student', data)
 
+export const findStudentCourseWithPage = data => postJson('course/studentWithPage', data)
+
 export const findTutorCourse = data => postJson('course/tutor', data)
 
 export const insertQuizWithAnswers = data => postJson('quiz/quizMap', data)
@@ -88,6 +90,9 @@ export const resetPwd = data => post('user/resetPwd', data)
 // Quiz 查询
 
 export const searchQuizByCustom = data => postJson('quiz/custom', data)
+
+// charts 统计分析
+export const statisticByTutorId = data => get('statistic/tutor', data)
 
 
 // 常用的工具函数

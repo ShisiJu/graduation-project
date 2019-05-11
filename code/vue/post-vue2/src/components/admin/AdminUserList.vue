@@ -80,7 +80,6 @@ export default {
 			let index = this.index;
 			let data = { type:userType, studno, pageSize, index };
 			searchUser(data).then(res => {
-				console.log(res.data);
 				this.tableData = res.data.content;
 				this.total = res.data.totalElements;
 			});

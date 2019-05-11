@@ -7,7 +7,7 @@
 				<el-option v-for="item in termOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
 			</el-select>
 
-			<el-select v-model="searchObj.tutorId" placeholder="请选择" filterable>
+			<el-select v-model="searchObj.tutorId" placeholder="请选择导师" filterable>
 				<el-option v-for="item in tutorOptions" :key="item.value" :label="item.label" :value="item.value">
 					<span style="float: left">{{ item.label }}</span>
 					<span style="float: right; color: #8492a6; font-size: 13px">{{ item.studno }}</span>
@@ -107,7 +107,6 @@ export default {
 		};
 	},
 	methods: {
-		
 		handleSizeChange(pageSize) {
 			this.pageSize = pageSize;
 			this.handleCurrentChange(this.index);
@@ -181,7 +180,7 @@ export default {
 			data['index'] = this.index;
 			data['pageSize'] = this.pageSize;
 
-			console.log(data)
+			console.log(data);
 
 			searchCourses(data).then(res => {
 				this.tableData = res.data.content;
@@ -197,11 +196,14 @@ export default {
 		searchTutorOptions(id) {
 			this.selectedTutorId = id;
 			if (this.edited == true) return;
+			this.getAllTutorInfo();
+			this.selectedTutorId = id;
+		},
+		getAllTutorInfo() {
 			getAllTutor({}).then(res => {
 				let data = res.data;
 				let eleData = turnToEleArr(data, 'studno');
 				this.tutorOptions = eleData;
-				this.selectedTutorId = id;
 			});
 		},
 		searchGroupOptions(courseId) {
@@ -222,6 +224,8 @@ export default {
 			let eleArr = turnToEleArr(res.data);
 			this.instituteOptions = eleArr;
 		});
+		
+		this.getAllTutorInfo();
 	}
 };
 </script>

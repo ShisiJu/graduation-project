@@ -18,7 +18,6 @@ import Quiz from '@/components/student/Quiz'
 import Tutor from '@/components/tutor/Tutor'
 import TutorInfo from '@/components/tutor/TutorInfo'
 import TutorStudents from '@/components/tutor/TutorStudents'
-import TutorCourses from '@/components/tutor/TutorCourses'
 import TutorCourseDetail from '@/components/tutor/TutorCourseDetail'
 import TutorCourseOutline from '@/components/tutor/TutorCourseOutline'
 
@@ -31,13 +30,12 @@ import AdminTutorsList from '@/components/admin/AdminTutorsList'
 import AdminInstitutesList from '@/components/admin/AdminInstitutesList'
 import AdminCoursesList from '@/components/admin/AdminCoursesList'
 import AdminUserList from '@/components/admin/AdminUserList'
-import AdminCourseCount from '@/components/admin/AdminCourseCount'
 
 
 Vue.use(Router)
 
 export default new Router({
-	mode:'hash',
+	mode: 'hash',
 	routes: [{
 		path: '/',
 		component: IndexPage
@@ -74,7 +72,7 @@ export default new Router({
 					component: TutorInfo
 				}, {
 					path: 'course',
-					component: TutorCourses
+					component: TutorCourseOutline
 				}, {
 					path: 'course-detail',
 					component: TutorCourseDetail
@@ -108,12 +106,6 @@ export default new Router({
 			}, {
 				path: 'users',
 				component: AdminUserList
-			}, {
-				path: 'course-count',
-				component: AdminCourseCount
-			}, {
-				path: 'test',
-				component: TutorCourseOutline
 			}]
 		}]
 	}]

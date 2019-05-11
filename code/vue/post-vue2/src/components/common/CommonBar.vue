@@ -5,29 +5,27 @@
 				<el-menu>
 					<el-submenu index="1" name="student" v-if="userInfo.type === 0">
 						<template slot="title">
-							<div class="jsstitle"><i class="el-icon-message"></i>学生信息</div>
+							<div class="jsstitle">
+								<i class="el-icon-message"></i>
+								学生信息
+							</div>
 						</template>
 						<el-menu-item-group>
-							<router-link :to="'/student/course'">
-								<el-menu-item index="1-1">我的课程</el-menu-item>
-							</router-link>
-							<router-link :to="'/student/info'">
-								<el-menu-item index="1-2">个人信息</el-menu-item>
-							</router-link>
+							<router-link :to="'/student/course'"><el-menu-item index="1-1">我的课程</el-menu-item></router-link>
+							<router-link :to="'/student/info'"><el-menu-item index="1-2">个人信息</el-menu-item></router-link>
 						</el-menu-item-group>
 					</el-submenu>
 
 					<el-submenu index="2" name="tutor" v-if="userInfo.type === 1">
 						<template slot="title">
-							<div class="jsstitle"><i class="el-icon-menu"></i>导师信息</div>
+							<div class="jsstitle">
+								<i class="el-icon-menu"></i>
+								导师信息
+							</div>
 						</template>
 						<el-menu-item-group>
-							<router-link :to="'/tutor/course'">
-								<el-menu-item index="2-1">我的课程</el-menu-item>
-							</router-link>
-							<router-link :to="'/tutor/info'">
-								<el-menu-item index="2-2">个人信息</el-menu-item>
-							</router-link>
+							<router-link :to="'/tutor/course'"><el-menu-item index="2-1">我的课程</el-menu-item></router-link>
+							<router-link :to="'/tutor/info'"><el-menu-item index="2-2">个人信息</el-menu-item></router-link>
 						</el-menu-item-group>
 					</el-submenu>
 
@@ -41,37 +39,24 @@
 							<template slot="title">
 								<div class="jsstitle">基本信息</div>
 							</template>
-							<router-link :to="'/admin/students'">
-								<el-menu-item index="3-1-1">学生信息</el-menu-item>
-							</router-link>
-							<router-link :to="'/admin/tutors'">
-								<el-menu-item index="3-1-2">导师信息</el-menu-item>
-							</router-link>
-							<router-link :to="'/admin/users'">
-								<el-menu-item index="3-1-3">用户信息</el-menu-item>
-							</router-link>
+							<router-link :to="'/admin/students'"><el-menu-item index="3-1-1">学生信息</el-menu-item></router-link>
+							<router-link :to="'/admin/tutors'"><el-menu-item index="3-1-2">导师信息</el-menu-item></router-link>
+							<router-link :to="'/admin/users'"><el-menu-item index="3-1-3">用户信息</el-menu-item></router-link>
 						</el-submenu>
 
 						<el-submenu index="3-2">
 							<template slot="title">
-								
 								<div class="jsstitle">结构信息</div>
 							</template>
-							<router-link :to="'/admin/institutes'">
-								<el-menu-item index="3-2-1">学院信息</el-menu-item>
-							</router-link>
-							<router-link :to="'/admin/groups'">
-								<el-menu-item index="3-2-2">组信息</el-menu-item>
-							</router-link>
+							<router-link :to="'/admin/institutes'"><el-menu-item index="3-2-1">学院信息</el-menu-item></router-link>
+							<router-link :to="'/admin/groups'"><el-menu-item index="3-2-2">组信息</el-menu-item></router-link>
 						</el-submenu>
 
 						<el-submenu index="3-3">
 							<template slot="title">
 								<div class="jsstitle">课程信息</div>
 							</template>
-							<router-link :to="'/admin/courses'">
-								<el-menu-item index="3-3-1">课程信息</el-menu-item>
-							</router-link>
+							<router-link :to="'/admin/courses'"><el-menu-item index="3-3-1">课程信息</el-menu-item></router-link>
 						</el-submenu>
 					</el-submenu>
 				</el-menu>
@@ -83,7 +68,7 @@
 					<el-dropdown>
 						<i class="el-icon-setting" style="margin-right: 15px;font-size: large;"></i>
 						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item @click.native.prevent='goInfo()'>个人信息</el-dropdown-item>
+							<el-dropdown-item @click.native.prevent="goInfo()">个人信息</el-dropdown-item>
 							<el-dropdown-item @click.native.prevent="logout()">登出</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
@@ -107,31 +92,30 @@ export default {
 		};
 	},
 	methods: {
-		logout:function() {
-			console.log('------logout')
+		logout: function() {
 			this.$store.commit('setUserInfo', null);
 			this.$router.push('/post');
-		},goInfo:function(){
-			console.log('------goInfo')
-			this.$router.push('/'+this.userType+'/info');
-		},goBack(){
+		},
+		goInfo: function() {
+			this.$router.push('/' + this.userType + '/info');
+		},
+		goBack() {
 			this.$router.go(-1);
 		}
-	},computed: {
+	},
+	computed: {
 		userType() {
 			let type = this.$store.state.userInfo.user.type;
-			if(type===0)
-				return 'student'
-			else if (type === 1)
-				return 'tutor'
-			else if(type === 2)
-				return 'admin'
+			if (type === 0) return 'student';
+			else if (type === 1) return 'tutor';
+			else if (type === 2) return 'admin';
 		}
-	},created() {
-		let user = this.$store.state.userInfo.user;
-		if(type===null){
+	},
+	beforeCreate:function() {
+		let user = this.$store.state.userInfo;
+		if (user === null) {
 			this.$router.push('/post');
-			alert('请先登录')
+			alert('请先登录');
 		}
 	}
 };
@@ -146,7 +130,7 @@ a {
 	color: #409eff;
 }
 
-.jsstitle{
+.jsstitle {
 	font-size: large;
 }
 </style>

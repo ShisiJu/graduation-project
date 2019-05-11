@@ -156,7 +156,6 @@ export default {
 			let index = this.index;
 			let data = { instituteIds, studno, pageSize, index };
 			searchTutors(data).then(res => {
-				console.log(res.data);
 				this.tableData = res.data.content;
 				this.total = res.data.totalElements;
 			});
@@ -174,8 +173,6 @@ export default {
 		getAllInstitute({}).then(res => {
 			let eleArr = turnToEleArr(res.data);
 			this.instituteOptions = eleArr;
-			console.log('-------create');
-			console.log(this.instituteOptions);
 		});
 	}
 };

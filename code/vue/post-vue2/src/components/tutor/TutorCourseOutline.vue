@@ -61,19 +61,12 @@
 				<el-button type="primary" @click="saveColumnData">确 定</el-button>
 			</div>
 		</el-dialog>
-
-		<v-chart v-if="showPie" :options="pieChart"></v-chart>
+		<div v-if="showPie"><div ref="recent5YearChart" style="width: 50rem;height: 37.5rem;"></div></div>
 	</div>
 </template>
 
 <script>
-import ECharts from 'vue-echarts';
-import 'echarts/lib/chart/pie';
-import 'echarts/lib/component/tooltip';
-import 'echarts/lib/component/legend';
-import 'echarts/lib/component/title';
-
-import { coursePieChartData } from '@/api/charts';
+import { coursePieAndLineChartData } from '@/api/charts';
 
 import {
 	searchQuizByCustom,
@@ -85,7 +78,8 @@ import {
 	getGroupsByCourseId,
 	getAllGroup,
 	turnToEleArr,
-	cloneObject
+	cloneObject,
+	statisticByTutorId
 } from '@/api/axiosAPI';
 
 export default {
@@ -126,17 +120,11 @@ export default {
 			});
 		},
 		changePieOption(data) {
-			let formatData = { A: 0, B: 0, C: 0, D: 0 };
-			data.forEach(e => {
-				let answer = e.answer;
-				if (e.type === 0) formatData[answer] = formatData[answer] + 1;
+			let tutor = { tutorId: this.selectedTutorId };
+			statisticByTutorId(tutor).then(res => {
+				let dom = this.$refs.recent5YearChart;
+				coursePieAndLineChartData(dom, res.data);
 			});
-			let dataArr = [];
-			for (let key in formatData) {
-				let ele = { value: formatData[key], name: key };
-				dataArr.push(ele);
-			}
-			this.pieChart = coursePieChartData(dataArr);
 		},
 		handleSizeChange(pageSize) {
 			this.pageSize = pageSize;
@@ -232,12 +220,17 @@ export default {
 		}
 	},
 	created: function() {
-		this.selectedTutorId = this.$store.state.tutor.id;
-		this.selectedTutor = this.$store.state.tutor;
+		let userType = this.$store.state.userInfo.user.type;
+
+		if (userType === 1) {
+			this.selectedTutorId = this.$store.state.userInfo.obj.id;
+			this.selectedTutor = this.$store.state.userInfo.obj;
+		} else {
+			this.selectedTutorId = this.$store.state.tutor.id;
+			this.selectedTutor = this.$store.state.tutor;
+		}
+
 		this.refreshTableData();
-	},
-	components: {
-		'v-chart': ECharts
 	}
 };
 </script>
@@ -245,5 +238,9 @@ export default {
 .echarts {
 	width: 100%;
 	height: 100%;
+}
+.chartBox {
+	width: 1800px;
+	height: 1400px;
 }
 </style>

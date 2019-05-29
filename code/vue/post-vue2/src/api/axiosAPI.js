@@ -54,6 +54,7 @@ export const saveTutor = data => postJson('tutor/saveTutor', data)
 
 export const deleteTutor = data => get('tutor/deleteTutor', data)
 
+
 // Institute CRUD
 export const pageInstitues = data => post('/institute/page', data)
 
@@ -92,7 +93,11 @@ export const resetPwd = data => post('user/resetPwd', data)
 export const searchQuizByCustom = data => postJson('quiz/custom', data)
 
 // charts 统计分析
-export const statisticByTutorId = data => get('statistic/tutor', data)
+export const statisticByTutorId = data => get('statistic/recent', data)
+
+export const satisticByTutor = data => get('statistic/tutor', data)
+
+export const satisticByInstitute = data => get('statistic/institute', data)
 
 
 // 常用的工具函数

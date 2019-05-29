@@ -37,10 +37,10 @@
 
 		<el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
 			<el-form :model="selectedTableColumn">
-				<el-form-item label="编码" label-width="100px"><el-input v-model="selectedTableColumn.code"></el-input></el-form-item>
-				<el-form-item label="名称" label-width="100px"><el-input v-model="selectedTableColumn.name" auto-complete="off"></el-input></el-form-item>
-				<el-form-item label="学年" label-width="100px"><el-input v-model="selectedTableColumn.academicYear"></el-input></el-form-item>
-				<el-form-item label="学院" label-width="100px">
+				<el-form-item label="编码" label-width="6.25rem"><el-input v-model="selectedTableColumn.code"></el-input></el-form-item>
+				<el-form-item label="名称" label-width="6.25rem"><el-input v-model="selectedTableColumn.name" auto-complete="off"></el-input></el-form-item>
+				<el-form-item label="学年" label-width="6.25rem"><el-input v-model="selectedTableColumn.academicYear"></el-input></el-form-item>
+				<el-form-item label="学院" label-width="6.25rem">
 					<el-select v-model="selectedInstituteOption" placeholder="请选择">
 						<el-option v-for="item in instituteOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
 					</el-select>

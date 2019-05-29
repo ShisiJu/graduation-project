@@ -31,6 +31,8 @@ import AdminInstitutesList from '@/components/admin/AdminInstitutesList'
 import AdminCoursesList from '@/components/admin/AdminCoursesList'
 import AdminUserList from '@/components/admin/AdminUserList'
 
+import Statistics from '@/components/admin/Statistics'
+
 
 Vue.use(Router)
 
@@ -105,8 +107,11 @@ export default new Router({
 				component: AdminCoursesList
 			}, {
 				path: 'users',
-				component: AdminUserList
-			}]
+				component: AdminUserList 
+			}, {
+				path: 'statistics',
+				component: Statistics
+			},]
 		}]
 	}]
 })

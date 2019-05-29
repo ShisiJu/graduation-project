@@ -6,6 +6,80 @@ import 'echarts/lib/component/legend';
 import 'echarts/lib/component/title';
 
 
+export const courseDetailChart = (dom, data) => {
+
+	let myChart = echarts.init(dom);
+	// 4 个
+	let organizedData = [
+		[],
+		[],
+		[],
+		[]
+	];
+
+	for (let ele of data) {
+		organizedData[0].push(ele['A']);
+		organizedData[1].push(ele['B']);
+		organizedData[2].push(ele['C']);
+		organizedData[3].push(ele['D']);
+	}
+
+
+	let option = {
+		tooltip: {
+			trigger: 'axis',
+			axisPointer: { // 坐标轴指示器，坐标轴触发有效
+				type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+			}
+		},
+		legend: {
+			data: ['非常满意', '比较满意', '一般满意', '不满意']
+		},
+		grid: {
+			left: '3%',
+			right: '4%',
+			bottom: '3%',
+			containLabel: true
+		},
+		xAxis: [{
+			type: 'category',
+			data: ['上课状态', '授课方式', '认真负责']
+		}],
+		yAxis: [{
+			type: 'value'
+		}],
+		series: [{
+				name: '非常满意',
+				type: 'bar',
+				barWidth: 55,
+				stack: '满意程度',
+				data: organizedData[0]
+			},
+			{
+				name: '比较满意',
+				type: 'bar',
+				stack: '满意程度',
+				data: organizedData[1]
+			},
+			{
+				name: '一般满意',
+				type: 'bar',
+				stack: '满意程度',
+				data: organizedData[2]
+			},
+			{
+				name: '不满意',
+				type: 'bar',
+				stack: '满意程度',
+				data: organizedData[3]
+			}
+		]
+	}
+	myChart.setOption(option);
+	return {}
+}
+
+
 
 export const coursePieChartData = data => {
 	return {

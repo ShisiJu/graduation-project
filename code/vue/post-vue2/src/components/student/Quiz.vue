@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-form ref="form" :model="form" label-width="250px">
+		<el-form ref="form" :model="form" label-width="15.625rem">
 			<el-form-item label="课程">{{ course.name }}</el-form-item>
 			<el-form-item label="上课状态">
 				<el-radio-group v-model="form.optAnswers[0]">
@@ -115,6 +115,6 @@ export default {
 
 <style scoped="scoped">
 div .el-form-item__content {
-	margin-left: -100px;
+	margin-left: -6.25rem;
 }
 </style>

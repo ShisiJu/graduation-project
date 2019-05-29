@@ -1,12 +1,30 @@
 <template>
 	<div>
-		<div>
-			<el-input v-model="exactStudno" placeholder="请输入学生学号" style="width: 10.25rem;margin-right: 3.125rem;"></el-input>
-			<span style="margin: 1.25rem;">专业</span>
-			<el-cascader :options="groupOptions" :show-all-levels="false" v-model="selectedSearchOptions" @change="handleSearchGroupChange" :props="groupProps"></el-cascader>
-			<el-button style="margin-left: 1.5rem;" icon="el-icon-search" circle @click="handleSearch"></el-button>
-			<el-button @click="clearSearchStudents" circle><i class="el-icon-delete"></i></el-button>
-			<el-button style="margin-left: 12.5rem;" type="success" size="small" @click="handleAdd()">添加学生</el-button>
+		<div style="float: left;">
+			<div style="float: left;">
+				<el-input v-model="exactStudno" placeholder="请输入学生学号" style="width: 10.25rem;"></el-input>
+				<el-cascader :options="groupOptions" :show-all-levels="false" v-model="selectedSearchOptions" @change="handleSearchGroupChange" :props="groupProps"></el-cascader>
+				<el-button icon="el-icon-search" circle @click="handleSearch"></el-button>
+				<el-button @click="clearSearchStudents" circle><i class="el-icon-delete"></i></el-button>
+				<el-button type="success" size="small" @click="handleAdd()">添加学生</el-button>
+			</div>
+			<div style="width: 20rem;float: left;margin-top: 0.25rem;">
+				<el-upload
+					style="height: 2.5rem;"
+					action="api/poi/import-student"
+					:on-preview="handlePreview"
+					:on-remove="handleRemove"
+					:before-remove="beforeRemove"
+					multiple
+					:limit="1"
+					:on-exceed="handleExceed"
+					:file-list="fileList"
+				>
+					<el-button size="small" @click="handleImportModel()">导入模版下载</el-button>
+					<el-button size="small">导入EXCEL</el-button>
+					<el-button size="small" @click="handleExport()">导出数据</el-button>
+				</el-upload>
+			</div>
 		</div>
 
 		<el-table :data="tableData">
@@ -37,15 +55,15 @@
 
 		<el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
 			<el-form :model="selectTable">
-				<el-form-item label="学号" label-width="100px"><el-input v-model="selectTable.studno"></el-input></el-form-item>
-				<el-form-item label="学生姓名" label-width="100px"><el-input v-model="selectTable.name"></el-input></el-form-item>
-				<el-form-item label="性别" label-width="100px">
+				<el-form-item label="学号" label-width="6.25rem"><el-input v-model="selectTable.studno"></el-input></el-form-item>
+				<el-form-item label="学生姓名" label-width="6.25rem"><el-input v-model="selectTable.name"></el-input></el-form-item>
+				<el-form-item label="性别" label-width="6.25rem">
 					<el-radio-group v-model="selectTable.sex">
 						<el-radio label="男">男</el-radio>
 						<el-radio label="女">女</el-radio>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item label="组" label-width="100px">
+				<el-form-item label="组" label-width="6.25rem">
 					<el-cascader :options="groupOptions" :show-all-levels="false" v-model="selectedOptions" @change="handleGroupChange" :props="groupProps"></el-cascader>
 				</el-form-item>
 			</el-form>
@@ -79,10 +97,29 @@ export default {
 			groupId: null,
 			selectedGroupId: null,
 			groupProps: { label: 'name', value: 'id', children: 'groups' },
-			groupOptions: []
+			groupOptions: [],
+			fileList: []
 		};
 	},
 	methods: {
+		handleImportModel() {
+			window.open(window.location.origin + '/api/poi/export-student-model');
+		},
+		handleExport() {
+			window.open(window.location.origin + '/api/poi/export-student');
+		},
+		handleRemove(file, fileList) {
+			console.log(file, fileList);
+		},
+		handlePreview(file) {
+			console.log(file);
+		},
+		handleExceed(files, fileList) {
+			this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+		},
+		beforeRemove(file, fileList) {
+			return this.$confirm(`确定移除 ${file.name}？`);
+		},
 		handleSizeChange(pageSize) {
 			this.pageSize = pageSize;
 			this.handleCurrentChange(this.index);
@@ -156,7 +193,7 @@ export default {
 			let pageSize = this.pageSize;
 			let index = this.index;
 			let data = { groupId, studno, pageSize, index };
-			
+
 			searchStudents(data).then(res => {
 				this.tableData = res.data.content;
 				this.total = res.data.totalElements;

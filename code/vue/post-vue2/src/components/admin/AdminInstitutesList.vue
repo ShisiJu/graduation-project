@@ -26,8 +26,8 @@
 
 		<el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
 			<el-form :model="selectedTableColumn">
-				<el-form-item label="编码" label-width="100px"><el-input v-model="selectedTableColumn.code"></el-input></el-form-item>
-				<el-form-item label="学院名称" label-width="100px"><el-input v-model="selectedTableColumn.name" auto-complete="off"></el-input></el-form-item>
+				<el-form-item label="编码" label-width="6.25rem"><el-input v-model="selectedTableColumn.code"></el-input></el-form-item>
+				<el-form-item label="学院名称" label-width="6.25rem"><el-input v-model="selectedTableColumn.name" auto-complete="off"></el-input></el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="handleCancle">取 消</el-button>

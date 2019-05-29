@@ -57,16 +57,17 @@
 								<div class="jsstitle">课程信息</div>
 							</template>
 							<router-link :to="'/admin/courses'"><el-menu-item index="3-3-1">课程信息</el-menu-item></router-link>
+						<router-link :to="'/admin/statistics'"><el-menu-item index="3-3-2">统计信息</el-menu-item></router-link>
 						</el-submenu>
 					</el-submenu>
 				</el-menu>
 			</el-aside>
 
 			<el-container>
-				<el-header style="text-align: right; font-size: 18px">
+				<el-header style="text-align: right; font-size: 1.125rem">
 					<el-button @click="goBack" plain style="float:left" icon="el-icon-back">后退</el-button>
 					<el-dropdown>
-						<i class="el-icon-setting" style="margin-right: 15px;font-size: large;"></i>
+						<i class="el-icon-setting" style="margin-right: 0.9375rem;font-size: large;"></i>
 						<el-dropdown-menu slot="dropdown">
 							<el-dropdown-item @click.native.prevent="goInfo()">个人信息</el-dropdown-item>
 							<el-dropdown-item @click.native.prevent="logout()">登出</el-dropdown-item>

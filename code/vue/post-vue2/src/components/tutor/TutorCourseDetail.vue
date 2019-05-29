@@ -2,7 +2,7 @@
 	<div>
 		<div class="switch">
 			<el-switch v-model="chart" active-text="表格" inactive-text="图表"></el-switch>
-			<span>--{{ course.name }} -- {{course.tutor.name}}--</span>
+			<span>--{{ course.name }} -- {{ course.tutor.name }}--</span>
 			<span>评价人数: {{ count }}</span>
 		</div>
 		<div v-show="chart">
@@ -14,19 +14,13 @@
 				<el-table-column prop="D" label="D"></el-table-column>
 				<el-table-column label="平均分">
 					<template slot-scope="scope">
-						{{
-							(scope.row.A * 100 +
-								scope.row.B * 85 +
-								scope.row.C * 60 +
-								scope.row.D * 40) /
-								count
-						}}
+						{{ (scope.row.A * 100 + scope.row.B * 85 + scope.row.C * 60 + scope.row.D * 40) / count }}
 					</template>
 				</el-table-column>
 			</el-table>
 		</div>
 
-		<v-chart v-if="!chart" class="jchart" :options="socreChart"></v-chart>
+		<div v-show="!chart" class="jchart"><div ref="detailChart" style="width: 40rem;height: 24rem;"></div></div>
 
 		<div v-show="chart">
 			<el-table :data="descData" style="width: 100%;margin-top: 1.875rem;">
@@ -36,21 +30,18 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<el-button type="text" @click="showMoreDesc()" v-if="existMoreDesc()">
-				显示更多
-			</el-button>
-			<el-button type="text" v-if="!existMoreDesc()" disabled>
-				没有了
-			</el-button>
+			<el-button type="text" @click="showMoreDesc()" v-if="existMoreDesc()">显示更多</el-button>
+			<el-button type="text" v-if="!existMoreDesc()" disabled>没有了</el-button>
 		</div>
 	</div>
 </template>
 
 <script>
-import ECharts from 'vue-echarts';
-import 'echarts/lib/chart/bar';
+import ECharts from 'echarts';
+import 'echarts/lib/chart/pie';
 import 'echarts/lib/component/tooltip';
 import { findCourseDetail } from '@/api/axiosAPI';
+import { courseDetailChart } from '@/api/charts';
 export default {
 	data() {
 		return {
@@ -60,7 +51,7 @@ export default {
 			socreChart: {},
 			descData: [],
 			descShow: 3,
-			course:{}
+			course: {}
 		};
 	},
 	methods: {
@@ -85,17 +76,8 @@ export default {
 			return showData;
 		},
 		changeCharts() {
-			this.socreChart = {
-				legend: {},
-				tooltip: {},
-				dataset: {
-					dimensions: ['question', 'A', 'B', 'C', 'D'],
-					source: this.tableData
-				},
-				xAxis: { type: 'category' },
-				yAxis: {},
-				series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }]
-			};
+			let dom = this.$refs.detailChart;
+			courseDetailChart(dom, this.tableData);
 		},
 		showMoreDesc() {
 			this.descShow += 5;
@@ -132,8 +114,10 @@ export default {
 }
 
 .jchart {
+	margin-top: 1.25rem;
 	width: 90%;
-	height: 25rem;
+	height: 90%;
+	margin-left: 10%;
 }
 
 .pagination {

@@ -16,10 +16,22 @@ public class SatisticController {
 	@Autowired
 	private SatisticService satisticService;
 
-	@RequestMapping("/tutor")
-	public List<Map<String, Object>> evaluateCourseByTutorId(Long tutorId) {
-		
+	@RequestMapping("/recent")
+	public List<Map<String, Object>> satisticRecent5yearByTutorId(Long tutorId) {
+
 		return satisticService.satisticRecent5yearByTutorId(tutorId);
+	}
+
+	@RequestMapping("/tutor")
+	public List<Map<String, Object>> satisticByTutor(Long tutorId) {
+
+		return satisticService.satisticByTutor();
+	}
+
+	@RequestMapping("/institute")
+	public List<Map<String, Object>> satisticByInstitute(Long tutorId) {
+
+		return satisticService.satisticByInstitute();
 	}
 
 }

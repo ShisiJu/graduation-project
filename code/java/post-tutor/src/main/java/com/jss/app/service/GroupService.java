@@ -29,6 +29,11 @@ public class GroupService {
 	@Autowired
 	private InstituteRepository instituteRepository;
 
+	public List<Group> findByGroupNameIn(List<String> listName) {
+
+		return groupRepository.findByNameIn(listName);
+	}
+
 	public List<Group> findByInstitute_id(Long id) {
 
 		return groupRepository.findByInstitute_id(id);
@@ -60,7 +65,7 @@ public class GroupService {
 
 	@Transactional
 	public void deleteGroupById(Long id) {
-		
+
 		groupRepository.deleteById(id);
 	}
 

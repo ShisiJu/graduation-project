@@ -39,6 +39,11 @@ public class TutorService {
 		return tutorRepository.findAll();
 	}
 
+	public Tutor findByStudno(String studno) {
+
+		return tutorRepository.findByStudno(studno);
+	}
+
 	@Transactional
 	public void deleteTutor(Long tutorId) {
 		Optional<Tutor> tutor = tutorRepository.findById(tutorId);

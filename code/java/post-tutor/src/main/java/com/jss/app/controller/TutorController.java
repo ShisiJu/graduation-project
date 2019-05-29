@@ -36,7 +36,7 @@ public class TutorController {
 
 	@RequestMapping("/all")
 	public List<Tutor> findAll() {
-		
+
 		return tutorService.findAll();
 	}
 

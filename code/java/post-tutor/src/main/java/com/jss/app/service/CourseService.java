@@ -24,9 +24,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.wenhao.jpa.Specifications;
 import com.jss.app.model.dictionary.Term;
 import com.jss.app.model.entity.Course;
+import com.jss.app.model.entity.Group;
 import com.jss.app.model.entity.Tutor;
 import com.jss.app.model.m2m.StudentCourse;
 import com.jss.app.repository.CourseRepository;
+import com.jss.app.repository.GroupRepository;
 import com.jss.app.repository.StudentCourseRepository;
 import com.jss.app.repository.StudentRepository;
 import com.jss.app.repository.TutorRepository;
@@ -48,6 +50,9 @@ public class CourseService {
 	@Autowired
 	private TutorRepository tutorRepository;
 
+	@Autowired
+	private GroupRepository groupRepository;
+
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -56,6 +61,7 @@ public class CourseService {
 		Long studentId = jsonObject.getLong("studentId");
 
 		Integer academicYear = jsonObject.getInteger("year");
+		String name = jsonObject.getString("name");
 
 		Term term = null;
 		if (jsonObject.getString("term") != null) {
@@ -63,7 +69,9 @@ public class CourseService {
 		}
 
 		Specification<StudentCourse> specification = Specifications.<StudentCourse>and().eq("student.id", studentId)
-				.eq(academicYear != null, "course.academicYear", academicYear).eq(term != null, "course.term", term).build();
+				.like(!StringUtils.isEmpty(name), "course.name", "%" + name + "%")
+				.eq(academicYear != null, "course.academicYear", academicYear).eq(term != null, "course.term", term)
+				.build();
 
 		Integer index = jsonObject.getInteger("index");
 		Integer pageSize = jsonObject.getInteger("pageSize");
@@ -75,6 +83,10 @@ public class CourseService {
 
 	public List<Course> findAllCourses() {
 		return courseRepository.findAll();
+	}
+
+	public List<Course> findAllCourses(Sort sort) {
+		return courseRepository.findAll(sort);
 	}
 
 	public List<StudentCourse> findStudentCourseByStudent_Id(Long id) {
@@ -188,6 +200,23 @@ public class CourseService {
 	}
 
 	@Transactional
+	public Course saveCourse(Course course, Tutor tutor, List<Group> listGroup) {
+
+		Long tutorId = null;
+		if (tutor != null) {
+			tutorId = tutor.getId();
+		}
+
+		List<Long> newGroupIds = new ArrayList<>();
+
+		listGroup.forEach(group -> {
+			newGroupIds.add(group.getId());
+		});
+
+		return saveCourse(course, tutorId, newGroupIds);
+	}
+
+	@Transactional
 	public Integer saveStudentCourseBySql(Long courseId, List<Long> studentIds) {
 
 		if (studentIds.isEmpty())
@@ -237,6 +266,14 @@ public class CourseService {
 
 		List<BigInteger> groupId = courseRepository.findGroupIdsByCourseId(courseId);
 		return DataBaseConvertor.toListLong(groupId);
+	}
+
+	public List<Group> findListGroupByCourseId(Long courseId) {
+
+		List<BigInteger> groupId = courseRepository.findGroupIdsByCourseId(courseId);
+		List<Long> listLong = DataBaseConvertor.toListLong(groupId);
+		return groupRepository.findByIdIn(listLong);
+
 	}
 
 	@Transactional

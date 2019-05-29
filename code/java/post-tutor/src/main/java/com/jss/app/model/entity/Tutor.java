@@ -29,6 +29,7 @@ public class Tutor extends RowBase implements Serializable {
 
 	private static final long serialVersionUID = 281326835164141801L;
 	private String name;
+
 	@Enumerated
 	private Sex sex;
 	private String studno;

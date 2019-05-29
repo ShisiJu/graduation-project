@@ -15,7 +15,16 @@ public class DataBaseConvertor {
 
 		return listLong;
 	}
-	
-	
+
+	public static String arrayJoin(List<String> listStr, String ch) {
+
+		StringBuffer sb = new StringBuffer();
+		listStr.forEach(str -> {
+			sb.append(str);
+			sb.append(ch);
+		});
+
+		return sb.substring(0, sb.length() - 1);
+	}
 
 }

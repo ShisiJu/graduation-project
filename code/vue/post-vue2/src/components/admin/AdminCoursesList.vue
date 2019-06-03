@@ -7,7 +7,6 @@
 				<el-select v-model="searchObj.term" placeholder="学期" style="width: 9rem" clearable>
 					<el-option v-for="item in termOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>
-
 				<el-select v-model="searchObj.tutorId" placeholder="请选择导师" filterable>
 					<el-option v-for="item in tutorOptions" :key="item.value" :label="item.label" :value="item.value">
 						<span style="float: left">{{ item.label }}</span>
@@ -15,12 +14,11 @@
 					</el-option>
 				</el-select>
 			</div>
-			<el-button  icon="el-icon-search" circle @click="handleSearch"></el-button>
+			<el-button icon="el-icon-search" circle @click="handleSearch"></el-button>
 			<el-button @click="clearSearch" circle><i class="el-icon-delete"></i></el-button>
-			<el-button  type="success" size="small" @click="handleAdd()">添加课程</el-button>
-			<div style="width: 20rem;float: left;margin-top: 0.25rem;">
+			<el-button type="success" size="small" @click="handleAdd()">添加课程</el-button>
+			<div style="width: 20rem;float: left;margin-top: 0.25rem;height: 4rem;">
 				<el-upload
-					style="height: 2.5rem;"
 					action="api/poi/import-course"
 					:on-preview="handlePreview"
 					:on-remove="handleRemove"
@@ -42,6 +40,7 @@
 			<el-table-column prop="term" label="学期"></el-table-column>
 			<el-table-column prop="name" label="名称"></el-table-column>
 			<el-table-column prop="code" label="编码"></el-table-column>
+			<el-table-column prop="courseType" label="课程类型"></el-table-column>
 			<el-table-column prop="tutor.name" label="导师"></el-table-column>
 			<el-table-column label="操作" width="260px">
 				<template slot-scope="scope">
@@ -74,6 +73,14 @@
 						<el-option v-for="item in termOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
 					</el-select>
 				</el-form-item>
+
+				<el-form-item label="课程类型" label-width="6.25rem">
+					<el-select v-model="selectedTableColumn.courseType" placeholder="课程类型" style="width: 9rem" clearable>
+						<el-option v-for="item in courseOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+
+				<el-form-item label="课程人数" label-width="6.25rem"><el-input v-model="selectedTableColumn.amount"></el-input></el-form-item>
 
 				<el-form-item label="导师" label-width="6.25rem">
 					<el-select v-model="selectedTutorId" placeholder="请选择" filterable>
@@ -111,6 +118,7 @@ export default {
 			total: 10,
 			searchObj: {},
 			termOptions: [{ value: '秋季' }, { value: '春季' }],
+			courseOptions: [{ value: '必修' }, { value: '选修' }],
 			dialogFormVisible: false,
 			dialogTitle: '',
 			edited: false,
@@ -123,7 +131,7 @@ export default {
 			groupOptions: [],
 			instituteOptions: [],
 			tutorOptions: [{ label: 'Stan', value: '5', studno: 'Mar' }],
-			fileList:[]
+			fileList: []
 		};
 	},
 	methods: {
@@ -208,8 +216,6 @@ export default {
 				});
 		},
 		handleCheck(rowData) {
-			console.log('----rowData');
-			console.log(rowData);
 			this.$store.commit('setCourse', rowData);
 			this.$router.push('/tutor/course-detail');
 		},
@@ -217,9 +223,6 @@ export default {
 			let data = this.searchObj;
 			data['index'] = this.index;
 			data['pageSize'] = this.pageSize;
-
-			console.log(data);
-
 			searchCourses(data).then(res => {
 				this.tableData = res.data.content;
 				this.total = res.data.totalElements;

@@ -20,7 +20,10 @@
 			</el-table>
 		</div>
 
-		<div v-show="!chart" class="jchart"><div ref="detailChart" style="width: 40rem;height: 24rem;"></div></div>
+		<div v-show="!chart" class="jchart">
+			<div>各项评价分布柱状图</div>
+			<div ref="detailChart" style="width: 40rem;height: 24rem;"></div>
+		</div>
 
 		<div v-show="chart">
 			<el-table :data="descData" style="width: 100%;margin-top: 1.875rem;">
@@ -108,6 +111,15 @@ export default {
 </script>
 
 <style scoped="scoped">
+.mytextStyle {
+	color: '#333';
+	fontstyle: 'normal';
+	fontweight: 'normal';
+	fontfamily: 'sans-serif';
+	fontsize: 20;
+	
+}
+
 .switch {
 	position: relative;
 	left: 0rem;

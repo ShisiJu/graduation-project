@@ -13,6 +13,7 @@
 						<el-menu-item-group>
 							<router-link :to="'/student/course'"><el-menu-item index="1-1">我的课程</el-menu-item></router-link>
 							<router-link :to="'/student/info'"><el-menu-item index="1-2">个人信息</el-menu-item></router-link>
+							<router-link :to="'/student/choose-course'"><el-menu-item index="1-3">选择课程</el-menu-item></router-link>
 						</el-menu-item-group>
 					</el-submenu>
 
@@ -26,6 +27,7 @@
 						<el-menu-item-group>
 							<router-link :to="'/tutor/course'"><el-menu-item index="2-1">我的课程</el-menu-item></router-link>
 							<router-link :to="'/tutor/info'"><el-menu-item index="2-2">个人信息</el-menu-item></router-link>
+							<router-link :to="'/tutor/student-course'"><el-menu-item index="2-3">成绩信息</el-menu-item></router-link>
 						</el-menu-item-group>
 					</el-submenu>
 
@@ -57,7 +59,8 @@
 								<div class="jsstitle">课程信息</div>
 							</template>
 							<router-link :to="'/admin/courses'"><el-menu-item index="3-3-1">课程信息</el-menu-item></router-link>
-						<router-link :to="'/admin/statistics'"><el-menu-item index="3-3-2">统计信息</el-menu-item></router-link>
+							<router-link :to="'/admin/statistics'"><el-menu-item index="3-3-2">统计信息</el-menu-item></router-link>
+							<router-link :to="'/admin/student-course'"><el-menu-item index="3-3-3">学生课程</el-menu-item></router-link>
 						</el-submenu>
 					</el-submenu>
 				</el-menu>
@@ -112,7 +115,7 @@ export default {
 			else if (type === 2) return 'admin';
 		}
 	},
-	beforeCreate:function() {
+	beforeCreate: function() {
 		let user = this.$store.state.userInfo;
 		if (user === null) {
 			this.$router.push('/post');

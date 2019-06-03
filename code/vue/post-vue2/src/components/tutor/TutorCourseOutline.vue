@@ -61,7 +61,10 @@
 				<el-button type="primary" @click="saveColumnData">确 定</el-button>
 			</div>
 		</el-dialog>
-		<div v-if="showPie"><div ref="recent5YearChart" style="width: 50rem;height: 37.5rem;"></div></div>
+		<div v-if="showPie">
+			<div style="margin-top: 0.625rem;margin-bottom: 0.625rem;">近五年课程评价分布折线图与饼状图</div>
+			<div ref="recent5YearChart" style="width: 50rem;height: 37.5rem;"></div>
+		</div>
 	</div>
 </template>
 

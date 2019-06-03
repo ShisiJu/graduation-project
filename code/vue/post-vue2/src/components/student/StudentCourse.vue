@@ -7,6 +7,7 @@
 				<el-option v-for="item in termOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
 			</el-select>
 			<el-button style="margin-left: 1.5rem;" icon="el-icon-search" circle @click="handleSearch"></el-button>
+			<el-button @click="clearSearch" circle><i class="el-icon-delete"></i></el-button>
 		</div>
 
 		<div>
@@ -17,6 +18,13 @@
 				<el-table-column prop="course.code" label="课程编码"></el-table-column>
 				<el-table-column prop="course.tutor.institute.name" label="所属学院"></el-table-column>
 				<el-table-column prop="course.tutor.name" label="导师"></el-table-column>
+				<el-table-column prop="score" label="分数">
+					<template slot-scope="scope">
+						<div v-if="scope.row.score >= 60" style="color: #006600;">{{ scope.row.score }}</div>
+						<div v-if="scope.row.score < 60" style="color:red;">{{ scope.row.score }}</div>
+					</template>
+				</el-table-column>
+
 				<el-table-column label="操作">
 					<template slot-scope="scope">
 						<el-button v-if="scope.row.status == 0" type="primary" @click.native.prevent="evaluateCourse(scope.row)" size="small">评价课程</el-button>
@@ -45,7 +53,7 @@ import { findStudentCourse, findStudentCourseWithPage } from '@/api/axiosAPI';
 export default {
 	name: 'j-student-info',
 	created: function() {
-		this.studentId =  this.$store.state.userInfo.obj.id;
+		this.studentId = this.$store.state.userInfo.obj.id;
 		this.refreshTableData();
 	},
 	data() {
@@ -60,6 +68,9 @@ export default {
 		};
 	},
 	methods: {
+		clearSearch() {
+			this.searchObj = {};
+		},
 		evaluateCourse: function(data) {
 			this.$store.commit('setQuiz', data);
 			this.$router.push('/student/quiz');

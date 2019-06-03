@@ -14,13 +14,13 @@ import StudentInfo from '@/components/student/StudentInfo'
 import StudentTutor from '@/components/student/StudentTutor'
 import StudentCourse from '@/components/student/StudentCourse'
 import Quiz from '@/components/student/Quiz'
+import ChooseCourse from '@/components/student/ChooseCourse.vue'
 
 import Tutor from '@/components/tutor/Tutor'
 import TutorInfo from '@/components/tutor/TutorInfo'
 import TutorStudents from '@/components/tutor/TutorStudents'
 import TutorCourseDetail from '@/components/tutor/TutorCourseDetail'
 import TutorCourseOutline from '@/components/tutor/TutorCourseOutline'
-
 
 import Admin from '@/components/admin/Admin'
 import AdminInfo from '@/components/admin/AdminInfo'
@@ -30,10 +30,10 @@ import AdminTutorsList from '@/components/admin/AdminTutorsList'
 import AdminInstitutesList from '@/components/admin/AdminInstitutesList'
 import AdminCoursesList from '@/components/admin/AdminCoursesList'
 import AdminUserList from '@/components/admin/AdminUserList'
-
 import Statistics from '@/components/admin/Statistics'
-
-
+import AdminStudentCoursesList from '@/components/admin/AdminStudentCoursesList'
+//  
+//
 Vue.use(Router)
 
 export default new Router({
@@ -64,6 +64,9 @@ export default new Router({
 				}, {
 					path: 'quiz',
 					component: Quiz
+				}, {
+					path: 'choose-course',
+					component: ChooseCourse
 				}
 			]
 		}, {
@@ -81,8 +84,11 @@ export default new Router({
 				},
 				{
 					path: 'course-outline',
-					component: TutorCourseOutline
-				}
+					component: TutorCourseOutline 
+				}, {
+					path: 'student-course',
+					component: AdminStudentCoursesList
+				},
 			]
 		}, {
 			path: '/admin',
@@ -107,11 +113,14 @@ export default new Router({
 				component: AdminCoursesList
 			}, {
 				path: 'users',
-				component: AdminUserList 
-			}, {
+				component: AdminUserList
+			},  {
 				path: 'statistics',
-				component: Statistics
-			},]
+				component: Statistics 
+			}, {
+				path: 'student-course',
+				component: AdminStudentCoursesList
+			}, ]
 		}]
 	}]
 })

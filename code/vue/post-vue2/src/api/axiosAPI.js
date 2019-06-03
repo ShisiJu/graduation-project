@@ -1,8 +1,16 @@
 import {
 	get,
 	post,
-	postJson
+	postJson,
+	downloadFile
 } from './http.js'
+
+//文件的导出 并且携带参数
+
+export const exportStudentCourse = data => downloadFile('poi/export-student-course', data)
+
+
+// 用户登录
 
 export const userLogin = data => post('login/login', data)
 
@@ -15,8 +23,8 @@ export const findAdminInfo = data => get('admin/info', data)
 
 // 学生
 export const findStudentCourse = data => post('course/student', data)
-
-export const findStudentCourseWithPage = data => postJson('course/studentWithPage', data)
+// StudentCourse
+export const findStudentCourseWithPage = data => postJson('student-course/search', data)
 
 export const findTutorCourse = data => postJson('course/tutor', data)
 
@@ -79,6 +87,22 @@ export const deleteCourse = data => get('course/delete', data)
 
 export const getGroupsByCourseId = data => get('course/findGroupsByCourseId', data)
 
+export const findOptionalCourse = data => postJson('course/findOptionalCourse', data)
+
+
+
+// Student_Course CRUD
+export const searchStudentCourses = data => postJson('student-course/search', data)
+
+export const updateScore = data => post('student-course/update-score', data)
+
+export const deleteStudentCourse = data => get('student-course/delete', data)
+
+//student-course
+export const saveStudentCourse = data => get('student-course/save', data)
+
+
+
 // User CRUD
 export const searchUser = data => postJson('user/search', data)
 
@@ -96,6 +120,8 @@ export const searchQuizByCustom = data => postJson('quiz/custom', data)
 export const statisticByTutorId = data => get('statistic/recent', data)
 
 export const satisticByTutor = data => get('statistic/tutor', data)
+
+export const satisticByTutorAndQuestion = data => get('statistic/tutor-question', data)
 
 export const satisticByInstitute = data => get('statistic/institute', data)
 

@@ -15,6 +15,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
+import com.jss.app.model.dictionary.CourseTyoe;
 import com.jss.app.model.dictionary.Term;
 import com.jss.app.model.entity.Course;
 import com.jss.app.model.entity.Group;
@@ -87,9 +89,19 @@ public class CourseSheetHandler implements SheetContentsHandler, HandleExcelExpo
 			course.setTerm(Term.valueOf(formattedValue));
 			break;
 		case "E":
-			tutor = tutorService.findByStudno(formattedValue);
+			course.setCourseType(CourseTyoe.valueOf(formattedValue));
 			break;
 		case "F":
+			if (course.getCourseType() == CourseTyoe.选修) {
+				course.setAmount(Integer.parseInt(formattedValue));
+			} else {
+				course.setAmount(0);
+			}
+			break;
+		case "G":
+			tutor = tutorService.findByStudno(formattedValue);
+			break;
+		case "H":
 			String[] split = formattedValue.split(",|，");
 			List<String> listName = Arrays.asList(split);
 			listGroup = groupService.findByGroupNameIn(listName);
@@ -112,7 +124,7 @@ public class CourseSheetHandler implements SheetContentsHandler, HandleExcelExpo
 		// 获取样式 从第三行开始
 		int index = dataNum + 1;
 
-		Sort sort = new Sort(Sort.Direction.ASC, "id");
+		Sort sort = new Sort(Sort.Direction.DESC, "academicYear", "term");
 		List<Course> listCourse = courseService.findAllCourses(sort);
 
 		for (Course course : listCourse) {
@@ -133,9 +145,15 @@ public class CourseSheetHandler implements SheetContentsHandler, HandleExcelExpo
 			cell.setCellValue(course.getTerm().toString());
 
 			cell = curRow.createCell(4);
-			cell.setCellValue(course.getTutor().getStudno());
+			cell.setCellValue(course.getCourseType().toString());
 
 			cell = curRow.createCell(5);
+			cell.setCellValue(course.getAmount());
+
+			cell = curRow.createCell(6);
+			cell.setCellValue(course.getTutor().getStudno());
+
+			cell = curRow.createCell(7);
 			List<Group> groups = courseService.findListGroupByCourseId(course.getId());
 			List<String> names = new ArrayList<>();
 			groups.forEach(group -> {
@@ -146,6 +164,12 @@ public class CourseSheetHandler implements SheetContentsHandler, HandleExcelExpo
 
 		}
 
+	}
+
+	@Override
+	public void handleExportData(JSONObject jsonObject, Workbook workbook) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

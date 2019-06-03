@@ -27,9 +27,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jss.app.service.handler.CourseSheetHandler;
 import com.jss.app.service.handler.GroupSheetHandler;
 import com.jss.app.service.handler.HandleExcelExport;
+import com.jss.app.service.handler.StudentCourseSheetHandler;
 import com.jss.app.service.handler.StudentSheetHandler;
 import com.jss.app.service.handler.TutorSheetHandler;
 import com.jss.app.util.ResponseUtil;
@@ -49,7 +51,31 @@ public class PoiService {
 	@Autowired
 	private CourseSheetHandler courseSheetHandler;
 
-	// 对 导师 导入 导出模版 导出数据
+	@Autowired
+	private StudentCourseSheetHandler studentCourseSheetHandler;
+
+	// 对 course 导入 导出模版 导出数据
+	public void importStudentCourse(MultipartFile file) throws Exception {
+
+		importData(file, studentCourseSheetHandler);
+	}
+
+	public void exportStudentCourseModel(HttpServletResponse response, String fileName)
+			throws IOException, InvalidFormatException {
+
+		Resource resource = new ClassPathResource("excel-model/student-course-model.xlsx");
+		File file = resource.getFile();
+		// 输出文件
+		ResponseUtil.download(response, file, fileName);
+	}
+
+	public void exportStudentCourse(HttpServletResponse response, JSONObject jsonObject, String fileName)
+			throws IOException, InvalidFormatException {
+
+		exportData(studentCourseSheetHandler, jsonObject, "excel-model/student-course-model.xlsx", response, fileName);
+	}
+
+	// 对 course 导入 导出模版 导出数据
 	public void importCourse(MultipartFile file) throws Exception {
 
 		importData(file, courseSheetHandler);
@@ -66,7 +92,7 @@ public class PoiService {
 
 	public void exportCourse(HttpServletResponse response, String fileName) throws IOException, InvalidFormatException {
 
-		exportData(courseSheetHandler, "excel-model/course-model.xlsx", response, fileName);
+		exportData(courseSheetHandler, null, "excel-model/course-model.xlsx", response, fileName);
 	}
 
 	// 对 导师 导入 导出模版 导出数据
@@ -86,7 +112,7 @@ public class PoiService {
 
 	public void exportTutor(HttpServletResponse response, String fileName) throws IOException, InvalidFormatException {
 
-		exportData(tutorSheetHandler, "excel-model/tutor-model.xlsx", response, fileName);
+		exportData(tutorSheetHandler, null, "excel-model/tutor-model.xlsx", response, fileName);
 	}
 
 	// 对 学生 导入 导出模版 导出数据
@@ -107,7 +133,7 @@ public class PoiService {
 	public void exportStudent(HttpServletResponse response, String fileName)
 			throws IOException, InvalidFormatException {
 
-		exportData(studentSheetHandler, "excel-model/group-model.xlsx", response, fileName);
+		exportData(studentSheetHandler, null, "excel-model/group-model.xlsx", response, fileName);
 	}
 
 	// 对 班级（组） 导入 导出模版 导出数据
@@ -127,20 +153,23 @@ public class PoiService {
 
 	public void exportGroup(HttpServletResponse response, String fileName) throws Exception {
 
-		exportData(groupSheetHandler, "excel-model/group-model.xlsx", response, fileName);
+		exportData(groupSheetHandler, null, "excel-model/group-model.xlsx", response, fileName);
 	}
 
-	public void exportData(HandleExcelExport handler, String modelPath, HttpServletResponse response, String fileName)
-			throws IOException, InvalidFormatException {
+	public void exportData(HandleExcelExport handler, JSONObject jsonObject, String modelPath,
+			HttpServletResponse response, String fileName) throws IOException, InvalidFormatException {
 		Resource resource = new ClassPathResource(modelPath);
 		File file = resource.getFile();
 		Workbook workbook = new XSSFWorkbook(file);
-		handler.handleExportData(workbook);
+
+		// 根据传入的条件进行导出
+		handler.handleExportData(jsonObject, workbook);
 
 		// 输出成 excel
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		workbook.write(byteArrayOutputStream);
 		ResponseUtil.download(response, byteArrayOutputStream, fileName);
+		workbook = new XSSFWorkbook(file);
 		workbook.close();
 	}
 

@@ -2,7 +2,9 @@ package com.jss.app.service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -22,6 +24,7 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.wenhao.jpa.Specifications;
+import com.jss.app.model.dictionary.CourseTyoe;
 import com.jss.app.model.dictionary.Term;
 import com.jss.app.model.entity.Course;
 import com.jss.app.model.entity.Group;
@@ -56,6 +59,21 @@ public class CourseService {
 	@PersistenceContext
 	private EntityManager entityManager;
 
+	public Map<String, Object> searchOptionalCourses(JSONObject jsonObject) {
+
+		Long studentId = jsonObject.getLong("studentId");
+		Integer index = jsonObject.getInteger("index");
+		Integer pageSize = jsonObject.getInteger("pageSize");
+		Sort sort = new Sort(Sort.Direction.DESC, "academic_year", "term");
+		Pageable page = PageRequest.of(index - 1, pageSize, sort);
+		List<Course> listCourse = courseRepository.findOptioinalCoursesByStudentId(studentId, page);
+		BigInteger totalElements = courseRepository.countOptioinalCoursesByStudentId(studentId);
+		Map<String, Object> data = new HashMap<>();
+		data.put("content", listCourse);
+		data.put("totalElements", totalElements.longValue());
+		return data;
+	}
+
 	public Page<StudentCourse> searchStudentCourseByStudent(JSONObject jsonObject) {
 
 		Long studentId = jsonObject.getLong("studentId");
@@ -68,10 +86,15 @@ public class CourseService {
 			term = Term.valueOf(jsonObject.getString("term"));
 		}
 
+		CourseTyoe courseTyoe = null;
+		if (jsonObject.getString("courseTyoe") != null) {
+			courseTyoe = CourseTyoe.valueOf(jsonObject.getString("courseTyoe"));
+		}
+
 		Specification<StudentCourse> specification = Specifications.<StudentCourse>and().eq("student.id", studentId)
 				.like(!StringUtils.isEmpty(name), "course.name", "%" + name + "%")
 				.eq(academicYear != null, "course.academicYear", academicYear).eq(term != null, "course.term", term)
-				.build();
+				.eq(courseTyoe != null, "courseTyoe", courseTyoe).build();
 
 		Integer index = jsonObject.getInteger("index");
 		Integer pageSize = jsonObject.getInteger("pageSize");
@@ -100,26 +123,31 @@ public class CourseService {
 
 	}
 
-	public Page<Course> searchCourses(JSONObject joCourse) {
+	public Page<Course> searchCourses(JSONObject jsonObject) {
 
-		String name = joCourse.getString("name");
+		String name = jsonObject.getString("name");
 
 		List<Long> instituteIds = null;
 		boolean boolIns = false;
 
-		if (joCourse.getJSONArray("instituteIds") != null) {
-			instituteIds = joCourse.getJSONArray("instituteIds").toJavaList(Long.class);
+		if (jsonObject.getJSONArray("instituteIds") != null) {
+			instituteIds = jsonObject.getJSONArray("instituteIds").toJavaList(Long.class);
 			boolIns = !instituteIds.isEmpty();
 		}
 
-		Integer index = joCourse.getInteger("index");
-		Integer pageSize = joCourse.getInteger("pageSize");
-		Integer academicYear = joCourse.getInteger("academicYear");
-		Optional<Long> tutorId = Optional.ofNullable(joCourse.getLong("tutorId"));
+		Integer index = jsonObject.getInteger("index");
+		Integer pageSize = jsonObject.getInteger("pageSize");
+		Integer academicYear = jsonObject.getInteger("academicYear");
+		Optional<Long> tutorId = Optional.ofNullable(jsonObject.getLong("tutorId"));
 
 		Term term = null;
-		if (joCourse.getString("term") != null) {
-			term = Term.valueOf(joCourse.getString("term"));
+		if (jsonObject.getString("term") != null) {
+			term = Term.valueOf(jsonObject.getString("term"));
+		}
+
+		CourseTyoe courseTyoe = null;
+		if (jsonObject.getString("courseTyoe") != null) {
+			courseTyoe = CourseTyoe.valueOf(jsonObject.getString("courseTyoe"));
 		}
 
 		Sort sort = new Sort(Sort.Direction.DESC, "academicYear", "term");
@@ -129,33 +157,34 @@ public class CourseService {
 				.like(!StringUtils.isEmpty(name), "name", "%" + name + "%")
 				.eq(academicYear != null, "academicYear", academicYear).eq(term != null, "term", term)
 				.in(boolIns, "tutor.institute.id", boolIns ? instituteIds.toArray() : null)
-				.eq(tutorId.isPresent(), "tutor.id", tutorId.orElse(null)).build();
+				.eq(tutorId.isPresent(), "tutor.id", tutorId.orElse(null))
+				.eq(courseTyoe != null, "courseTyoe", courseTyoe).build();
 
 		return courseRepository.findAll(specification, pageable);
 	}
 
-	public List<Course> searchCoursesWithoutPage(JSONObject joCourse) {
+	public List<Course> searchCoursesWithoutPage(JSONObject jsonObject) {
 
-		String name = joCourse.getString("name");
+		String name = jsonObject.getString("name");
 
 		List<Long> instituteIds = null;
 		boolean boolIns = false;
 
-		if (joCourse.getJSONArray("instituteIds") != null) {
-			instituteIds = joCourse.getJSONArray("instituteIds").toJavaList(Long.class);
+		if (jsonObject.getJSONArray("instituteIds") != null) {
+			instituteIds = jsonObject.getJSONArray("instituteIds").toJavaList(Long.class);
 			boolIns = !instituteIds.isEmpty();
 		}
 
-		Integer academicYear = joCourse.getInteger("academicYear");
-		Optional<Long> tutorId = Optional.ofNullable(joCourse.getLong("tutorId"));
+		Integer academicYear = jsonObject.getInteger("academicYear");
+		Optional<Long> tutorId = Optional.ofNullable(jsonObject.getLong("tutorId"));
 
 		Term term = null;
-		if (joCourse.getString("term") != null) {
-			term = Term.valueOf(joCourse.getString("term"));
+		if (jsonObject.getString("term") != null) {
+			term = Term.valueOf(jsonObject.getString("term"));
 		}
 
-		Integer lowYear = joCourse.getInteger("beforeYear");
-		Integer highYear = joCourse.getInteger("afterYear");
+		Integer lowYear = jsonObject.getInteger("beforeYear");
+		Integer highYear = jsonObject.getInteger("afterYear");
 		boolean betweenYear = lowYear != null && highYear != null;
 
 		Specification<Course> specification = Specifications.<Course>and()

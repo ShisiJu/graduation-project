@@ -10,9 +10,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Proxy;
 
 import com.jss.app.model.dictionary.CommonDictionary;
+import com.jss.app.model.dictionary.CourseTyoe;
 import com.jss.app.model.dictionary.Term;
 
 import lombok.AllArgsConstructor;
@@ -43,5 +45,12 @@ public class Course extends CommonDictionary implements Serializable {
 	private Integer academicYear;
 	@Enumerated
 	private Term term;
+	@Enumerated
+	@ColumnDefault(value = "0")
+	private CourseTyoe courseType;
+	@ColumnDefault(value = "0")
+	private Integer amount;
+	@ColumnDefault(value = "0")
+	private Integer currentNum;
 
 }

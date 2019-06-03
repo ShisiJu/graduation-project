@@ -1,6 +1,7 @@
 package com.jss.app.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,12 @@ public class CourseController {
 
 	@Autowired
 	private CourseService courseService;
+
+	@RequestMapping("/findOptionalCourse")
+	public Map<String, Object> findOptionalCourse(@RequestBody JSONObject jsonObject) {
+
+		return courseService.searchOptionalCourses(jsonObject);
+	}
 
 	@RequestMapping("/student")
 	public List<StudentCourse> findByStudent(@RequestParam Long id) {

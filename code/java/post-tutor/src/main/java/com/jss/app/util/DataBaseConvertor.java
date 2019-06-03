@@ -18,6 +18,9 @@ public class DataBaseConvertor {
 
 	public static String arrayJoin(List<String> listStr, String ch) {
 
+		if (listStr.size() == 0)
+			return "";
+
 		StringBuffer sb = new StringBuffer();
 		listStr.forEach(str -> {
 			sb.append(str);

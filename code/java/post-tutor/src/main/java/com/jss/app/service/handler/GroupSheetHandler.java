@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jss.app.model.entity.Group;
 import com.jss.app.model.entity.Institute;
 import com.jss.app.repository.GroupRepository;
@@ -113,6 +114,12 @@ public class GroupSheetHandler implements SheetContentsHandler, HandleExcelExpor
 
 		}
 
+	}
+
+	@Override
+	public void handleExportData(JSONObject jsonObject, Workbook workbook) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

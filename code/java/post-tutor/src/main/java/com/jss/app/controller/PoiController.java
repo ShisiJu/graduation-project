@@ -7,11 +7,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jss.app.service.PoiService;
 
 @Controller
@@ -21,6 +23,55 @@ public class PoiController {
 	@Autowired
 	private PoiService poiService;
 
+	// student-course 导入导出
+	@RequestMapping(value = "/export-student-course")
+	public void exportStudentCourse(@RequestBody JSONObject jsonObject, HttpServletResponse res) {
+
+		try {
+
+			poiService.exportStudentCourse(res, jsonObject, "student-course.xlsx");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidFormatException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@RequestMapping(value = "/export-student-course-model")
+	public void exportStudentCourseModel(HttpServletResponse res) {
+
+		try {
+
+			poiService.exportStudentCourseModel(res, "student-course-model.xlsx");
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		} catch (InvalidFormatException e) {
+
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+	@RequestMapping(value = "/import-student-course")
+	@ResponseBody
+	public void importStudentCourse(@RequestParam(name = "file") MultipartFile file) {
+		try {
+			poiService.importStudentCourse(file);
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+	}
+
+	// tutor 导入导出
 	@RequestMapping(value = "/export-tutor")
 	public void exportTutor(HttpServletResponse res) {
 
@@ -41,7 +92,6 @@ public class PoiController {
 	public void exportTutorModel(HttpServletResponse res) {
 
 		try {
-
 			poiService.exportTutorModel(res, "tutor-model.xlsx");
 
 		} catch (IOException e) {
@@ -51,7 +101,7 @@ public class PoiController {
 
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 	}
@@ -62,7 +112,7 @@ public class PoiController {
 		try {
 			poiService.importTutor(file);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 
@@ -98,7 +148,7 @@ public class PoiController {
 
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 	}
@@ -109,7 +159,7 @@ public class PoiController {
 		try {
 			poiService.importCourse(file);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 
@@ -143,7 +193,7 @@ public class PoiController {
 
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 	}
@@ -154,7 +204,7 @@ public class PoiController {
 		try {
 			poiService.importStudent(file);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 

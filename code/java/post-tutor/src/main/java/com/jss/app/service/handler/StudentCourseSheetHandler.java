@@ -9,38 +9,32 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.app.model.dictionary.Sex;
-import com.jss.app.model.entity.Group;
-import com.jss.app.model.entity.Student;
-import com.jss.app.model.entity.User;
-import com.jss.app.repository.GroupRepository;
-import com.jss.app.repository.StudentRepository;
-import com.jss.app.repository.UserRepository;
+import com.alibaba.fastjson.JSONObject;
+import com.jss.app.model.m2m.StudentCourse;
+import com.jss.app.service.StudentCourseService;
 
 @Component
-public class StudentCourseSheetHandler implements SheetContentsHandler,HandleExcelExport {
+public class StudentCourseSheetHandler implements SheetContentsHandler, HandleExcelExport {
 
-	private Student student;
+	private StudentCourse studentCourse;
 
 	private int dataNum = 1;
 
-	@Autowired
-	private GroupRepository groupRepository;
+	// 学生学号
+	private String studno = "";
+	// 课程编码
+	private String code = "";
 
 	@Autowired
-	private StudentRepository studentRepository;
-
-	@Autowired
-	private UserRepository userRepository;
+	private StudentCourseService studentCourseService;
 
 	@Override
 	public void startRow(int rowNum) {
 		if (rowNum > dataNum) {
-			student = new Student();
+			studentCourse = new StudentCourse();
 		}
 
 	}
@@ -48,44 +42,42 @@ public class StudentCourseSheetHandler implements SheetContentsHandler,HandleExc
 	@Override
 	@Transactional
 	public void endRow(int rowNum) {
-		if (rowNum > dataNum) {
-			String studno = student.getStudno();
 
-			if ("".equals(studno) || studno == null) {
-				return;
-			}
-			studentRepository.save(student);
-			User user = new User();
-			user.setPwd(studno);
-			user.setStudno(studno);
-			user.setType(0);
-			user.setUsername(studno);
-			userRepository.save(user);
-		}
+		if (rowNum <= dataNum)
+			return;
+
+		studentCourseService.save(studentCourse);
+
 	}
 
 	@Override
 	public void cell(String cellReference, String formattedValue, XSSFComment comment) {
-		if (student == null)
+		if (studentCourse == null)
 			return;
 
-		System.out.println(cellReference);
-
 		String prefix = cellReference.substring(0, 1);
+		formattedValue = formattedValue.trim();
 
 		switch (prefix) {
 		case "A":
-			student.setStudno(formattedValue);
 			break;
 		case "B":
-			student.setName(formattedValue);
+			code = formattedValue;
 			break;
 		case "C":
-			student.setSex(Sex.valueOf(formattedValue));
+			studno = formattedValue;
 			break;
 		case "D":
-			Group findByName = groupRepository.findByName(formattedValue.trim());
-			student.setGroup(findByName);
+			break;
+		case "E":
+			StudentCourse currentObj = studentCourseService.findByStudent_StudnoAndCourse_Code(studno, code);
+			if (currentObj == null) {
+				studentCourseService.saveStudentCourse(studno, code);
+				currentObj = studentCourseService.findByStudent_StudnoAndCourse_Code(studno, code);
+			}
+			currentObj.setScore(Integer.parseInt(formattedValue));
+			code = "";
+			studno = "";
 			break;
 		default:
 			break;
@@ -98,34 +90,44 @@ public class StudentCourseSheetHandler implements SheetContentsHandler,HandleExc
 
 	}
 
-	public void handleExportData(Workbook workbook) {
+	public void handleExportData(JSONObject jsonObject, Workbook workbook) {
 		Sheet sheet = workbook.getSheetAt(0);
-		// String[] titles = "学号,姓名,性别,职称,学院名称".split(",");
 		// 行
 		// 获取样式 从第三行开始
 		int index = dataNum + 1;
+		List<StudentCourse> listStudentCourse = studentCourseService
+				.searchStudentCourseByStudentWithoutPage(jsonObject);
+		System.out.println("----size()-----" + listStudentCourse.size());
 
-		Sort sort = new Sort(Sort.Direction.ASC, "studno");
-		List<Student> listStudent = studentRepository.findAll(sort);
+		for (int i = 0; i < listStudentCourse.size(); i++) {
 
-		for (Student student : listStudent) {
-
+			StudentCourse sc = listStudentCourse.get(i);
 			Row curRow = sheet.createRow(index);
 			index++;
 
 			Cell cell = curRow.createCell(0);
-			cell.setCellValue(student.getStudno());
+			cell.setCellValue(sc.getCourse().getName());
 
 			cell = curRow.createCell(1);
-			cell.setCellValue(student.getName());
+			cell.setCellValue(sc.getCourse().getCode());
 
 			cell = curRow.createCell(2);
-			cell.setCellValue(student.getSex().toString());
+			cell.setCellValue(sc.getStudent().getStudno());
 
 			cell = curRow.createCell(3);
-			cell.setCellValue(student.getGroup().getName());
+			cell.setCellValue(sc.getStudent().getName());
 
+			cell = curRow.createCell(4);
+			if (sc.getScore() != null) {
+				cell.setCellValue(sc.getScore());
+			}
 		}
+		System.out.println("----size()-----" + listStudentCourse.size());
+	}
+
+	@Override
+	public void handleExportData(Workbook workbook) {
+		// TODO Auto-generated method stub
 
 	}
 

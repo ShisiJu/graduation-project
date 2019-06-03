@@ -42,12 +42,33 @@ public class SatisticService {
 		return listEvaluation;
 	}
 
-	public List<Map<String, Object>> satisticByTutor() {
-		return quizAnswerRepository.evalutateByTutor();
+	public List<Map<String, Object>> satisticByTutor(Boolean asc) {
+
+		if (asc) {
+			return quizAnswerRepository.evalutateByTutor();
+		} else {
+			return quizAnswerRepository.evalutateByTutorDesc();
+		}
 	}
-	
-	public List<Map<String, Object>> satisticByInstitute() {
-		return quizAnswerRepository.evalutateByInstitute();
+
+	public List<Map<String, Object>> satisticByTutorAndQuestion(Boolean asc, Integer question) {
+
+		if (asc) {
+			return quizAnswerRepository.evalutateByTutorAndQuestion(question);
+		} else {
+			return quizAnswerRepository.evalutateByTutorAndQuestionDesc(question);
+		}
+
+	}
+
+	public List<Map<String, Object>> satisticByInstitute(Boolean asc) {
+
+		if (asc) {
+			return quizAnswerRepository.evalutateByInstitute();
+		} else {
+			return quizAnswerRepository.evalutateByInstituteDesc();
+		}
+
 	}
 
 	private Map<String, Object> copyMap(Map<String, Object> evaluation) {

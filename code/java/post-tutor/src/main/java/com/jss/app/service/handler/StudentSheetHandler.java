@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jss.app.model.dictionary.Sex;
 import com.jss.app.model.entity.Group;
 import com.jss.app.model.entity.Student;
@@ -127,6 +128,12 @@ public class StudentSheetHandler implements SheetContentsHandler,HandleExcelExpo
 
 		}
 
+	}
+
+	@Override
+	public void handleExportData(JSONObject jsonObject, Workbook workbook) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

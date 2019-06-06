@@ -2,15 +2,21 @@
 	<div>
 		<div style="float: left;">
 			<div style="float: left;">
-				<el-input v-model="exactStudno" placeholder="请输入学生学号" style="width: 10.25rem;"></el-input>
-				<el-cascader :options="groupOptions" :show-all-levels="false" v-model="selectedSearchOptions" @change="handleSearchGroupChange" :props="groupProps"></el-cascader>
+				<el-input v-model="searchObj.exactStudno" placeholder="请输入学生学号" style="width: 10.25rem;"></el-input>
+				<el-cascader
+					placeholder="请选择班级"
+					:options="groupOptions"
+					:show-all-levels="false"
+					v-model="searchObj.group"
+					@change="handleSearchGroupChange"
+					:props="groupProps"
+				></el-cascader>
 				<el-button icon="el-icon-search" circle @click="handleSearch"></el-button>
-				<el-button @click="clearSearchStudents" circle><i class="el-icon-delete"></i></el-button>
+				<el-button @click="clearSearch" circle><i class="el-icon-delete"></i></el-button>
 				<el-button type="success" size="small" @click="handleAdd()">添加学生</el-button>
 			</div>
-			<div style="width: 20rem;float: left;margin-top: 0.25rem;">
+			<div style="width: 8rem;float: left;margin-top: 0.25rem;height: 5rem;">
 				<el-upload
-					style="height: 2.5rem;"
 					action="api/poi/import-student"
 					:on-preview="handlePreview"
 					:on-remove="handleRemove"
@@ -20,10 +26,12 @@
 					:on-exceed="handleExceed"
 					:file-list="fileList"
 				>
-					<el-button size="small" @click="handleImportModel()">导入模版下载</el-button>
 					<el-button size="small">导入EXCEL</el-button>
-					<el-button size="small" @click="handleExport()">导出数据</el-button>
 				</el-upload>
+			</div>
+			<div style="width:16rem;float: left;margin-top: 0.25rem;">
+				<el-button size="small" @click="handleImportModel()">导入模版下载</el-button>
+				<el-button size="small" @click="handleExport()">导出数据</el-button>
 			</div>
 		</div>
 
@@ -76,7 +84,17 @@
 </template>
 
 <script>
-import { searchStudents, insertStudent, updateStudent, deleteStudent, getAllInstitute, getGroupByInstituteId, getAllGroup, getGroupByInstituteIdIn } from '@/api/axiosAPI';
+import {
+	exportStudent,
+	searchStudents,
+	insertStudent,
+	updateStudent,
+	deleteStudent,
+	getAllInstitute,
+	getGroupByInstituteId,
+	getAllGroup,
+	getGroupByInstituteIdIn
+} from '@/api/axiosAPI';
 
 export default {
 	name: 'j-admin-studen-list',
@@ -86,15 +104,13 @@ export default {
 			index: 1,
 			pageSize: 10,
 			total: 10,
-			exactStudno: '',
 			dialogFormVisible: false,
 			dialogTitle: '',
+			searchObj: { group: [] },
 			selectedOptions: [],
-			selectedSearchOptions: [],
 			selectTable: {},
 			selectTableTemp: {},
 			tableDataIndex: 0,
-			groupId: null,
 			selectedGroupId: null,
 			groupProps: { label: 'name', value: 'id', children: 'groups' },
 			groupOptions: [],
@@ -106,7 +122,8 @@ export default {
 			window.open(window.location.origin + '/api/poi/export-student-model');
 		},
 		handleExport() {
-			window.open(window.location.origin + '/api/poi/export-student');
+			console.log(this.searchObj);
+			exportStudent(this.searchObj);
 		},
 		handleRemove(file, fileList) {
 			console.log(file, fileList);
@@ -188,11 +205,9 @@ export default {
 			return JSON.parse(objStr);
 		},
 		refreshStudents() {
-			let groupId = this.groupId;
-			let studno = this.exactStudno;
-			let pageSize = this.pageSize;
-			let index = this.index;
-			let data = { groupId, studno, pageSize, index };
+			let data = this.searchObj;
+			data['index'] = this.index;
+			data['pageSize'] = this.pageSize;
 
 			searchStudents(data).then(res => {
 				this.tableData = res.data.content;
@@ -202,13 +217,12 @@ export default {
 		handleSearch() {
 			this.refreshStudents();
 		},
-		clearSearchStudents() {
-			this.selectedSearchOptions = [];
-			this.exactStudno = '';
-			this.groupId = null;
+		clearSearch() {
+			this.searchObj = { group: [] };
 		},
 		handleSearchGroupChange(val) {
-			this.groupId = val[1];
+			this.searchObj.group = val;
+			this.searchObj.groupId = val[1];
 		}
 	},
 	created: function() {

@@ -2,7 +2,7 @@
 	<div>
 		<el-form ref="form" :model="form" label-width="15.625rem">
 			<el-form-item label="课程">{{ course.name }}</el-form-item>
-			<el-form-item label="上课状态">
+			<el-form-item label="仪容仪表">
 				<el-radio-group v-model="form.optAnswers[0]">
 					<el-radio label="A">A.十分满意</el-radio>
 					<el-radio label="B">B.比较满意</el-radio>

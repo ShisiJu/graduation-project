@@ -19,11 +19,11 @@
 					<el-table-column prop="DPercent" label="满意率"></el-table-column>
 				</el-table>
 			</el-tab-pane>
-			<el-tab-pane label="上课状态" name="state_rank"><statistics-table :data="tableData"></statistics-table></el-tab-pane>
+			<el-tab-pane label="仪容仪表" name="state_rank"><statistics-table :data="tableData"></statistics-table></el-tab-pane>
 			<el-tab-pane label="授课方式" name="method_rank"><statistics-table :data="tableData"></statistics-table></el-tab-pane>
 			<el-tab-pane label="认真负责" name="serious_rank"><statistics-table :data="tableData"></statistics-table></el-tab-pane>
 			<el-tab-pane label="导师排名倒序" name="tutor_rank_desc"><statistics-table :data="tableData"></statistics-table></el-tab-pane>
-			<el-tab-pane label="上课状态倒序" name="state_rank_desc"><statistics-table :data="tableData"></statistics-table></el-tab-pane>
+			<el-tab-pane label="仪容仪表倒序" name="state_rank_desc"><statistics-table :data="tableData"></statistics-table></el-tab-pane>
 			<el-tab-pane label="授课方式倒序" name="method_rank_desc"><statistics-table :data="tableData"></statistics-table></el-tab-pane>
 			<el-tab-pane label="认真负责倒序" name="serious_rank_desc"><statistics-table :data="tableData"></statistics-table></el-tab-pane>
 		</el-tabs>
@@ -95,10 +95,7 @@ export default {
 			}
 		},
 		satisticQuestion(data) {
-			console.log('satisticQuestion');
-			console.log(data);
 			satisticByTutorAndQuestion(data).then(res => {
-				console.log(res);
 				this.formatData(res.data);
 				this.tableData = res.data;
 			});

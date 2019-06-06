@@ -2,30 +2,31 @@
 	<div>
 		<div style="float: left;">
 			<div style="float: left;">
-			<el-input v-model="exactStudno" placeholder="请输入导师学号" style="width: 10rem;"></el-input>
-			<el-select v-model="instituteIds" multiple placeholder="请选择学院">
-				<el-option v-for="item in instituteOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-			</el-select>
-			<el-button icon="el-icon-search" circle @click="handleSearch"></el-button>
-			<el-button @click="clearsearchTutors" circle><i class="el-icon-delete"></i></el-button>
-			<el-button type="success" size="small" @click="handleAdd()">添加导师</el-button>
+				<el-input v-model="searchObj.exactStudno" placeholder="请输入导师学号" style="width: 10rem;"></el-input>
+				<el-select v-model="searchObj.instituteIds" multiple placeholder="请选择学院">
+					<el-option v-for="item in instituteOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+				</el-select>
+				<el-button icon="el-icon-search" circle @click="handleSearch"></el-button>
+				<el-button @click="clearsearchTutors" circle><i class="el-icon-delete"></i></el-button>
+				<el-button type="success" size="small" @click="handleAdd()">添加导师</el-button>
 			</div>
-			<div style="width: 20rem;float: left;margin-top: 0.25rem;">
-			<el-upload
-				style="height: 2.5rem;"
-				action="api/poi/import-tutor"
-				:on-preview="handlePreview"
-				:on-remove="handleRemove"
-				:before-remove="beforeRemove"
-				multiple
-				:limit="1"
-				:on-exceed="handleExceed"
-				:file-list="fileList"
-			>
+			<div style="width: 8rem;float: left;margin-top: 0.25rem;height: 5rem;">
+				<el-upload
+					action="api/poi/import-tutor"
+					:on-preview="handlePreview"
+					:on-remove="handleRemove"
+					:before-remove="beforeRemove"
+					multiple
+					:limit="1"
+					:on-exceed="handleExceed"
+					:file-list="fileList"
+				>
+					<el-button size="small">导入EXCEL</el-button>
+				</el-upload>
+			</div>
+			<div style="width: 16rem;float: left;margin-top: 0.25rem;">
 				<el-button size="small" @click="handleImportModel()">导入模版下载</el-button>
-				<el-button size="small" >导入EXCEL</el-button>
 				<el-button size="small" @click="handleExport()">导出数据</el-button>
-			</el-upload>
 			</div>
 		</div>
 
@@ -91,7 +92,7 @@ export default {
 			index: 1,
 			pageSize: 10,
 			total: 10,
-			exactStudno: '',
+			searchObj: { instituteIds: [] },
 			dialogFormVisible: false,
 			dialogTitle: '',
 			selectedInstituteOption: '',
@@ -100,17 +101,16 @@ export default {
 			tableDataIndex: 0,
 			instituteProps: { label: 'name', value: 'id' },
 			instituteOptions: [],
-			instituteIds: [],
 			fileList: []
 		};
 	},
 	methods: {
-		handleImportModel(){
+		handleImportModel() {
 			window.open(window.location.origin + '/api/poi/export-tutor-model');
-
 		},
 		handleExport() {
-			window.open(window.location.origin + '/api/poi/export-tutor');
+			console.log(this.searchObj);
+			exportTutor(this.searchObj);
 		},
 		handleRemove(file, fileList) {
 			console.log(file, fileList);
@@ -187,11 +187,9 @@ export default {
 			this.$router.push('/tutor/course-outline');
 		},
 		refreshTableData() {
-			let instituteIds = this.instituteIds;
-			let studno = this.exactStudno;
-			let pageSize = this.pageSize;
-			let index = this.index;
-			let data = { instituteIds, studno, pageSize, index };
+			let data = this.searchObj;
+			data['index'] = this.index;
+			data['pageSize'] = this.pageSize;
 			searchTutors(data).then(res => {
 				this.tableData = res.data.content;
 				this.total = res.data.totalElements;
@@ -201,8 +199,8 @@ export default {
 			this.refreshTableData();
 		},
 		clearsearchTutors() {
-			this.exactStudno = '';
-			this.instituteIds = [];
+			this.searchObj.exactStudno = '';
+			this.searchObj.instituteIds = [];
 		}
 	},
 	created: function() {

@@ -62,14 +62,16 @@
 			</div>
 		</el-dialog>
 		<div v-if="showPie">
-			<div style="margin-top: 0.625rem;margin-bottom: 0.625rem;">近五年课程评价分布折线图与饼状图</div>
-			<div ref="recent5YearChart" style="width: 50rem;height: 37.5rem;"></div>
+			<div style="width: 69rem;height: 37.5rem;margin-top: 1.25rem;">
+				<div ref="recent5YearChart" style="width: 41.875rem;height: 37.5rem;float: left;"></div>
+				<div ref="pieChart" style="width:26rem;height: 27.5rem;float: left;"></div>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import { coursePieAndLineChartData } from '@/api/charts';
+import { courseLineChartData, coursePieData } from '@/api/charts';
 
 import {
 	searchQuizByCustom,
@@ -126,7 +128,10 @@ export default {
 			let tutor = { tutorId: this.selectedTutorId };
 			statisticByTutorId(tutor).then(res => {
 				let dom = this.$refs.recent5YearChart;
-				coursePieAndLineChartData(dom, res.data);
+				let dom2 = this.$refs.pieChart;
+				courseLineChartData(dom, res.data);
+				coursePieData(dom2, res.data);
+				pieChart;
 			});
 		},
 		handleSizeChange(pageSize) {

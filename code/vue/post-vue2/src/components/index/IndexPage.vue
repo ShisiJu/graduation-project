@@ -6,9 +6,7 @@
 				<template slot="title">
 					英语学习
 				</template>
-				<el-menu-item index="2-1">
-					ESL Pod
-				</el-menu-item>
+				<el-menu-item index="2-1">ESL Pod</el-menu-item>
 				<el-menu-item index="2-2">EngVid</el-menu-item>
 				<el-menu-item index="2-3">每日英语听力</el-menu-item>
 			</el-submenu>
@@ -48,14 +46,16 @@ export default {
 				{ src: imgUrlPrefix + '1.jpg', url: 'https://secure3.eslpod.com/', title: 'ESL Pod', id: 1 },
 				{ src: imgUrlPrefix + '2.jpg', url: 'https://www.csdn.net/', title: 'CSDN', id: 2 },
 				{ src: imgUrlPrefix + '3.jpg', url: 'https://github.com/', title: 'GitHub', id: 3 }
-			]
+			],
+			activeIndex: '1'
 		};
 	},
 	methods: {
 		goUrl(url) {
 			console.log(url);
 			window.location.href = url;
-		},jumpUrl(url){
+		},
+		jumpUrl(url) {
 			this.$router.push(url);
 		}
 	},

@@ -1,15 +1,31 @@
 <template>
 	<div>
 		<div>
-			<el-input v-model="exactName" placeholder="请输入组名称" style="width: 10.25rem;margin-right: 3.125rem;"></el-input>
-			<span style="margin: 1.25rem;">学院</span>
-
-			<el-select v-model="instituteIds" multiple placeholder="请选择学院">
+			<el-input v-model="searchObj.name" placeholder="请输入组名称" style="width: 9rem;"></el-input>
+			<el-select v-model="searchObj.instituteIds" multiple placeholder="请选择学院">
 				<el-option v-for="item in instituteOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
 			</el-select>
-			<el-button style="margin-left: 1.5rem;" icon="el-icon-search" circle @click="handleSearch"></el-button>
+			<el-button icon="el-icon-search" circle @click="handleSearch"></el-button>
 			<el-button @click="clearSearch" circle><i class="el-icon-delete"></i></el-button>
-			<el-button style="margin-left: 12.5rem;" type="success" size="small" @click="handleAdd()">添加组</el-button>
+			<el-button type="success" size="small" @click="handleAdd()">添加组</el-button>
+			<div style="width: 14rem;float: right;margin-top: 0.25rem;height: 4rem;">
+				<el-button size="small" @click="handleImportModel()">导入模版下载</el-button>
+				<el-button size="small" @click="handleExport()">导出数据</el-button>
+			</div>
+			<div style="width: 8rem;float: right;margin-top: 0.25rem;height: 4rem;">
+				<el-upload
+					action="api/poi/import-group"
+					:on-preview="handlePreview"
+					:on-remove="handleRemove"
+					:before-remove="beforeRemove"
+					multiple
+					:limit="1"
+					:on-exceed="handleExceed"
+					:file-list="fileList"
+				>
+					<el-button size="small">导入EXCEL</el-button>
+				</el-upload>
+			</div>
 		</div>
 
 		<el-table :data="tableData">
@@ -55,7 +71,7 @@
 </template>
 
 <script>
-import { searchGroups, getAllInstitute, saveGroup, deleteGroup, turnToEleArr, cloneObject } from '@/api/axiosAPI';
+import { exportGroup, searchGroups, getAllInstitute, saveGroup, deleteGroup, turnToEleArr, cloneObject } from '@/api/axiosAPI';
 
 export default {
 	name: 'j-admin-group-list',
@@ -65,7 +81,7 @@ export default {
 			index: 1,
 			pageSize: 10,
 			total: 10,
-			exactName: '',
+			searchObj: { instituteIds: [] },
 			dialogFormVisible: false,
 			dialogTitle: '',
 			selectedInstituteOption: '',
@@ -74,10 +90,28 @@ export default {
 			tableDataIndex: 0,
 			instituteProps: { label: 'name', value: 'id' },
 			instituteOptions: [],
-			instituteIds: []
+			fileList: []
 		};
 	},
 	methods: {
+		handleImportModel() {
+			window.open(window.location.origin + '/api/poi/export-group');
+		},
+		handleExport() {
+			exportGroup(this.searchObj);
+		},
+		handleRemove(file, fileList) {
+			console.log(file, fileList);
+		},
+		handlePreview(file) {
+			console.log(file);
+		},
+		handleExceed(files, fileList) {
+			this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+		},
+		beforeRemove(file, fileList) {
+			return this.$confirm(`确定移除 ${file.name}？`);
+		},
 		handleSizeChange(pageSize) {
 			this.pageSize = pageSize;
 			this.handleCurrentChange(this.index);
@@ -135,13 +169,10 @@ export default {
 					console.log(err);
 				});
 		},
-
 		refreshTableData() {
-			let instituteIds = this.instituteIds;
-			let name = this.exactName;
-			let pageSize = this.pageSize;
-			let index = this.index;
-			let data = { instituteIds, name, pageSize, index };
+			let data = this.searchObj;
+			data['index'] = this.index;
+			data['pageSize'] = this.pageSize;
 			searchGroups(data).then(res => {
 				this.tableData = res.data.content;
 				this.total = res.data.totalElements;
@@ -151,8 +182,8 @@ export default {
 			this.refreshTableData();
 		},
 		clearSearch() {
-			this.exactName = '';
-			this.instituteIds = [];
+			this.searchObj.name = '';
+			this.searchObj.instituteIds = [];
 		}
 	},
 	created: function() {

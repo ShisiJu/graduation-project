@@ -9,6 +9,15 @@ import {
 
 export const exportStudentCourse = data => downloadFile('poi/export-student-course', data)
 
+export const exportStudent = data => downloadFile('poi/export-student', data)
+
+export const exportTutor = data => downloadFile('poi/export-tutor', data)
+
+export const exportCourse = data => downloadFile('poi/export-course', data)
+
+export const exportGroup = data => downloadFile('poi/export-group', data)
+
+
 
 // 用户登录
 
@@ -49,7 +58,7 @@ export const getGroupByInstituteIdIn = data => postJson('group/institute_ids', d
 export const getAllTutor = data => get('tutor/all', data)
 
 // Student CRUD
-export const searchStudents = data => get('student/searchStudents', data)
+export const searchStudents = data => postJson('student/page', data)
 
 export const updateStudent = data => postJson('student/update', data)
 
@@ -145,4 +154,12 @@ export const turnToEleArr = (arr, other) => {
 		eleObj.push(obj);
 	});
 	return eleObj;
+}
+
+
+export const computeSorce = data => {
+	let count = data.A + data.B + data.C + data.D;
+	let score = (data.A * 100 + data.B * 85 + data.C * 60 + data.D * 40) / count;
+	let formatScore = score.toFixed(0);
+	return formatScore;
 }

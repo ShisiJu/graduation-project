@@ -26,7 +26,6 @@ export function downloadFile(url, params) {
 		data: params,
 		responseType: 'blob'
 	}).then(response => {
-		console.log(response)
 		let fileName = response.headers['content-disposition'].split("=")[1];
 		download(response.data, fileName)
 	}).catch((error) => {})

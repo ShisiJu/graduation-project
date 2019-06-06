@@ -59,7 +59,7 @@
 								<div class="jsstitle">课程信息</div>
 							</template>
 							<router-link :to="'/admin/courses'"><el-menu-item index="3-3-1">课程信息</el-menu-item></router-link>
-							<router-link :to="'/admin/statistics'"><el-menu-item index="3-3-2">统计信息</el-menu-item></router-link>
+							<router-link :to="'/admin/statistics'"><el-menu-item index="3-3-2">排名信息</el-menu-item></router-link>
 							<router-link :to="'/admin/student-course'"><el-menu-item index="3-3-3">学生课程</el-menu-item></router-link>
 						</el-submenu>
 					</el-submenu>

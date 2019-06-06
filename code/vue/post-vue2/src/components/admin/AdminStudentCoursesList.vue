@@ -11,10 +11,6 @@
 			<el-input v-if="type === 2" v-model="searchObj.tutorStudno" placeholder="导师学号" style="width: 9rem"></el-input>
 			<el-button style="margin-left: 1.5rem;" icon="el-icon-search" circle @click="handleSearch"></el-button>
 			<el-button @click="clearSearch" circle><i class="el-icon-delete"></i></el-button>
-			<div style="width: 14rem;float: right;margin-top: 0.25rem;height: 4rem;">
-				<el-button size="small">导入EXCEL</el-button>
-				<el-button size="small" @click="handleExport()">导出数据</el-button>
-			</div>
 			<div style="width: 8rem;float: right;margin-top: 0.25rem;height: 4rem;">
 				<el-upload
 					action="api/poi/import-student-course"
@@ -26,8 +22,12 @@
 					:on-exceed="handleExceed"
 					:file-list="fileList"
 				>
-					<el-button size="small" @click="handleImportModel()">导入模版下载</el-button>
+					<el-button size="small">导入EXCEL</el-button>
 				</el-upload>
+			</div>
+			<div style="width: 14rem;float: right;margin-top: 0.25rem;height: 4rem;">
+				<el-button size="small" @click="handleImportModel()">导入模版下载</el-button>
+				<el-button size="small" @click="handleExport()">导出数据</el-button>
 			</div>
 		</div>
 
@@ -88,7 +88,7 @@
 import { findStudentCourseWithPage, updateScore, deleteStudentCourse, exportStudentCourse } from '@/api/axiosAPI';
 
 export default {
-	name: 'j-student-info',
+	name: 'student-course-list',
 	created: function() {
 		this.refreshTableData();
 	},
@@ -113,12 +113,12 @@ export default {
 			window.open(window.location.origin + '/api/poi/export-student-course-model');
 		},
 		handleExport() {
-			//window.open(window.location.origin + '/api/poi/export-student-course');
-			console.log('-----------------------');
 			if (this.type === 1) {
 				this.searchObj['tutorStudno'] = this.$store.state.userInfo.obj.studno;
 			}
-			console.log(this.searchObj);
+			console.log('--handleExport-')
+
+			console.log(this.searchObj)
 			exportStudentCourse(this.searchObj);
 		},
 		handleRemove(file, fileList) {
@@ -198,7 +198,9 @@ export default {
 			findStudentCourseWithPage(data).then(res => {
 				this.tableData = res.data.content;
 				this.total = res.data.totalElements;
-				this.selectedTableColumn = res.data.content[0];
+				if (this.total > 0) {
+					this.selectedTableColumn = res.data.content[0];
+				}
 			});
 		}
 	},

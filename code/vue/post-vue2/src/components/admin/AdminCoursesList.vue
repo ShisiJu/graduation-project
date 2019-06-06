@@ -17,21 +17,27 @@
 			<el-button icon="el-icon-search" circle @click="handleSearch"></el-button>
 			<el-button @click="clearSearch" circle><i class="el-icon-delete"></i></el-button>
 			<el-button type="success" size="small" @click="handleAdd()">添加课程</el-button>
-			<div style="width: 20rem;float: left;margin-top: 0.25rem;height: 4rem;">
-				<el-upload
-					action="api/poi/import-course"
-					:on-preview="handlePreview"
-					:on-remove="handleRemove"
-					:before-remove="beforeRemove"
-					multiple
-					:limit="1"
-					:on-exceed="handleExceed"
-					:file-list="fileList"
-				>
+
+			<div>
+				<div style="width: 8rem;float: left;margin-top: 0.25rem;height: 4rem;">
+					<el-upload
+						action="api/poi/import-course"
+						:on-preview="handlePreview"
+						:on-remove="handleRemove"
+						:before-remove="beforeRemove"
+						multiple
+						:limit="1"
+						:on-exceed="handleExceed"
+						:file-list="fileList"
+					>
+						<el-button size="small">导入EXCEL</el-button>
+					</el-upload>
+				</div>
+
+				<div style="width:16rem;float: left;margin-top: 0.25rem;height: 4rem;">
 					<el-button size="small" @click="handleImportModel()">导入模版下载</el-button>
-					<el-button size="small">导入EXCEL</el-button>
 					<el-button size="small" @click="handleExport()">导出数据</el-button>
-				</el-upload>
+				</div>
 			</div>
 		</div>
 
@@ -106,7 +112,7 @@
 </template>
 
 <script>
-import { searchCourses, getAllInstitute, saveCourse, getAllTutor, deleteCourse, getGroupsByCourseId, getAllGroup, turnToEleArr, cloneObject } from '@/api/axiosAPI';
+import { exportCourse, searchCourses, getAllInstitute, saveCourse, getAllTutor, deleteCourse, getGroupsByCourseId, getAllGroup, turnToEleArr, cloneObject } from '@/api/axiosAPI';
 
 export default {
 	name: 'j-admin-group-list',
@@ -139,7 +145,8 @@ export default {
 			window.open(window.location.origin + '/api/poi/export-course-model');
 		},
 		handleExport() {
-			window.open(window.location.origin + '/api/poi/export-course');
+			console.log(this.searchObj);
+			exportCourse(this.searchObj);
 		},
 		handleRemove(file, fileList) {
 			console.log(file, fileList);
@@ -252,11 +259,6 @@ export default {
 				this.selectedGroupIds = res.data;
 			});
 			if (this.edited == true) return;
-			getAllGroup({}).then(res => {
-				let data = res.data;
-				let eleData = turnToEleArr(data);
-				this.groupOptions = eleData;
-			});
 		}
 	},
 	created: function() {
@@ -267,6 +269,12 @@ export default {
 		});
 
 		this.getAllTutorInfo();
+
+		getAllGroup({}).then(res => {
+			let data = res.data;
+			let eleData = turnToEleArr(data);
+			this.groupOptions = eleData;
+		});
 	}
 };
 </script>

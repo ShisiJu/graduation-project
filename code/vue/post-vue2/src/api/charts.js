@@ -1,9 +1,73 @@
 import echarts from 'echarts';
+
+
 import 'echarts/lib/chart/pie';
 import 'echarts/lib/chart/line';
+import 'echarts/lib/chart/radar';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/legend';
 import 'echarts/lib/component/title';
+
+import {
+	computeSorce
+} from '@/api/axiosAPI';
+
+
+export const courseRadarChart = (dom, data) => {
+	let myChart = echarts.init(dom);
+	let autumn = data[8];
+	let spring = data[9];
+
+	let option = {
+		title: {
+			text: '今年课程状态'
+		},
+		tooltip: {},
+		legend: {
+			data: ['秋季', '春季']
+		},
+		radar: {
+			name: {
+				textStyle: {
+					color: '#fff',
+					backgroundColor: '#999',
+					borderRadius: 3,
+					padding: [2, 5]
+				}
+			},
+			indicator: [{
+					name: '仪容仪表',
+					max: 100
+				},
+				{
+					name: '授课方式',
+					max: 100
+				},
+				{
+					name: '认真负责',
+					max: 100
+				},
+
+			]
+		},
+		series: [{
+			name: '秋季VS春季',
+			type: 'radar',
+			data: [{
+					value: [autumn.APercent, autumn.B, autumn.C],
+					name: '秋季'
+				},
+				{
+					value: [5000, 14000, 28000],
+					name: '春季'
+				}
+			]
+		}]
+	};
+
+	myChart.setOption(option);
+	return {}
+}
 
 
 export const courseDetailChart = (dom, data) => {
@@ -43,7 +107,7 @@ export const courseDetailChart = (dom, data) => {
 		},
 		xAxis: [{
 			type: 'category',
-			data: ['上课状态', '授课方式', '认真负责']
+			data: ['仪容仪表', '授课方式', '认真负责']
 		}],
 		yAxis: [{
 			type: 'value'
@@ -81,28 +145,97 @@ export const courseDetailChart = (dom, data) => {
 
 
 
-export const coursePieChartData = data => {
-	return {
+export const courseLineChartData = (dom, oriData) => {
+
+	let myChart = echarts.init(dom);
+
+	let xData = [];
+	let seriesData = [];
+
+	oriData.forEach(ele => {
+		seriesData.push(computeSorce(ele));
+		xData.push(ele.name);
+	})
+
+	let option = {
 		title: {
-			text: '课程评价等级分布',
-			subtext: '可根据查询动态查看',
+			text: '近五年综合评价分数折线图（百分制）',
+		},
+		xAxis: {
+			type: 'category',
+			data: xData
+		},
+		yAxis: {
+			type: 'value'
+		},
+		series: [{
+			data: seriesData,
+			type: 'line',
+			smooth: true,
+			label: {
+				show: true,
+				position: 'top',
+				textStyle: {
+					color: 'black',
+					fontSize: 16
+				}
+			}
+		}]
+	}
+	myChart.setOption(option);
+	return {};
+}
+
+
+export const coursePieData = (dom, oriData) => {
+
+	let myChart = echarts.init(dom);
+	console.log(myChart)
+	let seriesData = [{
+			value: 0,
+			name: '非常满意'
+		},
+		{
+			value: 0,
+			name: '比较满意'
+		},
+		{
+			value: 0,
+			name: '一般满意'
+		},
+		{
+			value: 0,
+			name: '不满意'
+		}
+	];
+
+	oriData.forEach(ele => {
+		seriesData[0].value = seriesData[0].value + ele.A;
+		seriesData[1].value = seriesData[1].value + ele.B;
+		seriesData[2].value = seriesData[2].value + ele.C;
+		seriesData[3].value = seriesData[3].value + ele.D;
+	})
+
+	let option = {
+		title: {
+			text: '满意度分布饼状图',
 			x: 'center'
 		},
 		tooltip: {
 			trigger: 'item',
-			formatter: '{a} <br/>{b} : {c} ({d}%)'
+			formatter: "{a} <br/>{b} : {c} ({d}%)"
 		},
 		legend: {
 			orient: 'vertical',
 			left: 'left',
-			data: ['A', 'B', 'C', 'D']
+			data: ['非常满意', '比较满意', '一般满意', '不满意']
 		},
 		series: [{
-			name: '评价',
+			name: '学生评价',
 			type: 'pie',
 			radius: '55%',
 			center: ['50%', '60%'],
-			data: data,
+			data: seriesData,
 			itemStyle: {
 				emphasis: {
 					shadowBlur: 10,
@@ -112,111 +245,9 @@ export const coursePieChartData = data => {
 			}
 		}]
 	};
-}
 
-
-
-
-export const coursePieAndLineChartData = (dom, oriData) => {
-	let sourceData = [];
-	let labelOption = [];
-	let aOption = [];
-	let bOption = [];
-	let cOption = [];
-	let dOption = [];
-	labelOption.push('objectEvaluation');
-	aOption.push('非常满意');
-	bOption.push('比较满意');
-	cOption.push('不太满意');
-	dOption.push('不满意');
-	oriData.forEach(ele => {
-		labelOption.push(ele.name);
-		aOption.push(ele.A);
-		bOption.push(ele.B);
-		cOption.push(ele.C);
-		dOption.push(ele.D);
-	});
-	sourceData.push(labelOption);
-	sourceData.push(aOption);
-	sourceData.push(bOption);
-	sourceData.push(cOption);
-	sourceData.push(dOption);
-
-	let myChart = echarts.init(dom);
-	let option = {
-		legend: {},
-		tooltip: {
-			trigger: 'axis',
-			showContent: false
-		},
-		dataset: {
-			source: sourceData
-		},
-		xAxis: {
-			type: 'category'
-		},
-		yAxis: {
-			gridIndex: 0
-		},
-		grid: {
-			top: '55%'
-		},
-		series: [{
-				type: 'line',
-				smooth: true,
-				seriesLayoutBy: 'row'
-			},
-			{
-				type: 'line',
-				smooth: true,
-				seriesLayoutBy: 'row'
-			},
-			{
-				type: 'line',
-				smooth: true,
-				seriesLayoutBy: 'row'
-			},
-			{
-				type: 'line',
-				smooth: true,
-				seriesLayoutBy: 'row'
-			},
-			{
-				type: 'pie',
-				id: 'pie',
-				radius: '30%',
-				center: ['50%', '25%'],
-				label: {
-					formatter: '{b}: {@2012} ({d}%)'
-				},
-				encode: {
-					itemName: 'objectEvaluation',
-					value: '2012',
-					tooltip: '2012'
-				}
-			}
-		]
-	};
-
-	myChart.on('updateAxisPointer', function(event) {
-		var xAxisInfo = event.axesInfo[0];
-		if (xAxisInfo) {
-			var dimension = xAxisInfo.value + 1;
-			myChart.setOption({
-				series: {
-					id: 'pie',
-					label: {
-						formatter: '{b}: {@[' + dimension + ']} ({d}%)'
-					},
-					encode: {
-						value: dimension,
-						tooltip: dimension
-					}
-				}
-			});
-		}
-	});
 
 	myChart.setOption(option);
 	return {};
+
 }

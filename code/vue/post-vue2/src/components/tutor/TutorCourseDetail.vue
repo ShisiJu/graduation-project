@@ -14,15 +14,17 @@
 				<el-table-column prop="D" label="D"></el-table-column>
 				<el-table-column label="平均分">
 					<template slot-scope="scope">
-						{{ (scope.row.A * 100 + scope.row.B * 85 + scope.row.C * 60 + scope.row.D * 40) / count }}
+						{{ computeSorce(scope.row) }}
 					</template>
 				</el-table-column>
 			</el-table>
 		</div>
 
 		<div v-show="!chart" class="jchart">
-			<div>各项评价分布柱状图</div>
-			<div ref="detailChart" style="width: 40rem;height: 24rem;"></div>
+			<div style="width: 50rem;height: 24rem;">
+				各项评价分布柱状图
+				<div ref="detailChart" style="width: 40rem;height: 24rem;"></div>
+			</div>
 		</div>
 
 		<div v-show="chart">
@@ -43,7 +45,7 @@
 import ECharts from 'echarts';
 import 'echarts/lib/chart/pie';
 import 'echarts/lib/component/tooltip';
-import { findCourseDetail } from '@/api/axiosAPI';
+import { computeSorce, findCourseDetail } from '@/api/axiosAPI';
 import { courseDetailChart } from '@/api/charts';
 export default {
 	data() {
@@ -60,7 +62,7 @@ export default {
 	methods: {
 		getShowData(oriData) {
 			let showData = [];
-			let questions = ['上课状态', '授课方式', '认真负责'];
+			let questions = ['仪容仪表', '授课方式', '认真负责'];
 			for (let i = 0; i < 3; i++) {
 				let d = { question: questions[i], A: 0, B: 0, C: 0, D: 0 };
 				showData.push(d);
@@ -87,6 +89,8 @@ export default {
 		},
 		existMoreDesc() {
 			return this.descShow < this.descData.length;
+		},computeSorce(data){
+			return computeSorce(data);
 		}
 	},
 	created: function() {
@@ -117,7 +121,6 @@ export default {
 	fontweight: 'normal';
 	fontfamily: 'sans-serif';
 	fontsize: 20;
-	
 }
 
 .switch {

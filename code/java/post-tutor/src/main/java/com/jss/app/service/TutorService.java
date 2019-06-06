@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.wenhao.jpa.Specifications;
 import com.jss.app.model.entity.Institute;
 import com.jss.app.model.entity.Tutor;
@@ -51,11 +52,10 @@ public class TutorService {
 		tutorRepository.deleteById(tutorId);
 	}
 
-	@Transactional(readOnly = true)
-	public Page<Tutor> searchTutors(String studno, List<Long> instituteIds, Integer index, Integer pageSize) {
+	private Specification<Tutor> specification(JSONObject jsonObject) {
 
-		Sort sort = new Sort(Sort.Direction.ASC, "studno");
-		Pageable pageable = PageRequest.of(index - 1, pageSize, sort);
+		String studno = jsonObject.getString("studno");
+		List<Long> instituteIds = jsonObject.getJSONArray("instituteIds").toJavaList(Long.class);
 
 		boolean boolIns = !instituteIds.isEmpty();
 
@@ -63,7 +63,29 @@ public class TutorService {
 				.like(!StringUtils.isEmpty(studno), "studno", "%" + studno + "%")
 				.in(boolIns, "institute.id", instituteIds.toArray()).build();
 
+		return specification;
+	}
+
+	public Page<Tutor> searchTutors(JSONObject jsonObject) {
+
+		Integer index = jsonObject.getInteger("index");
+		Integer pageSize = jsonObject.getInteger("pageSize");
+
+		Sort sort = new Sort(Sort.Direction.ASC, "studno");
+		Pageable pageable = PageRequest.of(index - 1, pageSize, sort);
+
+		Specification<Tutor> specification = specification(jsonObject);
+
 		return tutorRepository.findAll(specification, pageable);
+	}
+
+	public List<Tutor> searchTutorsWithoutPage(JSONObject jsonObject) {
+
+		Sort sort = new Sort(Sort.Direction.ASC, "studno");
+
+		Specification<Tutor> specification = specification(jsonObject);
+
+		return tutorRepository.findAll(specification, sort);
 	}
 
 	@Transactional

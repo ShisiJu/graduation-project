@@ -9,7 +9,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +17,7 @@ import com.jss.app.model.entity.Group;
 import com.jss.app.model.entity.Institute;
 import com.jss.app.repository.GroupRepository;
 import com.jss.app.repository.InstituteRepository;
+import com.jss.app.service.GroupService;
 
 @Component
 public class GroupSheetHandler implements SheetContentsHandler, HandleExcelExport {
@@ -31,6 +31,9 @@ public class GroupSheetHandler implements SheetContentsHandler, HandleExcelExpor
 
 	@Autowired
 	private GroupRepository groupRepository;
+
+	@Autowired
+	private GroupService groupService;
 
 	@Override
 	public void startRow(int rowNum) {
@@ -86,14 +89,18 @@ public class GroupSheetHandler implements SheetContentsHandler, HandleExcelExpor
 	}
 
 	public void handleExportData(Workbook workbook) {
-		Sheet sheet = workbook.getSheetAt(0);
-		// String[] titles = "学号,姓名,性别,职称,学院名称".split(",");
-		// 行
-		// 获取样式 从第三行开始
-		int index = dataNum + 1;
+		handleExportData(null, workbook);
+	}
 
-		Sort sort = new Sort(Sort.Direction.ASC, "institute");
-		List<Group> listGroup = groupRepository.findAll(sort);
+	@Override
+	public void handleExportData(JSONObject jsonObject, Workbook workbook) {
+		if (jsonObject == null) {
+			jsonObject = new JSONObject();
+		}
+
+		Sheet sheet = workbook.getSheetAt(0);
+		int index = dataNum + 1;
+		List<Group> listGroup = groupService.searchGroupsWithoutPage(jsonObject);
 
 		for (Group group : listGroup) {
 
@@ -113,13 +120,6 @@ public class GroupSheetHandler implements SheetContentsHandler, HandleExcelExpor
 			cell.setCellValue(group.getInstitute().getName());
 
 		}
-
-	}
-
-	@Override
-	public void handleExportData(JSONObject jsonObject, Workbook workbook) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

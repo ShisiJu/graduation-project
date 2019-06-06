@@ -9,18 +9,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSONObject;
+import com.github.wenhao.jpa.Specifications;
 import com.jss.app.model.entity.Group;
 import com.jss.app.model.entity.Student;
 import com.jss.app.model.entity.User;
 import com.jss.app.repository.GroupRepository;
 import com.jss.app.repository.StudentRepository;
 import com.jss.app.repository.UserRepository;
-import com.jss.app.spec.StudentSpecs;
-
 
 @Service
 @Transactional(readOnly = true)
@@ -46,19 +48,36 @@ public class StudentService {
 		return findAll;
 	}
 
-	/**
-	 * 动态查询,传入null,不进行查询 index在service进行了-1处理
-	 * 
-	 * @param studno
-	 * @param groupId
-	 * @param index
-	 * @param pageSize
-	 * @return
-	 */
-	public Page<Student> searchStudents(String studno, Long groupId, Integer index, Integer pageSize) {
+	private Specification<Student> specification(JSONObject jsonObject) {
+
+		String studno = jsonObject.getString("studno");
+		Long groupId = jsonObject.getLong("groupId");
+		Specification<Student> specification = Specifications.<Student>and()
+				.like(!StringUtils.isEmpty(studno), "studno", "%" + studno + "%")
+				.eq(groupId != null, "group.id", groupId).build();
+
+		return specification;
+	}
+
+	public Page<Student> searchStudents(JSONObject jsonObject) {
+
+		Specification<Student> specification = specification(jsonObject);
+
+		Integer index = jsonObject.getInteger("index");
+		Integer pageSize = jsonObject.getInteger("pageSize");
+
 		Sort sort = new Sort(Sort.Direction.ASC, "studno");
 		Pageable pageable = PageRequest.of(index - 1, pageSize, sort);
-		return studentRepository.findAll(StudentSpecs.searchStudent(studno, groupId), pageable);
+
+		return studentRepository.findAll(specification, pageable);
+	}
+
+	public List<Student> searchStudentsWithoutPage(JSONObject jsonObject) {
+
+		Specification<Student> specification = specification(jsonObject);
+		Sort sort = new Sort(Sort.Direction.ASC, "studno");
+
+		return studentRepository.findAll(specification, sort);
 	}
 
 	public Student findStudentById(Long id) throws NoSuchElementException {

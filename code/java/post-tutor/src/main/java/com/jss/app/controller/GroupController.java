@@ -53,19 +53,11 @@ public class GroupController {
 		return groupService.saveGroup(group, instituteId);
 
 	}
-	
-
-	
-	
 
 	@RequestMapping("/searchGroups")
 	public Page<Group> searchGroups(@RequestBody JSONObject jsonObject) {
 
-		String name = jsonObject.getString("name");
-		List<Long> instituteIds = jsonObject.getJSONArray("instituteIds").toJavaList(Long.class);
-		Integer index = jsonObject.getInteger("index");
-		Integer pageSize = jsonObject.getInteger("pageSize");
-		return groupService.searchGroups(name, instituteIds, index, pageSize);
+		return groupService.searchGroups(jsonObject);
 	}
 
 }

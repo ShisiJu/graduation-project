@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.wenhao.jpa.Specifications;
 import com.jss.app.model.entity.Group;
 import com.jss.app.model.entity.Institute;
@@ -49,10 +50,10 @@ public class GroupService {
 		return groupRepository.findAll();
 	}
 
-	public Page<Group> searchGroups(String name, List<Long> instituteIds, Integer index, Integer pageSize) {
+	private Specification<Group> specification(JSONObject jsonObject) {
 
-		Sort sort = new Sort(Sort.Direction.ASC, "code");
-		Pageable pageable = PageRequest.of(index - 1, pageSize, sort);
+		String name = jsonObject.getString("name");
+		List<Long> instituteIds = jsonObject.getJSONArray("instituteIds").toJavaList(Long.class);
 
 		boolean boolIns = !instituteIds.isEmpty();
 
@@ -60,7 +61,28 @@ public class GroupService {
 				.like(!StringUtils.isEmpty(name), "name", "%" + name + "%")
 				.in(boolIns, "institute.id", instituteIds.toArray()).build();
 
+		return specification;
+
+	}
+
+	public Page<Group> searchGroups(JSONObject jsonObject) {
+
+		Specification<Group> specification = specification(jsonObject);
+
+		Integer index = jsonObject.getInteger("index");
+		Integer pageSize = jsonObject.getInteger("pageSize");
+
+		Sort sort = new Sort(Sort.Direction.ASC, "code");
+		Pageable pageable = PageRequest.of(index - 1, pageSize, sort);
+
 		return groupRepository.findAll(specification, pageable);
+	}
+
+	public List<Group> searchGroupsWithoutPage(JSONObject jsonObject) {
+
+		Specification<Group> specification = specification(jsonObject);
+		Sort sort = new Sort(Sort.Direction.ASC, "code");
+		return groupRepository.findAll(specification, sort);
 	}
 
 	@Transactional

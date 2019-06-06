@@ -19,10 +19,10 @@ public class StudentController {
 	@Autowired
 	private StudentService studentService;
 
-	@RequestMapping("/searchStudents")
-	public Page<Student> getStudentsByStudnoAndGroupId(String studno, Long groupId, Integer index, Integer pageSize) {
+	@RequestMapping("/page")
+	public Page<Student> getStudentsByStudnoAndGroupId(@RequestBody JSONObject jsonObject) {
 		// index 是以0开始 service做了处理
-		return studentService.searchStudents(studno, groupId, index, pageSize);
+		return studentService.searchStudents(jsonObject);
 	}
 
 	@RequestMapping("/info")
@@ -33,17 +33,6 @@ public class StudentController {
 	@RequestMapping("/group")
 	public void getStudentGroup(@RequestParam Group group) {
 		studentService.findStudentByGroup(group);
-	}
-
-	@RequestMapping("/page")
-	public Page<Student> getListStudents(@RequestParam(required = false) String studno,
-			@RequestParam(required = false) Long groupId, Integer index, Integer pageSize) {
-
-		// index 是以0开始 service做了处理
-		if (studno == null && groupId == null) {
-			return studentService.findAllWithPage(index, pageSize);
-		}
-		return null;
 	}
 
 	@RequestMapping("/count")

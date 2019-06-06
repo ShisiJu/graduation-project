@@ -43,11 +43,7 @@ public class TutorController {
 	@RequestMapping("/searchTutors")
 	public Page<Tutor> searchTutors(@RequestBody JSONObject jsonObject) {
 
-		String studno = jsonObject.getString("studno");
-		List<Long> instituteIds = jsonObject.getJSONArray("instituteIds").toJavaList(Long.class);
-		Integer index = jsonObject.getInteger("index");
-		Integer pageSize = jsonObject.getInteger("pageSize");
-		return tutorService.searchTutors(studno, instituteIds, index, pageSize);
+		return tutorService.searchTutors(jsonObject);
 	}
 
 }

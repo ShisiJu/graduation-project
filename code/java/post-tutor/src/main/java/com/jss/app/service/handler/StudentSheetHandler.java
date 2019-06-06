@@ -9,7 +9,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +20,10 @@ import com.jss.app.model.entity.User;
 import com.jss.app.repository.GroupRepository;
 import com.jss.app.repository.StudentRepository;
 import com.jss.app.repository.UserRepository;
+import com.jss.app.service.StudentService;
 
 @Component
-public class StudentSheetHandler implements SheetContentsHandler,HandleExcelExport {
+public class StudentSheetHandler implements SheetContentsHandler, HandleExcelExport {
 
 	private Student student;
 
@@ -34,6 +34,9 @@ public class StudentSheetHandler implements SheetContentsHandler,HandleExcelExpo
 
 	@Autowired
 	private StudentRepository studentRepository;
+
+	@Autowired
+	private StudentService studentService;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -70,8 +73,6 @@ public class StudentSheetHandler implements SheetContentsHandler,HandleExcelExpo
 		if (student == null)
 			return;
 
-		System.out.println(cellReference);
-
 		String prefix = cellReference.substring(0, 1);
 
 		switch (prefix) {
@@ -100,14 +101,20 @@ public class StudentSheetHandler implements SheetContentsHandler,HandleExcelExpo
 	}
 
 	public void handleExportData(Workbook workbook) {
+		handleExportData(null, workbook);
+	}
+
+	@Override
+	public void handleExportData(JSONObject jsonObject, Workbook workbook) {
+
+		if (jsonObject == null) {
+			jsonObject = new JSONObject();
+		}
+
 		Sheet sheet = workbook.getSheetAt(0);
-		// String[] titles = "学号,姓名,性别,职称,学院名称".split(",");
-		// 行
-		// 获取样式 从第三行开始
 		int index = dataNum + 1;
 
-		Sort sort = new Sort(Sort.Direction.ASC, "studno");
-		List<Student> listStudent = studentRepository.findAll(sort);
+		List<Student> listStudent = studentService.searchStudentsWithoutPage(jsonObject);
 
 		for (Student student : listStudent) {
 
@@ -128,12 +135,6 @@ public class StudentSheetHandler implements SheetContentsHandler,HandleExcelExpo
 
 		}
 
-	}
-
-	@Override
-	public void handleExportData(JSONObject jsonObject, Workbook workbook) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

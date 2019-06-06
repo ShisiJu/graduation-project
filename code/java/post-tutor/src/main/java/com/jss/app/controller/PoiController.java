@@ -23,6 +23,54 @@ public class PoiController {
 	@Autowired
 	private PoiService poiService;
 
+	// group 导入导出
+	@RequestMapping(value = "/export-group")
+	public void exportGroup(@RequestBody JSONObject jsonObject, HttpServletResponse res) throws Exception {
+
+		try {
+
+			poiService.exportGroup(res, jsonObject, "group.xlsx");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidFormatException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@RequestMapping(value = "/export-group-model")
+	public void exportGroup(HttpServletResponse res) {
+
+		try {
+
+			poiService.exportGroupModel(res, "group.xlsx");
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		} catch (InvalidFormatException e) {
+
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+	@RequestMapping(value = "/import-group")
+	@ResponseBody
+	public void importGroup(@RequestParam(name = "file") MultipartFile file) {
+		try {
+			poiService.importGroup(file);
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+	}
+
 	// student-course 导入导出
 	@RequestMapping(value = "/export-student-course")
 	public void exportStudentCourse(@RequestBody JSONObject jsonObject, HttpServletResponse res) {
@@ -73,11 +121,11 @@ public class PoiController {
 
 	// tutor 导入导出
 	@RequestMapping(value = "/export-tutor")
-	public void exportTutor(HttpServletResponse res) {
+	public void exportTutor(@RequestBody JSONObject jsonObject, HttpServletResponse res) {
 
 		try {
 
-			poiService.exportTutor(res, "tutor.xlsx");
+			poiService.exportTutor(res, jsonObject, "tutor.xlsx");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -120,11 +168,11 @@ public class PoiController {
 
 	// 课程导入导出
 	@RequestMapping(value = "/export-course")
-	public void exportCourse(HttpServletResponse res) {
+	public void exportCourse(@RequestBody JSONObject jsonObject, HttpServletResponse res) {
 
 		try {
 
-			poiService.exportCourse(res, "course.xlsx");
+			poiService.exportCourse(res, jsonObject, "course.xlsx");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -167,9 +215,9 @@ public class PoiController {
 
 	// 学生导入导出
 	@RequestMapping(value = "/export-student")
-	public void exportStudent(HttpServletResponse res) {
+	public void exportStudent(@RequestBody JSONObject jsonObject, HttpServletResponse res) {
 		try {
-			poiService.exportStudent(res, "student.xlsx");
+			poiService.exportStudent(res, jsonObject, "student.xlsx");
 
 		} catch (IOException e) {
 			e.printStackTrace();

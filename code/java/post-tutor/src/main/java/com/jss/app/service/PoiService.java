@@ -90,9 +90,10 @@ public class PoiService {
 		ResponseUtil.download(response, file, fileName);
 	}
 
-	public void exportCourse(HttpServletResponse response, String fileName) throws IOException, InvalidFormatException {
+	public void exportCourse(HttpServletResponse response, JSONObject jsonObject, String fileName)
+			throws IOException, InvalidFormatException {
 
-		exportData(courseSheetHandler, null, "excel-model/course-model.xlsx", response, fileName);
+		exportData(courseSheetHandler, jsonObject, "excel-model/course-model.xlsx", response, fileName);
 	}
 
 	// 对 导师 导入 导出模版 导出数据
@@ -110,9 +111,10 @@ public class PoiService {
 		ResponseUtil.download(response, file, fileName);
 	}
 
-	public void exportTutor(HttpServletResponse response, String fileName) throws IOException, InvalidFormatException {
+	public void exportTutor(HttpServletResponse response, JSONObject jsonObject, String fileName)
+			throws IOException, InvalidFormatException {
 
-		exportData(tutorSheetHandler, null, "excel-model/tutor-model.xlsx", response, fileName);
+		exportData(tutorSheetHandler, jsonObject, "excel-model/tutor-model.xlsx", response, fileName);
 	}
 
 	// 对 学生 导入 导出模版 导出数据
@@ -130,10 +132,10 @@ public class PoiService {
 		ResponseUtil.download(response, file, fileName);
 	}
 
-	public void exportStudent(HttpServletResponse response, String fileName)
+	public void exportStudent(HttpServletResponse response, JSONObject jsonObject, String fileName)
 			throws IOException, InvalidFormatException {
 
-		exportData(studentSheetHandler, null, "excel-model/group-model.xlsx", response, fileName);
+		exportData(studentSheetHandler, jsonObject, "excel-model/student-model.xlsx", response, fileName);
 	}
 
 	// 对 班级（组） 导入 导出模版 导出数据
@@ -151,9 +153,9 @@ public class PoiService {
 		ResponseUtil.download(response, file, fileName);
 	}
 
-	public void exportGroup(HttpServletResponse response, String fileName) throws Exception {
+	public void exportGroup(HttpServletResponse response, JSONObject jsonObject, String fileName) throws Exception {
 
-		exportData(groupSheetHandler, null, "excel-model/group-model.xlsx", response, fileName);
+		exportData(groupSheetHandler, jsonObject, "excel-model/group-model.xlsx", response, fileName);
 	}
 
 	public void exportData(HandleExcelExport handler, JSONObject jsonObject, String modelPath,

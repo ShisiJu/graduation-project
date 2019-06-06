@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jss.app.model.m2m.StudentCourse;
@@ -46,6 +47,12 @@ public class StudentCourseSheetHandler implements SheetContentsHandler, HandleEx
 		if (rowNum <= dataNum)
 			return;
 
+		if (studentCourse == null)
+			return;
+
+		if (studentCourse.getCourse() == null)
+			return;
+
 		studentCourseService.save(studentCourse);
 
 	}
@@ -70,12 +77,32 @@ public class StudentCourseSheetHandler implements SheetContentsHandler, HandleEx
 		case "D":
 			break;
 		case "E":
+			if (StringUtils.isEmpty(studno) || StringUtils.isEmpty(code)) {
+				studentCourse = null;
+				break;
+			}
+
 			StudentCourse currentObj = studentCourseService.findByStudent_StudnoAndCourse_Code(studno, code);
+
 			if (currentObj == null) {
+
 				studentCourseService.saveStudentCourse(studno, code);
 				currentObj = studentCourseService.findByStudent_StudnoAndCourse_Code(studno, code);
 			}
-			currentObj.setScore(Integer.parseInt(formattedValue));
+
+			if (currentObj == null) {
+				break;
+			}
+
+			Integer parseInt = null;
+
+			try {
+				parseInt = Integer.parseInt(formattedValue);
+			} catch (NumberFormatException e) {
+
+			}
+			currentObj.setScore(parseInt);
+			studentCourse = currentObj;
 			code = "";
 			studno = "";
 			break;

@@ -11,7 +11,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,6 +96,7 @@ public class CourseSheetHandler implements SheetContentsHandler, HandleExcelExpo
 			} else {
 				course.setAmount(0);
 			}
+			course.setCurrentNum(0);
 			break;
 		case "G":
 			tutor = tutorService.findByStudno(formattedValue);
@@ -118,14 +118,20 @@ public class CourseSheetHandler implements SheetContentsHandler, HandleExcelExpo
 	}
 
 	public void handleExportData(Workbook workbook) {
+		handleExportData(null, workbook);
+	}
+
+	@Override
+	public void handleExportData(JSONObject jsonObject, Workbook workbook) {
+
+		if (jsonObject == null) {
+			jsonObject = new JSONObject();
+		}
+
 		Sheet sheet = workbook.getSheetAt(0);
-		// String[] titles = "学号,姓名,性别,职称,学院名称".split(",");
-		// 行
-		// 获取样式 从第三行开始
 		int index = dataNum + 1;
 
-		Sort sort = new Sort(Sort.Direction.DESC, "academicYear", "term");
-		List<Course> listCourse = courseService.findAllCourses(sort);
+		List<Course> listCourse = courseService.searchCoursesWithoutPage(jsonObject);
 
 		for (Course course : listCourse) {
 
@@ -164,12 +170,6 @@ public class CourseSheetHandler implements SheetContentsHandler, HandleExcelExpo
 
 		}
 
-	}
-
-	@Override
-	public void handleExportData(JSONObject jsonObject, Workbook workbook) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

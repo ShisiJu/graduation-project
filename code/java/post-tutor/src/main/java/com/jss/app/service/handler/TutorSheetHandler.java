@@ -9,7 +9,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +20,7 @@ import com.jss.app.model.entity.User;
 import com.jss.app.repository.InstituteRepository;
 import com.jss.app.repository.TutorRepository;
 import com.jss.app.repository.UserRepository;
+import com.jss.app.service.TutorService;
 
 @Component
 public class TutorSheetHandler implements SheetContentsHandler, HandleExcelExport {
@@ -34,6 +34,9 @@ public class TutorSheetHandler implements SheetContentsHandler, HandleExcelExpor
 
 	@Autowired
 	private TutorRepository tutorRepository;
+
+	@Autowired
+	private TutorService tutorService;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -70,7 +73,6 @@ public class TutorSheetHandler implements SheetContentsHandler, HandleExcelExpor
 		if (tutor == null)
 			return;
 
-		System.out.println(cellReference);
 
 		String prefix = cellReference.substring(0, 1);
 
@@ -88,7 +90,6 @@ public class TutorSheetHandler implements SheetContentsHandler, HandleExcelExpor
 			tutor.setTitle(formattedValue);
 			break;
 		case "E":
-			System.out.println(instituteRepository);
 			Institute findByName = instituteRepository.findByName(formattedValue);
 			tutor.setInstitute(findByName);
 			break;
@@ -104,14 +105,20 @@ public class TutorSheetHandler implements SheetContentsHandler, HandleExcelExpor
 	}
 
 	public void handleExportData(Workbook workbook) {
-		Sheet sheet = workbook.getSheetAt(0);
-		// String[] titles = "学号,姓名,性别,职称,学院名称".split(",");
-		// 行
-		// 获取样式 从第三行开始
-		int index = dataNum + 1;
+		handleExportData(null, workbook);
+	}
 
-		Sort sort = new Sort(Sort.Direction.ASC, "studno");
-		List<Tutor> listTutor = tutorRepository.findAll(sort);
+	@Override
+	public void handleExportData(JSONObject jsonObject, Workbook workbook) {
+
+		if (jsonObject == null) {
+			jsonObject = new JSONObject();
+		}
+
+		Sheet sheet = workbook.getSheetAt(0);
+		int index = dataNum + 1;
+		
+		List<Tutor> listTutor = tutorService.searchTutorsWithoutPage(jsonObject);
 
 		for (Tutor tutor : listTutor) {
 
@@ -134,12 +141,6 @@ public class TutorSheetHandler implements SheetContentsHandler, HandleExcelExpor
 			cell.setCellValue(tutor.getInstitute().getName());
 
 		}
-
-	}
-
-	@Override
-	public void handleExportData(JSONObject jsonObject, Workbook workbook) {
-		// TODO Auto-generated method stub
 
 	}
 

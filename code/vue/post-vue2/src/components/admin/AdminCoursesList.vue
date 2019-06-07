@@ -36,7 +36,7 @@
 
 				<div style="width:16rem;float: left;margin-top: 0.25rem;height: 4rem;">
 					<el-button size="small" @click="handleImportModel()">导入模版下载</el-button>
-					<el-button size="small" @click="handleExport()">导出数据</el-button>
+					<el-button  size="small" @click="handleExport()">导出数据</el-button>
 				</div>
 			</div>
 		</div>
@@ -137,7 +137,7 @@ export default {
 			groupOptions: [],
 			instituteOptions: [],
 			tutorOptions: [{ label: 'Stan', value: '5', studno: 'Mar' }],
-			fileList: []
+			fileList: [],
 		};
 	},
 	methods: {
@@ -145,7 +145,6 @@ export default {
 			window.open(window.location.origin + '/api/poi/export-course-model');
 		},
 		handleExport() {
-			console.log(this.searchObj);
 			exportCourse(this.searchObj);
 		},
 		handleRemove(file, fileList) {

@@ -220,11 +220,7 @@ export default {
 				this.selectedGroupIds = res.data;
 			});
 			if (this.edited == true) return;
-			getAllGroup({}).then(res => {
-				let data = res.data;
-				let eleData = turnToEleArr(data);
-				this.groupOptions = eleData;
-			});
+			
 		}
 	},
 	created: function() {
@@ -239,6 +235,12 @@ export default {
 		}
 
 		this.refreshTableData();
+		
+		getAllGroup({}).then(res => {
+			let data = res.data;
+			let eleData = turnToEleArr(data);
+			this.groupOptions = eleData;
+		});
 	}
 };
 </script>

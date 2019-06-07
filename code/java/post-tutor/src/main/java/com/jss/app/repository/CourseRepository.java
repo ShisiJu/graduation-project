@@ -20,7 +20,7 @@ public interface CourseRepository extends RowBaseRepository<Course, Long> {
 
 	Course findByCode(String code);
 
-	@Query(value = "SELECT * FROM t_course tc LEFT OUTER JOIN t_tutor tt ON tc.tutor_id = tt.id WHERE tc.course_type = 1 AND tc.amount > tc.current_num AND tc.id NOT IN( SELECT tsc.course_id FROM t_student_course tsc WHERE tsc.student_id = ?1)", nativeQuery = true)
+	@Query(value = "SELECT * FROM t_course tc LEFT OUTER JOIN t_tutor tt ON tc.tutor_id = tt.id WHERE tc.course_type = 1 AND tc.amount > tc.current_num  AND tc.academic_year = YEAR(NOW()) AND tc.term = IF ( MONTH (NOW()) < 8 && MONTH (NOW()) > 2, 1, 0) AND tc.id NOT IN( SELECT tsc.course_id FROM t_student_course tsc WHERE tsc.student_id = ?1)", nativeQuery = true)
 	List<Course> findOptioinalCoursesByStudentId(Long studentId, Pageable pageable);
 
 	@Query(value = " SELECT COUNT(1)  FROM t_course tc LEFT OUTER JOIN t_tutor tt ON tc.tutor_id = tt.id WHERE tc.course_type = 1  AND tc.amount > tc.current_num AND  tc.academic_year = YEAR(NOW()) AND tc.term = IF ( MONTH (NOW()) < 8 && MONTH (NOW()) > 2, 1, 0) AND  tc.id NOT IN( SELECT tsc.course_id FROM t_student_course tsc WHERE tsc.student_id = ?1) ", nativeQuery = true)

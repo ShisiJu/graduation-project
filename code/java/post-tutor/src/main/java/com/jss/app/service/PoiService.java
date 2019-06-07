@@ -1,7 +1,6 @@
 package com.jss.app.service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -19,8 +18,6 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.InputSource;
@@ -63,10 +60,11 @@ public class PoiService {
 	public void exportStudentCourseModel(HttpServletResponse response, String fileName)
 			throws IOException, InvalidFormatException {
 
-		Resource resource = new ClassPathResource("excel-model/student-course-model.xlsx");
-		File file = resource.getFile();
+		InputStream inputStream = getClass().getClassLoader()
+				.getResourceAsStream("excel-model/student-course-model.xlsx");
+
 		// 输出文件
-		ResponseUtil.download(response, file, fileName);
+		ResponseUtil.download(response, inputStream, fileName);
 	}
 
 	public void exportStudentCourse(HttpServletResponse response, JSONObject jsonObject, String fileName)
@@ -84,10 +82,10 @@ public class PoiService {
 	public void exportCourseModel(HttpServletResponse response, String fileName)
 			throws IOException, InvalidFormatException {
 
-		Resource resource = new ClassPathResource("excel-model/course-model.xlsx");
-		File file = resource.getFile();
+		InputStream inputStream = getClass().getClassLoader().getResourceAsStream("excel-model/course-model.xlsx");
+
 		// 输出文件
-		ResponseUtil.download(response, file, fileName);
+		ResponseUtil.download(response, inputStream, fileName);
 	}
 
 	public void exportCourse(HttpServletResponse response, JSONObject jsonObject, String fileName)
@@ -105,10 +103,10 @@ public class PoiService {
 	public void exportTutorModel(HttpServletResponse response, String fileName)
 			throws IOException, InvalidFormatException {
 
-		Resource resource = new ClassPathResource("excel-model/tutor-model.xlsx");
-		File file = resource.getFile();
+		InputStream inputStream = getClass().getClassLoader().getResourceAsStream("excel-model/tutor-model.xlsx");
+
 		// 输出文件
-		ResponseUtil.download(response, file, fileName);
+		ResponseUtil.download(response, inputStream, fileName);
 	}
 
 	public void exportTutor(HttpServletResponse response, JSONObject jsonObject, String fileName)
@@ -126,10 +124,9 @@ public class PoiService {
 	public void exportStudentModel(HttpServletResponse response, String fileName)
 			throws IOException, InvalidFormatException {
 
-		Resource resource = new ClassPathResource("excel-model/student-model.xlsx");
-		File file = resource.getFile();
+		InputStream inputStream = getClass().getClassLoader().getResourceAsStream("excel-model/student-model.xlsx");
 		// 输出文件
-		ResponseUtil.download(response, file, fileName);
+		ResponseUtil.download(response, inputStream, fileName);
 	}
 
 	public void exportStudent(HttpServletResponse response, JSONObject jsonObject, String fileName)
@@ -147,10 +144,9 @@ public class PoiService {
 	public void exportGroupModel(HttpServletResponse response, String fileName)
 			throws IOException, InvalidFormatException {
 
-		Resource resource = new ClassPathResource("excel-model/group-model.xlsx");
-		File file = resource.getFile();
+		InputStream inputStream = getClass().getClassLoader().getResourceAsStream("excel-model/group-model.xlsx");
 		// 输出文件
-		ResponseUtil.download(response, file, fileName);
+		ResponseUtil.download(response, inputStream, fileName);
 	}
 
 	public void exportGroup(HttpServletResponse response, JSONObject jsonObject, String fileName) throws Exception {
@@ -160,18 +156,15 @@ public class PoiService {
 
 	public void exportData(HandleExcelExport handler, JSONObject jsonObject, String modelPath,
 			HttpServletResponse response, String fileName) throws IOException, InvalidFormatException {
-		Resource resource = new ClassPathResource(modelPath);
-		File file = resource.getFile();
-		Workbook workbook = new XSSFWorkbook(file);
 
+		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(modelPath);
+		Workbook workbook = new XSSFWorkbook(inputStream);
 		// 根据传入的条件进行导出
 		handler.handleExportData(jsonObject, workbook);
-
 		// 输出成 excel
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		workbook.write(byteArrayOutputStream);
 		ResponseUtil.download(response, byteArrayOutputStream, fileName);
-		workbook = new XSSFWorkbook(file);
 		workbook.close();
 	}
 

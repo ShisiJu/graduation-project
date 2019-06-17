@@ -1,6 +1,5 @@
 package com.jss.app.model.m2m;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -29,9 +28,9 @@ import lombok.ToString;
 public class 	StudentCourse  extends RowBase {
 	private static final long serialVersionUID = -164015745985836181L;
 
-	@ManyToOne(cascade = CascadeType.REMOVE)
+	@ManyToOne
 	private Student student;
-	@ManyToOne(cascade = CascadeType.REMOVE)
+	@ManyToOne
 	private Course course;
 	@ColumnDefault(value = "0")
 	private Integer status;

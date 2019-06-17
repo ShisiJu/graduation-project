@@ -157,8 +157,13 @@ public class StudentCourseService {
 		Optional<StudentCourse> studentCourseOp = studentCourseRepository.findById(id);
 		StudentCourse studentCourse = studentCourseOp.get();
 		Course course = studentCourse.getCourse();
-		int currentNum = course.getCurrentNum();
-		course.setCurrentNum(currentNum - 1);
+		
+		Integer currentNum = course.getCurrentNum();
+		
+		if(currentNum != 0) {
+			course.setCurrentNum(currentNum - 1);
+		}
+
 		courseRepository.save(course);
 		studentCourseRepository.deleteById(id);
 	}

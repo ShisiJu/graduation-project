@@ -62,6 +62,7 @@ public class CourseController {
 	public Course saveCourses(@RequestBody JSONObject jsonObject) {
 
 		Course course = jsonObject.getObject("course", Course.class);
+		course.setCurrentNum(0);
 		Long tutorId = jsonObject.getLong("tutorId");
 
 		List<Long> groupIds = null;

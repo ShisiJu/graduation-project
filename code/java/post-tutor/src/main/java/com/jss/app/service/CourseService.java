@@ -192,6 +192,7 @@ public class CourseService {
 			Optional<Tutor> tutor = tutorRepository.findById(tutorId);
 			course.setTutor(tutor.get());
 		}
+		
 		Course savedCourse = courseRepository.save(course);
 		if (newGroupIds != null) {
 			Long courseId = course.getId();

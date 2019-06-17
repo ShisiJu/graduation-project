@@ -2,7 +2,7 @@
 	<div>
 		<div style="float: left;">
 			<div style="float: left;">
-				<el-input v-model="searchObj.exactStudno" placeholder="请输入学生学号" style="width: 10.25rem;"></el-input>
+				<el-input v-model="searchObj.studno" placeholder="请输入学生学号" style="width: 10.25rem;"></el-input>
 				<el-cascader
 					placeholder="请选择班级"
 					:options="groupOptions"
@@ -171,7 +171,7 @@ export default {
 					this.refreshStudents();
 				})
 				.catch(err => {
-					alert('删除失败');
+					alert('删除失败，请先将关联数据清空后删除');
 					console.log(err);
 				});
 		},

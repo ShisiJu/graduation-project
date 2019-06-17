@@ -88,7 +88,7 @@ export default {
 					this.refreshTableData();
 				})
 				.catch(err => {
-					alert('删除失败');
+					alert('删除失败，请先将关联数据清空后删除');
 					console.log(err);
 				});
 		},

@@ -60,7 +60,7 @@ export default {
 
 			saveStudentCourse(data).then(res => {
 				if (res.statusText != 'OK') {
-					alert('选择失败');
+					alert('选择成功');
 				} else {
 					alert('选择成功');
 				}

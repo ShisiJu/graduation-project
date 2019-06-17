@@ -166,7 +166,7 @@ export default {
 					this.refreshTableData();
 				})
 				.catch(err => {
-					alert('删除失败,为防止误操作,请先将组清空后删除');
+					alert('删除失败，请先将关联数据清空后删除');
 					console.log(err);
 				});
 		},
